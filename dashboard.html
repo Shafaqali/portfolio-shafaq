@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#0d0d18; --bg2:#13131f; --bg3:#1a1a2e; --surface:#181828;
+    --text:#eeeef5; --muted:rgba(238,238,245,0.52); --dim:rgba(238,238,245,0.28);
+    --accent:#c084fc; --accent-dark:#7c3aed;
+    --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.11);
+    --card:#161624; --now:#4ade80;
+    --danger:#f87171; --success:#4ade80;
+  }
+  body { font-family: 'Instrument Sans', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  body::before { content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);
+    background-size:48px 48px; }
+
+  /* Login Screen */
+  .login-screen { position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; align-items:center; justify-content:center; }
+  .login-box { background:var(--card); border:1px solid var(--border2); border-radius:18px; padding:2rem; width:340px; text-align:center; }
+  .login-logo { font-family:'Bricolage Grotesque',serif; font-size:1.5rem; font-weight:800; margin-bottom:0.5rem; }
+  .login-logo em { font-style:normal; color:var(--accent); }
+  .login-subtitle { font-size:0.78rem; color:var(--muted); margin-bottom:1.8rem; }
+  .login-box input { width:100%; background:var(--bg3); border:1px solid var(--border2); border-radius:9px; padding:10px 14px; color:var(--text); font-family:inherit; font-size:0.88rem; outline:none; margin-bottom:0.8rem; }
+  .login-box input:focus { border-color:rgba(192,132,252,0.5); }
+  .login-box .btn-primary { width:100%; padding:10px; justify-content:center; }
+  .login-error { font-size:0.75rem; color:var(--danger); margin-top:0.5rem; min-height:18px; }
+
+  .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
+
+  /* Sidebar */
+  .sidebar { width:220px; flex-shrink:0; background:rgba(13,13,24,0.92); border-right:1px solid var(--border2); display:flex; flex-direction:column; padding:1.2rem 0.8rem; gap:4px; }
+  .sidebar-logo { font-family:'Bricolage Grotesque','Georgia',serif; font-weight:800; font-size:1rem; letter-spacing:-0.02em; color:var(--text); padding:0.4rem 0.8rem 1.2rem; border-bottom:1px solid var(--border); margin-bottom:0.5rem; }
+  .sidebar-logo em { font-style:normal; color:var(--accent); }
+  .sidebar-logo span { font-size:0.65rem; font-weight:600; color:var(--muted); display:block; letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
+  .nav-item { display:flex; align-items:center; gap:9px; padding:8px 12px; border-radius:9px; cursor:pointer; color:var(--muted); font-size:0.8rem; font-weight:500; border:1px solid transparent; transition:all .15s; user-select:none; }
+  .nav-item:hover { color:var(--text); background:rgba(128,128,128,0.07); }
+  .nav-item.active { color:var(--accent); background:rgba(192,132,252,0.08); border-color:rgba(192,132,252,0.18); }
+  .nav-icon { font-size:15px; width:18px; text-align:center; }
+  .nav-section { font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--dim); padding:8px 12px 4px; margin-top:8px; }
+  .sidebar-bottom { margin-top:auto; padding-top:1rem; border-top:1px solid var(--border); }
+  .user-pill { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; background:var(--card); border:1px solid var(--border2); cursor:pointer; }
+  .user-pill:hover { border-color:rgba(248,113,113,0.4); }
+  .user-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--accent-dark),var(--accent)); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+  .user-name { font-size:0.75rem; font-weight:600; color:var(--text); }
+  .user-role { font-size:0.65rem; color:var(--muted); }
+
+  /* Main */
+  .main { flex:1; overflow:auto; display:flex; flex-direction:column; }
+  .topbar { height:52px; background:rgba(13,13,24,0.82); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; flex-shrink:0; }
+  .topbar-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:1rem; font-weight:700; letter-spacing:-0.02em; }
+  .topbar-actions { display:flex; gap:8px; align-items:center; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; font-size:0.75rem; font-weight:600; cursor:pointer; border:none; transition:all .15s; font-family:inherit; }
+  .btn-primary { background:var(--accent); color:#0d0d18; }
+  .btn-primary:hover { filter:brightness(1.1); }
+  .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border2); }
+  .btn-ghost:hover { color:var(--text); background:rgba(128,128,128,0.08); }
+  .btn-danger { background:rgba(248,113,113,0.12); color:var(--danger); border:1px solid rgba(248,113,113,0.25); }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  .content { padding:1.5rem; flex:1; }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* Stats row */
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem; }
+  .stat-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem 1.1rem; }
+  .stat-label { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .stat-value { font-family:'Bricolage Grotesque','Georgia',serif; font-size:1.6rem; font-weight:800; letter-spacing:-0.03em; color:var(--text); }
+  .stat-sub { font-size:0.68rem; color:var(--muted); margin-top:3px; }
+  .stat-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block; margin-right:4px; }
+
+  /* Section title */
+  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .section-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.9rem; font-weight:700; letter-spacing:-0.01em; }
+
+  /* Table */
+  .table-wrap { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; }
+  table { width:100%; border-collapse:collapse; }
+  th { font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px; text-align:left; border-bottom:1px solid var(--border2); background:rgba(255,255,255,0.02); }
+  td { padding:10px 14px; font-size:0.78rem; color:var(--text); border-bottom:1px solid var(--border); }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(255,255,255,0.02); }
+  .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:6px; font-size:0.65rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
+  .badge-purple { background:rgba(192,132,252,0.12); color:var(--accent); border:1px solid rgba(192,132,252,0.25); }
+  .badge-green { background:rgba(74,222,128,0.1); color:var(--now); border:1px solid rgba(74,222,128,0.25); }
+  .badge-blue { background:rgba(56,189,248,0.1); color:#38bdf8; border:1px solid rgba(56,189,248,0.25); }
+  .badge-red { background:rgba(248,113,113,0.1); color:var(--danger); border:1px solid rgba(248,113,113,0.25); }
+  .icon-btn { background:none; border:1px solid var(--border2); color:var(--muted); width:28px; height:28px; border-radius:7px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:13px; transition:all .15s; }
+  .icon-btn:hover { color:var(--text); border-color:var(--border2); background:rgba(128,128,128,0.1); }
+  .icon-btn.del:hover { color:var(--danger); border-color:rgba(248,113,113,0.4); }
+
+  /* Form */
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .form-group { display:flex; flex-direction:column; gap:5px; }
+  .form-group.full { grid-column:1/-1; }
+  label { font-size:0.7rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); }
+  input, textarea, select { background:var(--bg3); border:1px solid var(--border2); border-radius:9px; padding:8px 12px; color:var(--text); font-family:inherit; font-size:0.82rem; outline:none; transition:border-color .15s; width:100%; }
+  input:focus, textarea:focus, select:focus { border-color:rgba(192,132,252,0.5); }
+  textarea { resize:vertical; min-height:80px; }
+  select option { background:var(--bg3); }
+
+  /* Card form panel */
+  .form-panel { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1.2rem; }
+  .form-panel + .form-panel { margin-top:1rem; }
+  .panel-title { font-size:0.78rem; font-weight:700; color:var(--text); margin-bottom:1rem; padding-bottom:0.6rem; border-bottom:1px solid var(--border2); display:flex; align-items:center; gap:6px; }
+  .panel-icon { font-size:14px; }
+
+  /* Photo upload area */
+  .upload-zone { border:1.5px dashed var(--border2); border-radius:12px; padding:1.5rem; text-align:center; cursor:pointer; transition:border-color .15s; position:relative; }
+  .upload-zone:hover { border-color:rgba(192,132,252,0.5); }
+  .upload-icon { font-size:1.8rem; margin-bottom:8px; opacity:0.4; }
+  .upload-text { font-size:0.75rem; color:var(--muted); }
+  .upload-text strong { color:var(--accent); }
+
+  /* Toggle switch */
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+  .toggle-row:last-child { border-bottom:none; }
+  .toggle-label { font-size:0.78rem; color:var(--text); font-weight:500; }
+  .toggle-desc { font-size:0.68rem; color:var(--muted); margin-top:1px; }
+  .toggle { width:38px; height:20px; background:var(--border2); border-radius:100px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; border:none; }
+  .toggle.on { background:var(--accent); }
+  .toggle::after { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:3px; left:3px; transition:transform .2s; }
+  .toggle.on::after { transform:translateX(18px); }
+
+  /* Skill tags */
+  .tags-input { display:flex; flex-wrap:wrap; gap:6px; padding:8px; background:var(--bg3); border:1px solid var(--border2); border-radius:9px; min-height:42px; cursor:text; }
+  .tag { display:inline-flex; align-items:center; gap:4px; background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.25); color:var(--accent); border-radius:6px; padding:2px 8px; font-size:0.7rem; font-weight:600; }
+  .tag-x { cursor:pointer; opacity:0.6; font-size:11px; }
+  .tag-x:hover { opacity:1; }
+
+  /* Toast */
+  .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--card); border:1px solid rgba(74,222,128,0.3); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.78rem; font-weight:600; display:flex; align-items:center; gap:7px; z-index:999; animation:slideIn .3s ease; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+  .toast.error { border-color:rgba(248,113,113,0.4); }
+  @keyframes slideIn { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  .toast-dot { width:7px; height:7px; border-radius:50%; background:var(--now); }
+  .toast.error .toast-dot { background:var(--danger); }
+
+  /* Project card grid */
+  .project-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+  .project-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem; transition:border-color .2s; }
+  .project-card:hover { border-color:rgba(192,132,252,0.35); }
+  .project-name { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.95rem; font-weight:700; margin-bottom:4px; }
+  .project-desc { font-size:0.75rem; color:var(--muted); line-height:1.55; margin-bottom:10px; }
+  .project-actions { display:flex; gap:6px; align-items:center; }
+  .project-tech { display:flex; flex-wrap:wrap; gap:4px; flex:1; }
+  .tech-chip { font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:5px; background:var(--border); border:1px solid var(--border2); color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; }
+
+  .divider { height:1px; background:var(--border); margin:1.2rem 0; }
+  .row { display:flex; gap:1rem; }
+  .col-6 { flex:1; }
+
+  /* Loading */
+  .loading { text-align:center; color:var(--muted); padding:2rem; font-size:0.8rem; }
+  .empty-state { text-align:center; color:var(--muted); padding:2rem; font-size:0.82rem; }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">MN<em>.</em></div>
+    <div class="login-subtitle">Admin Panel — Enter your password</div>
+    <input type="password" id="login-pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="btn btn-primary" onclick="doLogin()">Login →</button>
+    <div class="login-error" id="login-err"></div>
+  </div>
+</div>
+
+<div class="layout" id="app" style="display:none">
+  <aside class="sidebar">
+    <div class="sidebar-logo">MN<em>.</em><span>Admin Panel</span></div>
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('profile',this)"><span class="nav-icon">◈</span> Profile & Photo</div>
+    <div class="nav-section">Content</div>
+    <div class="nav-item" onclick="showPage('projects',this)"><span class="nav-icon">◻</span> Projects</div>
+    <div class="nav-item" onclick="showPage('jobs',this)"><span class="nav-icon">◈</span> Career / Jobs</div>
+    <div class="nav-item" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
+    <div class="nav-item" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
+    <div class="nav-section">Settings</div>
+    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⊙</span> Site Settings</div>
+    <div class="sidebar-bottom">
+      <div class="user-pill" onclick="logout()" title="Click to logout">
+        <div class="user-avatar" id="side-avatar">MN</div>
+        <div><div class="user-name" id="side-name">Mohammed Natsha</div><div class="user-role">Admin · Logout</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="window.open('index.html','_blank')">⬡ View Portfolio</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value" id="stat-projects">—</div><div class="stat-sub"><span class="stat-dot"></span><span id="stat-projects-sub">loading...</span></div></div>
+          <div class="stat-card"><div class="stat-label">Jobs / Companies</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
+          <div class="stat-card"><div class="stat-label">Skill Categories</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
+          <div class="stat-card"><div class="stat-label">Testimonials</div><div class="stat-value" id="stat-testi">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span>total</div></div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <div class="section-head"><div class="section-title">Recent Projects</div><button class="btn btn-ghost" onclick="showPage('projects',null)">View all</button></div>
+            <div class="table-wrap" id="dash-projects-table"><div class="loading">Loading...</div></div>
+          </div>
+          <div class="col-6">
+            <div class="section-head"><div class="section-title">Quick Actions</div></div>
+            <div class="form-panel">
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('projects',null)">+ Add new project</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('jobs',null)">+ Add job / experience</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('skills',null)">+ Add skill category</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('testimonials',null)">+ Add testimonial</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('profile',null)">✎ Edit profile</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="page" id="page-profile">
+        <div class="row">
+          <div class="col-6">
+            <div class="form-panel">
+              <div class="panel-title"><span class="panel-icon">◈</span> Basic Info</div>
+              <div class="form-grid">
+                <div class="form-group full"><label>Full Name</label><input id="p-name" placeholder="Mohammed Natsha" /></div>
+                <div class="form-group full"><label>Tagline / Role</label><input id="p-tagline" placeholder="Full-Stack Developer" /></div>
+                <div class="form-group full"><label>Bio (short description)</label><textarea id="p-bio" placeholder="A short bio that appears on the homepage..."></textarea></div>
+                <div class="form-group"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com" /></div>
+                <div class="form-group"><label>GitHub URL</label><input id="p-github" placeholder="https://github.com/..." /></div>
+                <div class="form-group full"><label>LinkedIn URL</label><input id="p-linkedin" placeholder="https://linkedin.com/in/..." /></div>
+                <div class="form-group full"><label>Photo URL</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
+              </div>
+              <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+                <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-panel">
+              <div class="panel-title"><span class="panel-icon">◻</span> Photo Preview</div>
+              <div style="text-align:center; padding:1rem;">
+                <img id="p-photo-preview" src="" alt="Photo" style="width:120px;height:150px;object-fit:cover;border-radius:14px;border:1px solid var(--border2);display:none;" />
+                <div id="p-photo-placeholder" style="width:120px;height:150px;border:1.5px dashed var(--border2);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;opacity:0.3">📸</div>
+                <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Paste image URL above to update photo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="page" id="page-projects">
+        <div class="section-head">
+          <div class="section-title" id="projects-count">All Projects</div>
+          <button class="btn btn-primary" onclick="clearProjectForm()">+ New Project</button>
+        </div>
+        <div class="project-grid" id="projects-grid"><div class="loading">Loading projects...</div></div>
+        <div class="divider"></div>
+        <div class="form-panel">
+          <div class="panel-title"><span class="panel-icon">+</span> Add / Edit Project</div>
+          <input type="hidden" id="proj-id" />
+          <div class="form-grid">
+            <div class="form-group"><label>Project Name</label><input id="proj-name" placeholder="My Awesome Project" /></div>
+            <div class="form-group"><label>Status</label><select id="proj-status"><option>Live</option><option>WIP</option><option>Archived</option></select></div>
+            <div class="form-group full"><label>Description</label><textarea id="proj-desc" placeholder="Short description of the project..."></textarea></div>
+            <div class="form-group"><label>GitHub Link</label><input id="proj-github" placeholder="https://github.com/..." /></div>
+            <div class="form-group"><label>Live Demo Link</label><input id="proj-live" placeholder="https://..." /></div>
+            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="proj-tech" placeholder="React, Node.js, MongoDB, Tailwind..." /></div>
+          </div>
+          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-ghost" onclick="clearProjectForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveProject()">Save Project</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOBS -->
+      <div class="page" id="page-jobs">
+        <div class="section-head">
+          <div class="section-title" id="jobs-count">Career Timeline</div>
+          <button class="btn btn-primary" onclick="clearJobForm()">+ Add Job</button>
+        </div>
+        <div class="table-wrap" style="margin-bottom:1rem" id="jobs-table"><div class="loading">Loading jobs...</div></div>
+        <div class="form-panel">
+          <div class="panel-title"><span class="panel-icon">◈</span> Add / Edit Job</div>
+          <input type="hidden" id="job-id" />
+          <div class="form-grid">
+            <div class="form-group"><label>Company Name</label><input id="job-company" placeholder="Acme Corp" /></div>
+            <div class="form-group"><label>Your Role</label><input id="job-role" placeholder="Senior Full-Stack Developer" /></div>
+            <div class="form-group"><label>Start Date</label><input id="job-start" placeholder="Jan 2023" /></div>
+            <div class="form-group"><label>End Date</label><input id="job-end" placeholder="Leave blank if current" /></div>
+            <div class="form-group full"><label>Bullet Points (one per line)</label><textarea id="job-bullets" placeholder="Built REST APIs with Node.js&#10;Reduced load time by 40%&#10;Led team of 3 engineers"></textarea></div>
+            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="job-tech" placeholder="React, Node.js, PostgreSQL..." /></div>
+            <div class="form-group"><label>Card Theme</label><select id="job-theme"><option value="theme-purple">Purple</option><option value="theme-blue">Blue</option><option value="theme-pink">Pink</option><option value="theme-green">Green</option><option value="theme-sky">Sky</option></select></div>
+            <div class="form-group"><label>Current Job?</label><select id="job-current"><option value="false">No</option><option value="true">Yes – show "Now" badge</option></select></div>
+            <div class="form-group full"><label>Panel Title (shown on card)</label><input id="job-panel-title" placeholder="e.g. Led platform engineering team" /></div>
+          </div>
+          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-ghost" onclick="clearJobForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveJob()">Save Job</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="page" id="page-skills">
+        <div class="section-head">
+          <div class="section-title">Skill Categories</div>
+          <button class="btn btn-primary" onclick="clearSkillForm()">+ New Category</button>
+        </div>
+        <div id="skills-list"><div class="loading">Loading skills...</div></div>
+        <div class="divider"></div>
+        <div class="form-panel">
+          <div class="panel-title"><span class="panel-icon">◎</span> Add / Edit Skill Category</div>
+          <input type="hidden" id="skill-id" />
+          <div class="form-grid">
+            <div class="form-group"><label>Category Title</label><input id="skill-title" placeholder="Frontend Development" /></div>
+            <div class="form-group"><label>Description</label><input id="skill-desc" placeholder="Building fast, responsive UIs" /></div>
+            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="skill-tags" placeholder="React, Next.js, TypeScript, Tailwind..." /></div>
+          </div>
+          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-ghost" onclick="clearSkillForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveSkill()">Save Category</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TESTIMONIALS -->
+      <div class="page" id="page-testimonials">
+        <div class="section-head">
+          <div class="section-title" id="testi-count">Testimonials</div>
+          <button class="btn btn-primary" onclick="clearTestiForm()">+ Add Testimonial</button>
+        </div>
+        <div class="table-wrap" style="margin-bottom:1rem" id="testi-table"><div class="loading">Loading...</div></div>
+        <div class="form-panel">
+          <div class="panel-title"><span class="panel-icon">◉</span> Add / Edit Testimonial</div>
+          <input type="hidden" id="testi-id" />
+          <div class="form-grid">
+            <div class="form-group"><label>Author Name</label><input id="testi-name" placeholder="Ali Hassan" /></div>
+            <div class="form-group"><label>Author Role</label><input id="testi-role" placeholder="CTO, Company Name" /></div>
+            <div class="form-group"><label>Emoji Avatar</label><input id="testi-emoji" placeholder="🧑" style="max-width:80px" /></div>
+            <div class="form-group"><label>Visible on site?</label><select id="testi-visible"><option value="true">Yes</option><option value="false">No</option></select></div>
+            <div class="form-group full"><label>Quote</label><textarea id="testi-quote" placeholder="Write the testimonial here..."></textarea></div>
+          </div>
+          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-ghost" onclick="clearTestiForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveTestimonial()">Save Testimonial</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="row">
+          <div class="col-6">
+            <div class="form-panel">
+              <div class="panel-title"><span class="panel-icon">⊙</span> Site Settings</div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Available for work</div><div class="toggle-desc">Show green badge on hero</div></div>
+                <button class="toggle" id="toggle-available" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Show testimonials section</div><div class="toggle-desc">Display on portfolio page</div></div>
+                <button class="toggle on" id="toggle-testimonials" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Open to freelance work</div><div class="toggle-desc">Shown in contact section</div></div>
+                <button class="toggle" id="toggle-freelance" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div style="margin-top:1rem;">
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-panel">
+              <div class="panel-title"><span class="panel-icon">⬡</span> Admin Password</div>
+              <div class="form-group" style="margin-bottom:10px"><label>New Password</label><input type="password" id="new-pw" placeholder="Min 6 characters" /></div>
+              <div class="form-group"><label>Confirm Password</label><input type="password" id="confirm-pw" placeholder="Repeat password" /></div>
+              <div style="margin-top:1rem">
+                <button class="btn btn-ghost" onclick="changePassword()">Update Password</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// ⚡ CHANGE THIS TO YOUR RENDER BACKEND URL AFTER DEPLOYING
+// ══════════════════════════════════════════════════════════════════════
+const API_BASE = 'https://your-portfolio-backend.onrender.com';
+// ══════════════════════════════════════════════════════════════════════
+
+let token = localStorage.getItem('portfolio_admin_token') || '';
+let allData = { projects: [], jobs: [], skills: [], testimonials: [], settings: {} };
+
+// ── Auth ─────────────────────────────────────────────────────────────
+async function doLogin() {
+  const pw = document.getElementById('login-pw').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  try {
+    const r = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Login failed');
+    token = data.token;
+    localStorage.setItem('portfolio_admin_token', token);
+    showApp();
+  } catch (e) {
+    errEl.textContent = e.message;
+  }
+}
+
+function logout() {
+  if (!confirm('Logout?')) return;
+  localStorage.removeItem('portfolio_admin_token');
+  token = '';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pw').value = '';
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  loadAll();
+}
+
+// Check if already logged in
+if (token) showApp();
+
+// ── API Helpers ───────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API_BASE + path, opts);
+  if (r.status === 401) { logout(); throw new Error('Session expired'); }
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+// ── Load All Data ─────────────────────────────────────────────────────
+async function loadAll() {
+  try {
+    const [settings, projects, jobs, skills, testimonials] = await Promise.all([
+      api('GET', '/api/admin/settings'),
+      api('GET', '/api/admin/projects'),
+      api('GET', '/api/admin/jobs'),
+      api('GET', '/api/admin/skills'),
+      api('GET', '/api/admin/testimonials')
+    ]);
+    allData = { settings, projects, jobs, skills, testimonials };
+    renderDashboard();
+    renderProfile();
+    renderProjects();
+    renderJobs();
+    renderSkills();
+    renderTestimonials();
+    renderSettingsToggles();
+  } catch (e) {
+    showToast('Failed to load: ' + e.message, true);
+  }
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────
+function renderDashboard() {
+  const { projects, jobs, skills, testimonials } = allData;
+  document.getElementById('stat-projects').textContent = projects.length;
+  document.getElementById('stat-jobs').textContent = jobs.length;
+  document.getElementById('stat-skills').textContent = skills.length;
+  document.getElementById('stat-testi').textContent = testimonials.length;
+  const featured = projects.filter(p => p.status === 'Live').length;
+  document.getElementById('stat-projects-sub').textContent = featured + ' live';
+  const current = jobs.filter(j => j.is_current).length;
+  document.getElementById('stat-jobs-sub').textContent = current + ' current';
+
+  const table = document.getElementById('dash-projects-table');
+  if (!projects.length) { table.innerHTML = '<div class="empty-state">No projects yet</div>'; return; }
+  table.innerHTML = `<table><tr><th>Project</th><th>Status</th><th>Tech</th></tr>${
+    projects.slice(0,5).map(p => `<tr>
+      <td><strong>${esc(p.name)}</strong></td>
+      <td>${statusBadge(p.status)}</td>
+      <td>${(p.tech_tags||[]).slice(0,2).map(t=>`<span class="badge badge-purple">${esc(t)}</span>`).join(' ')}</td>
+    </tr>`).join('')
+  }</table>`;
+}
+
+// ── Profile ───────────────────────────────────────────────────────────
+function renderProfile() {
+  const s = allData.settings || {};
+  document.getElementById('p-name').value = s.name || '';
+  document.getElementById('p-tagline').value = s.tagline || '';
+  document.getElementById('p-bio').value = s.bio || '';
+  document.getElementById('p-email').value = s.email || '';
+  document.getElementById('p-github').value = s.github || '';
+  document.getElementById('p-linkedin').value = s.linkedin || '';
+  document.getElementById('p-photo').value = s.photo_url || '';
+  updatePhotoPreview(s.photo_url);
+
+  const initials = (s.name||'MN').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('side-avatar').textContent = initials;
+  document.getElementById('side-name').textContent = s.name || 'Admin';
+}
+
+function updatePhotoPreview(url) {
+  const img = document.getElementById('p-photo-preview');
+  const ph = document.getElementById('p-photo-placeholder');
+  if (url) {
+    img.src = url; img.style.display = 'block'; ph.style.display = 'none';
+  } else {
+    img.style.display = 'none'; ph.style.display = 'inline-flex';
+  }
+}
+
+document.getElementById('p-photo').addEventListener('input', function() {
+  updatePhotoPreview(this.value);
+});
+
+async function saveProfile() {
+  try {
+    const update = {
+      name: document.getElementById('p-name').value,
+      tagline: document.getElementById('p-tagline').value,
+      bio: document.getElementById('p-bio').value,
+      email: document.getElementById('p-email').value,
+      github: document.getElementById('p-github').value,
+      linkedin: document.getElementById('p-linkedin').value,
+      photo_url: document.getElementById('p-photo').value
+    };
+    allData.settings = await api('PUT', '/api/admin/settings', update);
+    renderProfile();
+    showToast('Profile saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ── Projects ─────────────────────────────────────────────────────────
+function renderProjects() {
+  const projects = allData.projects;
+  document.getElementById('projects-count').textContent = `All Projects (${projects.length})`;
+  const grid = document.getElementById('projects-grid');
+  if (!projects.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>'; return; }
+  grid.innerHTML = projects.map(p => `
+    <div class="project-card">
+      <div class="project-name">${esc(p.name)}</div>
+      <div class="project-desc">${esc(p.description)}</div>
+      <div class="project-tech">${(p.tech_tags||[]).map(t=>`<span class="tech-chip">${esc(t)}</span>`).join('')}</div>
+      <div class="project-actions" style="margin-top:8px;">
+        ${statusBadge(p.status)}
+        <div style="flex:1"></div>
+        <button class="icon-btn" onclick="editProject('${p._id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteProject('${p._id}')">✕</button>
+      </div>
+    </div>`).join('') + `
+    <div class="project-card" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:110px;" onclick="clearProjectForm()">
+      <div style="text-align:center;color:var(--muted)"><div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div><div style="font-size:0.75rem;font-weight:600;">Add New Project</div></div>
+    </div>`;
+}
+
+function editProject(id) {
+  const p = allData.projects.find(x => x._id === id);
+  if (!p) return;
+  document.getElementById('proj-id').value = p._id;
+  document.getElementById('proj-name').value = p.name;
+  document.getElementById('proj-status').value = p.status;
+  document.getElementById('proj-desc').value = p.description;
+  document.getElementById('proj-github').value = p.github || '';
+  document.getElementById('proj-live').value = p.live || '';
+  document.getElementById('proj-tech').value = (p.tech_tags||[]).join(', ');
+  document.querySelector('.form-panel .panel-title').innerHTML = '<span class="panel-icon">✎</span> Edit Project';
+  document.querySelector('.form-panel .panel-title').scrollIntoView({ behavior: 'smooth' });
+}
+
+function clearProjectForm() {
+  document.getElementById('proj-id').value = '';
+  ['proj-name','proj-desc','proj-github','proj-live','proj-tech'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('proj-status').value = 'WIP';
+}
+
+async function saveProject() {
+  const id = document.getElementById('proj-id').value;
+  const body = {
+    name: document.getElementById('proj-name').value,
+    status: document.getElementById('proj-status').value,
+    description: document.getElementById('proj-desc').value,
+    github: document.getElementById('proj-github').value,
+    live: document.getElementById('proj-live').value,
+    tech_tags: document.getElementById('proj-tech').value.split(',').map(s=>s.trim()).filter(Boolean)
+  };
+  if (!body.name) return showToast('Project name is required', true);
+  try {
+    if (id) {
+      await api('PUT', '/api/admin/projects/' + id, body);
+    } else {
+      await api('POST', '/api/admin/projects', body);
+    }
+    clearProjectForm();
+    allData.projects = await api('GET', '/api/admin/projects');
+    renderProjects();
+    renderDashboard();
+    showToast('Project saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project?')) return;
+  try {
+    await api('DELETE', '/api/admin/projects/' + id);
+    allData.projects = await api('GET', '/api/admin/projects');
+    renderProjects();
+    renderDashboard();
+    showToast('Project deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ── Jobs ──────────────────────────────────────────────────────────────
+function renderJobs() {
+  const jobs = allData.jobs;
+  document.getElementById('jobs-count').textContent = `Career Timeline (${jobs.length} jobs)`;
+  const table = document.getElementById('jobs-table');
+  if (!jobs.length) { table.innerHTML = '<div class="empty-state">No jobs yet</div>'; return; }
+  table.innerHTML = `<table>
+    <tr><th>#</th><th>Company</th><th>Role</th><th>Period</th><th>Status</th><th>Actions</th></tr>
+    ${jobs.map((j,i) => `<tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(j.company)}</strong></td>
+      <td>${esc(j.role)}</td>
+      <td>${esc(j.date_text||'')}</td>
+      <td>${j.is_current ? '<span class="badge badge-green">Current</span>' : '<span class="badge badge-purple">Past</span>'}</td>
+      <td style="display:flex;gap:6px;"><button class="icon-btn" onclick="editJob('${j._id}')">✎</button><button class="icon-btn del" onclick="deleteJob('${j._id}')">✕</button></td>
+    </tr>`).join('')}
+  </table>`;
+}
+
+function editJob(id) {
+  const j = allData.jobs.find(x => x._id === id);
+  if (!j) return;
+  const [start, end] = (j.date_text||'').split(' – ');
+  document.getElementById('job-id').value = j._id;
+  document.getElementById('job-company').value = j.company;
+  document.getElementById('job-role').value = j.role;
+  document.getElementById('job-start').value = start || '';
+  document.getElementById('job-end').value = end || '';
+  document.getElementById('job-bullets').value = (j.bullets||[]).join('\n');
+  document.getElementById('job-tech').value = (j.tech_tags||[]).join(', ');
+  document.getElementById('job-theme').value = j.panel_theme || 'theme-blue';
+  document.getElementById('job-current').value = j.is_current ? 'true' : 'false';
+  document.getElementById('job-panel-title').value = j.panel_title || '';
+  document.getElementById('jobs-table').scrollIntoView({ behavior: 'smooth' });
+}
+
+function clearJobForm() {
+  document.getElementById('job-id').value = '';
+  ['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('job-current').value = 'false';
+  document.getElementById('job-theme').value = 'theme-blue';
+}
+
+async function saveJob() {
+  const id = document.getElementById('job-id').value;
+  const start = document.getElementById('job-start').value;
+  const end = document.getElementById('job-end').value;
+  const body = {
+    company: document.getElementById('job-company').value,
+    role: document.getElementById('job-role').value,
+    date_text: end ? `${start} – ${end}` : start,
+    is_current: document.getElementById('job-current').value === 'true',
+    bullets: document.getElementById('job-bullets').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    tech_tags: document.getElementById('job-tech').value.split(',').map(s=>s.trim()).filter(Boolean),
+    panel_theme: document.getElementById('job-theme').value,
+    panel_title: document.getElementById('job-panel-title').value
+  };
+  if (!body.company) return showToast('Company name required', true);
+  try {
+    if (id) {
+      await api('PUT', '/api/admin/jobs/' + id, body);
+    } else {
+      await api('POST', '/api/admin/jobs', body);
+    }
+    clearJobForm();
+    allData.jobs = await api('GET', '/api/admin/jobs');
+    renderJobs();
+    renderDashboard();
+    showToast('Job saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteJob(id) {
+  if (!confirm('Delete this job?')) return;
+  try {
+    await api('DELETE', '/api/admin/jobs/' + id);
+    allData.jobs = await api('GET', '/api/admin/jobs');
+    renderJobs();
+    renderDashboard();
+    showToast('Job deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ── Skills ─────────────────────────────────────────────────────────────
+function renderSkills() {
+  const skills = allData.skills;
+  const list = document.getElementById('skills-list');
+  if (!skills.length) { list.innerHTML = '<div class="empty-state">No skill categories yet</div>'; return; }
+  list.innerHTML = skills.map(s => `
+    <div class="form-panel" style="margin-bottom:0.8rem">
+      <div class="panel-title">
+        <span class="panel-icon">◎</span> ${esc(s.title)}
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="icon-btn" onclick="editSkill('${s._id}')">✎</button>
+          <button class="icon-btn del" onclick="deleteSkill('${s._id}')">✕</button>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">${esc(s.description||'')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${(s.tags||[]).map(t=>`<span class="badge badge-purple">${esc(t.label||t)}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function editSkill(id) {
+  const s = allData.skills.find(x => x._id === id);
+  if (!s) return;
+  document.getElementById('skill-id').value = s._id;
+  document.getElementById('skill-title').value = s.title;
+  document.getElementById('skill-desc').value = s.description || '';
+  document.getElementById('skill-tags').value = (s.tags||[]).map(t=>t.label||t).join(', ');
+}
+
+function clearSkillForm() {
+  document.getElementById('skill-id').value = '';
+  ['skill-title','skill-desc','skill-tags'].forEach(id => document.getElementById(id).value = '');
+}
+
+async function saveSkill() {
+  const id = document.getElementById('skill-id').value;
+  const body = {
+    title: document.getElementById('skill-title').value,
+    description: document.getElementById('skill-desc').value,
+    tags: document.getElementById('skill-tags').value.split(',').map(s=>({ label: s.trim() })).filter(t=>t.label)
+  };
+  if (!body.title) return showToast('Category title required', true);
+  try {
+    if (id) {
+      await api('PUT', '/api/admin/skills/' + id, body);
+    } else {
+      await api('POST', '/api/admin/skills', body);
+    }
+    clearSkillForm();
+    allData.skills = await api('GET', '/api/admin/skills');
+    renderSkills();
+    renderDashboard();
+    showToast('Skill category saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteSkill(id) {
+  if (!confirm('Delete this skill category?')) return;
+  try {
+    await api('DELETE', '/api/admin/skills/' + id);
+    allData.skills = await api('GET', '/api/admin/skills');
+    renderSkills();
+    renderDashboard();
+    showToast('Skill deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ── Testimonials ──────────────────────────────────────────────────────
+function renderTestimonials() {
+  const testis = allData.testimonials;
+  document.getElementById('testi-count').textContent = `Testimonials (${testis.length})`;
+  const table = document.getElementById('testi-table');
+  if (!testis.length) { table.innerHTML = '<div class="empty-state">No testimonials yet</div>'; return; }
+  table.innerHTML = `<table>
+    <tr><th>Author</th><th>Role</th><th>Quote preview</th><th>Visible</th><th></th></tr>
+    ${testis.map(t => `<tr>
+      <td><strong>${esc(t.author_name)}</strong></td>
+      <td>${esc(t.author_role)}</td>
+      <td style="color:var(--muted)">${esc((t.quote||'').substring(0,40))}...</td>
+      <td>${t.visible ? '<span class="badge badge-green">On</span>' : '<span class="badge badge-red">Off</span>'}</td>
+      <td style="display:flex;gap:6px;"><button class="icon-btn" onclick="editTesti('${t._id}')">✎</button><button class="icon-btn del" onclick="deleteTesti('${t._id}')">✕</button></td>
+    </tr>`).join('')}
+  </table>`;
+}
+
+function editTesti(id) {
+  const t = allData.testimonials.find(x => x._id === id);
+  if (!t) return;
+  document.getElementById('testi-id').value = t._id;
+  document.getElementById('testi-name').value = t.author_name;
+  document.getElementById('testi-role').value = t.author_role;
+  document.getElementById('testi-emoji').value = t.author_emoji || '🧑';
+  document.getElementById('testi-visible').value = t.visible ? 'true' : 'false';
+  document.getElementById('testi-quote').value = t.quote;
+}
+
+function clearTestiForm() {
+  document.getElementById('testi-id').value = '';
+  ['testi-name','testi-role','testi-quote'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('testi-emoji').value = '🧑';
+  document.getElementById('testi-visible').value = 'true';
+}
+
+async function saveTestimonial() {
+  const id = document.getElementById('testi-id').value;
+  const body = {
+    author_name: document.getElementById('testi-name').value,
+    author_role: document.getElementById('testi-role').value,
+    author_emoji: document.getElementById('testi-emoji').value || '🧑',
+    visible: document.getElementById('testi-visible').value === 'true',
+    quote: document.getElementById('testi-quote').value
+  };
+  if (!body.author_name || !body.quote) return showToast('Name and quote required', true);
+  try {
+    if (id) {
+      await api('PUT', '/api/admin/testimonials/' + id, body);
+    } else {
+      await api('POST', '/api/admin/testimonials', body);
+    }
+    clearTestiForm();
+    allData.testimonials = await api('GET', '/api/admin/testimonials');
+    renderTestimonials();
+    renderDashboard();
+    showToast('Testimonial saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteTesti(id) {
+  if (!confirm('Delete this testimonial?')) return;
+  try {
+    await api('DELETE', '/api/admin/testimonials/' + id);
+    allData.testimonials = await api('GET', '/api/admin/testimonials');
+    renderTestimonials();
+    renderDashboard();
+    showToast('Testimonial deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ── Settings ──────────────────────────────────────────────────────────
+function renderSettingsToggles() {
+  const s = allData.settings;
+  setToggle('toggle-available', s.available === '1');
+  setToggle('toggle-testimonials', s.show_testimonials !== false);
+  setToggle('toggle-freelance', !!s.freelance);
+}
+
+function setToggle(id, val) {
+  const el = document.getElementById(id);
+  if (val) el.classList.add('on');
+  else el.classList.remove('on');
+}
+
+async function saveSettings() {
+  const body = {
+    available: document.getElementById('toggle-available').classList.contains('on') ? '1' : '0',
+    show_testimonials: document.getElementById('toggle-testimonials').classList.contains('on'),
+    freelance: document.getElementById('toggle-freelance').classList.contains('on')
+  };
+  try {
+    allData.settings = await api('PUT', '/api/admin/settings', body);
+    showToast('Settings saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function changePassword() {
+  const np = document.getElementById('new-pw').value;
+  const cp = document.getElementById('confirm-pw').value;
+  if (!np) return showToast('Enter a new password', true);
+  if (np.length < 6) return showToast('Password must be at least 6 characters', true);
+  if (np !== cp) return showToast('Passwords do not match', true);
+  try {
+    await api('PUT', '/api/admin/settings', { new_password: np });
+    document.getElementById('new-pw').value = '';
+    document.getElementById('confirm-pw').value = '';
+    showToast('Password updated! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ── UI Helpers ─────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'Dashboard', profile:'Profile & Photo', projects:'Projects', jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials', settings:'Site Settings' };
+  document.getElementById('page-title').textContent = titles[id] || id;
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function statusBadge(status) {
+  const map = { Live:'badge-green', WIP:'badge-blue', Archived:'badge-purple' };
+  return `<span class="badge ${map[status]||'badge-purple'}">${status}</span>`;
+}
+
+let toastTimer;
+function showToast(msg, isError) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  clearTimeout(toastTimer);
+  const t = document.createElement('div');
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.innerHTML = '<div class="toast-dot"></div>' + (msg || 'Done!');
+  document.body.appendChild(t);
+  toastTimer = setTimeout(() => t.remove(), 3000);
+}
+</script>
+</body>
+</html>

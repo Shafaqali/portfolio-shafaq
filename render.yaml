@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: portfolio-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://alishafaq782_db_user:TNS37YO5629ZrmIq@cluster0.jvpyl8v.mongodb.net/portfolio
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        value: admin123
+      - key: NODE_ENV
+        value: production
