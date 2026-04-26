@@ -89,12 +89,22 @@ const BlogPostSchema = new mongoose.Schema({
   published:    { type: Boolean, default: true }
 }, { timestamps: true });
 
+const ContactSchema = new mongoose.Schema({
+  name:    { type: String, required: true },
+  email:   { type: String, required: true },
+  subject: { type: String, default: '' },
+  message: { type: String, required: true },
+  read:    { type: Boolean, default: false },
+  starred: { type: Boolean, default: false }
+}, { timestamps: true });
+
 const Settings    = mongoose.model('Settings',      SettingsSchema);
 const Project     = mongoose.model('Project',       ProjectSchema);
 const Job         = mongoose.model('Job',           JobSchema);
 const SkillCat    = mongoose.model('SkillCategory', SkillCategorySchema);
 const Testimonial = mongoose.model('Testimonial',   TestimonialSchema);
 const BlogPost    = mongoose.model('BlogPost',      BlogPostSchema);
+const Contact     = mongoose.model('Contact',       ContactSchema);
 
 // ── Auth Middleware ─────────────────────────────────────────────────
 function authRequired(req, res, next) {
@@ -105,6 +115,81 @@ function authRequired(req, res, next) {
     next();
   } catch {
     res.status(401).json({ error: 'Invalid token' });
+  }
+}
+
+// ── Resend Email Helper ─────────────────────────────────────────────
+async function sendEmailViaResend({ to, senderName, senderEmail, subject, message }) {
+  const RESEND_KEY = process.env.RESEND_API_KEY;
+  if (!RESEND_KEY) {
+    console.warn('⚠️  RESEND_API_KEY not set — skipping email send');
+    return;
+  }
+
+  const html = `
+    <div style="font-family:'Segoe UI',sans-serif;max-width:560px;margin:0 auto;background:#0d0d18;color:#eeeef5;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)">
+      <div style="background:linear-gradient(135deg,#1a1a2e,#13131f);padding:28px 32px;border-bottom:1px solid rgba(255,255,255,0.08)">
+        <div style="font-size:1.2rem;font-weight:800;letter-spacing:-0.02em;color:#eeeef5">
+          📬 New Contact Message
+        </div>
+        <div style="font-size:0.78rem;color:rgba(238,238,245,0.5);margin-top:4px">
+          From your portfolio contact form
+        </div>
+      </div>
+      <div style="padding:28px 32px">
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+          <tr>
+            <td style="padding:8px 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(238,238,245,0.4);width:80px">Name</td>
+            <td style="padding:8px 0;font-size:0.88rem;color:#eeeef5;font-weight:600">${senderName}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(238,238,245,0.4)">Email</td>
+            <td style="padding:8px 0;font-size:0.88rem;color:#c084fc"><a href="mailto:${senderEmail}" style="color:#c084fc;text-decoration:none">${senderEmail}</a></td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(238,238,245,0.4)">Subject</td>
+            <td style="padding:8px 0;font-size:0.88rem;color:#eeeef5">${subject || '—'}</td>
+          </tr>
+        </table>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px 20px">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(238,238,245,0.4);margin-bottom:10px">Message</div>
+          <div style="font-size:0.88rem;color:rgba(238,238,245,0.85);line-height:1.7;white-space:pre-wrap">${message}</div>
+        </div>
+        <div style="margin-top:20px">
+          <a href="mailto:${senderEmail}?subject=Re: ${encodeURIComponent(subject || 'Your message')}" style="display:inline-block;background:#c084fc;color:#0d0d18;text-decoration:none;padding:10px 20px;border-radius:9px;font-size:0.82rem;font-weight:700">
+            ↩ Reply to ${senderName}
+          </a>
+        </div>
+      </div>
+      <div style="padding:16px 32px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.7rem;color:rgba(238,238,245,0.28);text-align:center">
+        Sent via your portfolio contact form
+      </div>
+    </div>
+  `;
+
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + RESEND_KEY,
+        'Content-Type':  'application/json'
+      },
+      body: JSON.stringify({
+        from:     'Portfolio Contact <onboarding@resend.dev>',
+        to:       [to],
+        reply_to: senderEmail,
+        subject:  `📬 [Portfolio] ${subject || 'New message from ' + senderName}`,
+        html
+      })
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      console.error('❌ Resend error:', err);
+    } else {
+      console.log('✅ Email sent via Resend to', to);
+    }
+  } catch (e) {
+    console.error('❌ Resend fetch failed:', e.message);
   }
 }
 
@@ -132,6 +217,43 @@ app.get('/api/portfolio', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ── PUBLIC: Contact Form Submit ─────────────────────────────────────
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    // Basic validation
+    if (!name || !name.trim())    return res.status(400).json({ error: 'Name is required' });
+    if (!email || !email.trim())  return res.status(400).json({ error: 'Email is required' });
+    if (!message || !message.trim()) return res.status(400).json({ error: 'Message is required' });
+
+    // Save to MongoDB
+    const contact = await Contact.create({
+      name:    name.trim(),
+      email:   email.trim().toLowerCase(),
+      subject: (subject || '').trim(),
+      message: message.trim()
+    });
+
+    // Get owner email from Settings to send notification
+    const settings = await Settings.findOne().select('email');
+    if (settings?.email) {
+      await sendEmailViaResend({
+        to:          settings.email,
+        senderName:  name.trim(),
+        senderEmail: email.trim(),
+        subject:     (subject || '').trim(),
+        message:     message.trim()
+      });
+    }
+
+    res.json({ ok: true, id: contact._id });
+  } catch (err) {
+    console.error('Contact submit error:', err);
+    res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 });
 
@@ -278,6 +400,34 @@ app.put('/api/admin/blog/:id', authRequired, async (req, res) => {
 
 app.delete('/api/admin/blog/:id', authRequired, async (req, res) => {
   await BlogPost.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
+});
+
+// ── ADMIN: Contacts ─────────────────────────────────────────────────
+app.get('/api/admin/contacts', authRequired, async (req, res) => {
+  res.json(await Contact.find().sort({ createdAt: -1 }));
+});
+
+app.put('/api/admin/contacts/:id/read', authRequired, async (req, res) => {
+  try {
+    const c = await Contact.findByIdAndUpdate(
+      req.params.id, { read: req.body.read }, { new: true }
+    );
+    res.json(c);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/admin/contacts/:id/star', authRequired, async (req, res) => {
+  try {
+    const c = await Contact.findByIdAndUpdate(
+      req.params.id, { starred: req.body.starred }, { new: true }
+    );
+    res.json(c);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/admin/contacts/:id', authRequired, async (req, res) => {
+  await Contact.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
 });
 
