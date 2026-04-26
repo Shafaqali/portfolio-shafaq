@@ -630,12 +630,31 @@
                 <button class="toggle" id="toggle-available" onclick="this.classList.toggle('on')"></button>
               </div>
               <div class="toggle-row">
-                <div><div class="toggle-label">Show testimonials section</div><div class="toggle-desc">Display on portfolio page</div></div>
+                <div><div class="toggle-label">Open to freelance work</div><div class="toggle-desc">Shown in contact section</div></div>
+                <button class="toggle" id="toggle-freelance" onclick="this.classList.toggle('on')"></button>
+              </div>
+            </div>
+            <div class="form-panel" style="margin-top:1rem;">
+              <div class="panel-title"><span class="panel-icon">◻</span> Section Visibility</div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Show Projects section</div><div class="toggle-desc">Project cards on portfolio</div></div>
+                <button class="toggle on" id="toggle-projects" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Show Skills section</div><div class="toggle-desc">Tech skills grid</div></div>
+                <button class="toggle on" id="toggle-skills" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Show Career section</div><div class="toggle-desc">Job timeline</div></div>
+                <button class="toggle on" id="toggle-career" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Show Testimonials section</div><div class="toggle-desc">Display on portfolio page</div></div>
                 <button class="toggle on" id="toggle-testimonials" onclick="this.classList.toggle('on')"></button>
               </div>
               <div class="toggle-row">
-                <div><div class="toggle-label">Open to freelance work</div><div class="toggle-desc">Shown in contact section</div></div>
-                <button class="toggle" id="toggle-freelance" onclick="this.classList.toggle('on')"></button>
+                <div><div class="toggle-label">Show Contact section</div><div class="toggle-desc">Contact form at bottom</div></div>
+                <button class="toggle on" id="toggle-contact" onclick="this.classList.toggle('on')"></button>
               </div>
               <div style="margin-top:1rem;">
                 <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
@@ -1493,8 +1512,12 @@ async function deleteTesti(id) {
 function renderSettingsToggles() {
   const s = allData.settings;
   setToggle('toggle-available',    s.available === '1' || s.available === true);
-  setToggle('toggle-testimonials', s.show_testimonials !== false);
   setToggle('toggle-freelance',    !!s.freelance);
+  setToggle('toggle-projects',     s.show_projects     !== false);
+  setToggle('toggle-skills',       s.show_skills       !== false);
+  setToggle('toggle-career',       s.show_career       !== false);
+  setToggle('toggle-testimonials', s.show_testimonials !== false);
+  setToggle('toggle-contact',      s.show_contact      !== false);
 }
 function setToggle(id, val) {
   const el = document.getElementById(id);
@@ -1503,8 +1526,12 @@ function setToggle(id, val) {
 async function saveSettings() {
   const body = {
     available:         document.getElementById('toggle-available').classList.contains('on') ? '1' : '0',
+    freelance:         document.getElementById('toggle-freelance').classList.contains('on'),
+    show_projects:     document.getElementById('toggle-projects').classList.contains('on'),
+    show_skills:       document.getElementById('toggle-skills').classList.contains('on'),
+    show_career:       document.getElementById('toggle-career').classList.contains('on'),
     show_testimonials: document.getElementById('toggle-testimonials').classList.contains('on'),
-    freelance:         document.getElementById('toggle-freelance').classList.contains('on')
+    show_contact:      document.getElementById('toggle-contact').classList.contains('on')
   };
   try {
     allData.settings = await api('PUT', '/api/admin/settings', body);
