@@ -327,7 +327,7 @@ let portfolioData = null;
 async function init() {
   try {
     // ⚡ CHANGE THIS to your Render backend URL
-    const API_BASE = 'https://your-portfolio-backend.onrender.com';
+    const API_BASE = 'https://portfolio-shafaq.onrender.com';
     const r = await fetch(API_BASE + '/api/portfolio');
     portfolioData = await r.json();
     render(portfolioData);
