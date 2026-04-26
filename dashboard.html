@@ -20,7 +20,8 @@
     --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.11);
     --card:#161624; --now:#4ade80;
     --danger:#f87171; --success:#4ade80;
-    --sidebar-w: 220px; --topbar-h: 52px;
+    --sidebar-w: 220px;
+    --topbar-h: 52px;
   }
   body { font-family: 'Instrument Sans', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; overflow-x: hidden; }
   body::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
@@ -42,16 +43,14 @@
   .sidebar-overlay { display:block; position:fixed; inset:0; z-index:8999; background:rgba(0,0,0,0.7); opacity:0; transition:opacity .25s; pointer-events:none; }
   .sidebar-overlay.visible { opacity:1; pointer-events:auto; }
 
-  .sidebar { width:var(--sidebar-w); flex-shrink:0; background:#0d0d18; border-right:1px solid var(--border2); display:flex; flex-direction:column; padding:1.2rem 0.8rem; gap:4px; position:relative; z-index:1; transition:transform .28s cubic-bezier(.4,0,.2,1); overflow-y:auto; }
+  .sidebar { width:var(--sidebar-w); flex-shrink:0; background:#0d0d18; border-right:1px solid var(--border2); display:flex; flex-direction:column; padding:1.2rem 0.8rem; gap:4px; position:relative; z-index:1; transition:transform .28s cubic-bezier(.4,0,.2,1); }
   .sidebar-logo { font-family:'Bricolage Grotesque','Georgia',serif; font-weight:800; font-size:1rem; letter-spacing:-0.02em; color:var(--text); padding:0.4rem 0.8rem 1.2rem; border-bottom:1px solid var(--border); margin-bottom:0.5rem; }
   .sidebar-logo em { font-style:normal; color:var(--accent); }
   .sidebar-logo span { font-size:0.65rem; font-weight:600; color:var(--muted); display:block; letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
-  .nav-item { display:flex; align-items:center; gap:9px; padding:8px 12px; border-radius:9px; cursor:pointer; color:var(--muted); font-size:0.8rem; font-weight:500; border:1px solid transparent; transition:all .15s; user-select:none; position:relative; }
+  .nav-item { display:flex; align-items:center; gap:9px; padding:8px 12px; border-radius:9px; cursor:pointer; color:var(--muted); font-size:0.8rem; font-weight:500; border:1px solid transparent; transition:all .15s; user-select:none; }
   .nav-item:hover { color:var(--text); background:rgba(128,128,128,0.07); }
   .nav-item.active { color:var(--accent); background:rgba(192,132,252,0.08); border-color:rgba(192,132,252,0.18); }
   .nav-icon { font-size:15px; width:18px; text-align:center; }
-  .nav-badge { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:var(--danger); color:#fff; font-size:0.6rem; font-weight:800; border-radius:100px; padding:1px 6px; min-width:18px; text-align:center; display:none; }
-  .nav-badge.visible { display:block; }
   .nav-section { font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--dim); padding:8px 12px 4px; margin-top:8px; }
   .sidebar-bottom { margin-top:auto; padding-top:1rem; border-top:1px solid var(--border); }
   .user-pill { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; background:var(--card); border:1px solid var(--border2); cursor:pointer; }
@@ -79,7 +78,6 @@
   .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border2); }
   .btn-ghost:hover { color:var(--text); background:rgba(128,128,128,0.08); }
   .btn-danger { background:rgba(248,113,113,0.12); color:var(--danger); border:1px solid rgba(248,113,113,0.25); }
-  .btn-success { background:rgba(74,222,128,0.12); color:var(--now); border:1px solid rgba(74,222,128,0.25); }
   .btn:disabled { opacity:0.5; cursor:not-allowed; }
 
   .content { padding:1.2rem; flex:1; }
@@ -87,8 +85,7 @@
   .page.active { display:block; }
 
   .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem; }
-  .stat-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem 1.1rem; cursor:pointer; transition:border-color .2s; }
-  .stat-card:hover { border-color:rgba(192,132,252,0.35); }
+  .stat-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem 1.1rem; }
   .stat-label { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
   .stat-value { font-family:'Bricolage Grotesque','Georgia',serif; font-size:1.6rem; font-weight:800; letter-spacing:-0.03em; color:var(--text); }
   .stat-sub { font-size:0.68rem; color:var(--muted); margin-top:3px; }
@@ -109,12 +106,9 @@
   .badge-blue { background:rgba(56,189,248,0.1); color:#38bdf8; border:1px solid rgba(56,189,248,0.25); }
   .badge-red { background:rgba(248,113,113,0.1); color:var(--danger); border:1px solid rgba(248,113,113,0.25); }
   .badge-gold { background:rgba(251,191,36,0.1); color:#fbbf24; border:1px solid rgba(251,191,36,0.28); }
-  .badge-dim { background:rgba(255,255,255,0.04); color:var(--dim); border:1px solid var(--border2); }
   .icon-btn { background:none; border:1px solid var(--border2); color:var(--muted); width:28px; height:28px; border-radius:7px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:13px; transition:all .15s; flex-shrink:0; }
   .icon-btn:hover { color:var(--text); background:rgba(128,128,128,0.1); }
   .icon-btn.del:hover { color:var(--danger); border-color:rgba(248,113,113,0.4); }
-  .icon-btn.star-btn:hover { color:#fbbf24; border-color:rgba(251,191,36,0.4); }
-  .icon-btn.star-btn.starred { color:#fbbf24; border-color:rgba(251,191,36,0.4); background:rgba(251,191,36,0.08); }
 
   .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
   .form-group { display:flex; flex-direction:column; gap:5px; }
@@ -144,25 +138,56 @@
 
   /* ORDER LIST */
   .order-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1rem; }
-  .order-item { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border2); border-radius:12px; padding:10px 12px; transition:border-color .15s, background .15s; cursor:default; }
+  .order-item {
+    display:flex; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--border2);
+    border-radius:12px; padding:10px 12px;
+    transition:border-color .15s, background .15s;
+    cursor:default;
+  }
   .order-item:hover { border-color:rgba(192,132,252,0.3); background:rgba(192,132,252,0.04); }
   .order-item.dragging { opacity:0.5; border-color:var(--accent); background:rgba(192,132,252,0.08); }
   .order-item.drag-over { border-color:var(--accent); border-style:dashed; background:rgba(192,132,252,0.06); }
-  .order-num { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; flex-shrink:0; letter-spacing:0.04em; background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.2); color:var(--accent); }
-  .order-num.top3 { background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); color:#fbbf24; }
-  .order-thumb { width:38px; height:38px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--bg3); border:1px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden; }
+  .order-num {
+    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-size:0.72rem; font-weight:800; flex-shrink:0; letter-spacing:0.04em;
+    background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.2); color:var(--accent);
+  }
+  .order-num.top3 {
+    background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); color:#fbbf24;
+  }
+  .order-thumb {
+    width:38px; height:38px; border-radius:8px; object-fit:cover; flex-shrink:0;
+    background:var(--bg3); border:1px solid var(--border2);
+    display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden;
+  }
   .order-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .order-info { flex:1; min-width:0; }
   .order-name { font-size:0.82rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .order-meta { font-size:0.68rem; color:var(--muted); margin-top:1px; }
   .order-controls { display:flex; gap:4px; flex-shrink:0; }
-  .order-btn { width:28px; height:28px; border-radius:7px; border:1px solid var(--border2); background:none; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; font-family:inherit; }
+  .order-btn {
+    width:28px; height:28px; border-radius:7px; border:1px solid var(--border2);
+    background:none; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    font-size:12px; transition:all .15s; font-family:inherit;
+  }
   .order-btn:hover { color:var(--text); background:rgba(192,132,252,0.1); border-color:rgba(192,132,252,0.3); }
   .order-btn:disabled { opacity:0.25; cursor:not-allowed; }
-  .drag-handle { cursor:grab; color:var(--dim); padding:0 2px; font-size:14px; flex-shrink:0; display:flex; align-items:center; }
+  .drag-handle {
+    cursor:grab; color:var(--dim); padding:0 2px; font-size:14px; flex-shrink:0;
+    display:flex; align-items:center;
+  }
   .drag-handle:active { cursor:grabbing; }
-  .feat-label { font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:#fbbf24; background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25); border-radius:5px; padding:1px 6px; flex-shrink:0; white-space:nowrap; }
-  .order-save-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.2); border-radius:10px; margin-bottom:1rem; }
+  .feat-label {
+    font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
+    color:#fbbf24; background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25);
+    border-radius:5px; padding:1px 6px; flex-shrink:0; white-space:nowrap;
+  }
+  .order-save-bar {
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 14px; background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.2);
+    border-radius:10px; margin-bottom:1rem;
+  }
   .order-save-hint { font-size:0.73rem; color:var(--muted); }
   .order-save-hint strong { color:var(--accent); }
 
@@ -180,44 +205,20 @@
   .tech-chip { font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:5px; background:var(--border); border:1px solid var(--border2); color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; }
 
   /* ── RESUME UPLOAD ZONE ── */
-  .resume-zone { border:1.5px dashed var(--border2); border-radius:12px; padding:1.1rem; text-align:center; cursor:pointer; transition:border-color .2s, background .2s; }
+  .resume-zone {
+    border:1.5px dashed var(--border2); border-radius:12px; padding:1.1rem;
+    text-align:center; cursor:pointer; transition:border-color .2s, background .2s;
+  }
   .resume-zone:hover { border-color:rgba(192,132,252,0.45); background:rgba(192,132,252,0.04); }
   .resume-zone.has-file { border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.04); }
-  .resume-status-bar { display:flex; align-items:center; gap:10px; margin-top:8px; background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.2); border-radius:9px; padding:8px 12px; }
+  .resume-status-bar {
+    display:flex; align-items:center; gap:10px; margin-top:8px;
+    background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.2);
+    border-radius:9px; padding:8px 12px;
+  }
   .resume-status-icon { font-size:1.1rem; flex-shrink:0; }
   .resume-status-text { flex:1; font-size:0.75rem; color:var(--now); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .resume-status-actions { display:flex; gap:6px; flex-shrink:0; }
-
-  /* ── MESSAGE CARD ── */
-  .msg-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem 1.2rem; display:flex; flex-direction:column; gap:8px; transition:border-color .2s; }
-  .msg-card:hover { border-color:rgba(192,132,252,0.3); }
-  .msg-card.unread { border-left:3px solid var(--accent); }
-  .msg-card.starred-card { border-left:3px solid #fbbf24; }
-  .msg-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .msg-from { font-weight:700; font-size:0.85rem; color:var(--text); }
-  .msg-email { font-size:0.72rem; color:var(--muted); }
-  .msg-time { font-size:0.68rem; color:var(--dim); margin-left:auto; white-space:nowrap; }
-  .msg-subject { font-size:0.78rem; font-weight:600; color:var(--accent); }
-  .msg-body { font-size:0.8rem; color:var(--muted); line-height:1.65; white-space:pre-wrap; background:var(--bg3); border-radius:9px; padding:10px 12px; border:1px solid var(--border); }
-  .msg-actions { display:flex; gap:6px; align-items:center; }
-  .msg-unread-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; }
-  .msg-list { display:flex; flex-direction:column; gap:10px; }
-  .msg-filter-bar { display:flex; gap:6px; margin-bottom:1rem; flex-wrap:wrap; }
-  .msg-filter-btn { padding:5px 14px; border-radius:100px; font-size:0.72rem; font-weight:700; border:1px solid var(--border2); background:transparent; color:var(--muted); cursor:pointer; font-family:inherit; transition:all .15s; }
-  .msg-filter-btn:hover,.msg-filter-btn.active { color:var(--accent); border-color:rgba(192,132,252,0.45); background:rgba(192,132,252,0.08); }
-  .msg-empty { text-align:center; color:var(--muted); padding:3rem 2rem; font-size:0.82rem; }
-  .msg-empty .empty-icon { font-size:2.5rem; opacity:0.25; display:block; margin-bottom:1rem; }
-
-  /* ── BLOG ── */
-  .blog-grid-admin { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
-  .blog-card-admin { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
-  .blog-card-admin:hover { border-color:rgba(192,132,252,0.35); }
-  .blog-thumb-admin { width:100%; height:90px; object-fit:cover; display:block; background:var(--bg3); }
-  .blog-thumb-placeholder-admin { width:100%; height:90px; background:linear-gradient(135deg,#1a1a3e,#0d0d20); display:flex; align-items:center; justify-content:center; font-size:1.6rem; opacity:0.3; }
-  .blog-card-body-admin { padding:0.8rem; }
-  .blog-title-admin { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.9rem; font-weight:700; margin-bottom:3px; line-height:1.25; }
-  .blog-meta-admin { font-size:0.68rem; color:var(--muted); margin-bottom:8px; }
-  .blog-actions-admin { display:flex; gap:6px; align-items:center; }
 
   .divider { height:1px; background:var(--border); margin:1.2rem 0; }
   .row { display:flex; gap:1rem; }
@@ -258,7 +259,7 @@
 
   @media (max-width: 768px) {
     .hamburger { display:inline-flex; }
-    .sidebar { position:fixed; top:0; left:0; bottom:0; z-index:9000; transform:translateX(-100%); box-shadow:4px 0 30px rgba(0,0,0,0.8); }
+    .sidebar { position:fixed; top:0; left:0; bottom:0; z-index:9000; transform:translateX(-100%); box-shadow:4px 0 30px rgba(0,0,0,0.8); overflow-y:auto; }
     .sidebar.open { transform:translateX(0); }
     .sidebar-close { display:flex; align-items:center; justify-content:flex-end; margin-bottom:0.5rem; }
     .sidebar-close-btn { background:none; border:1px solid var(--border2); color:var(--muted); cursor:pointer; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; }
@@ -269,7 +270,7 @@
     .stat-value { font-size:1.3rem; }
     .row { flex-direction:column; }
     .col-6 { width:100%; }
-    .project-grid,.blog-grid-admin { grid-template-columns:1fr; }
+    .project-grid { grid-template-columns:1fr; }
     .form-grid { grid-template-columns:1fr; }
     .form-group.full { grid-column:1; }
     .content { padding:0.9rem; }
@@ -280,8 +281,11 @@
   @media (max-width: 420px) {
     .stats-row { grid-template-columns:1fr 1fr; gap:6px; }
     .stat-card { padding:0.75rem 0.8rem; }
+    .stat-label { font-size:0.6rem; }
+    .stat-value { font-size:1.1rem; }
     .topbar { padding:0 0.75rem; }
     .content { padding:0.75rem; }
+    .section-head .btn { padding:5px 10px; font-size:0.7rem; }
   }
   @media (min-width: 769px) {
     .sidebar-close { display:none; }
@@ -315,12 +319,7 @@
     <div class="nav-item" data-page="projects" onclick="showPage('projects',this)"><span class="nav-icon">◻</span> Projects</div>
     <div class="nav-item" data-page="jobs" onclick="showPage('jobs',this)"><span class="nav-icon">◈</span> Career / Jobs</div>
     <div class="nav-item" data-page="skills" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
-    <div class="nav-item" data-page="blog" onclick="showPage('blog',this)"><span class="nav-icon">✍</span> Blog Posts</div>
     <div class="nav-item" data-page="testimonials" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
-    <div class="nav-item" data-page="messages" onclick="showPage('messages',this)">
-      <span class="nav-icon">✉</span> Messages
-      <span class="nav-badge" id="msg-nav-badge">0</span>
-    </div>
     <div class="nav-section">Settings</div>
     <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⊙</span> Site Settings</div>
     <div class="sidebar-bottom">
@@ -364,22 +363,21 @@
       <!-- ── DASHBOARD ── -->
       <div class="page active" id="page-dashboard">
         <div class="stats-row">
-          <div class="stat-card" onclick="showPage('projects')"><div class="stat-label">Projects</div><div class="stat-value" id="stat-projects">—</div><div class="stat-sub"><span class="stat-dot"></span><span id="stat-projects-sub">loading...</span></div></div>
-          <div class="stat-card" onclick="showPage('blog')"><div class="stat-label">Blog Posts</div><div class="stat-value" id="stat-blog">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span><span id="stat-blog-sub">loading...</span></div></div>
-          <div class="stat-card" onclick="showPage('messages')"><div class="stat-label">Messages</div><div class="stat-value" id="stat-msgs">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f87171"></span><span id="stat-msgs-sub">loading...</span></div></div>
-          <div class="stat-card" onclick="showPage('testimonials')"><div class="stat-label">Reviews</div><div class="stat-value" id="stat-testi">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span>total</div></div>
+          <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value" id="stat-projects">—</div><div class="stat-sub"><span class="stat-dot"></span><span id="stat-projects-sub">loading...</span></div></div>
+          <div class="stat-card"><div class="stat-label">Jobs</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
+          <div class="stat-card"><div class="stat-label">Skills</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
+          <div class="stat-card"><div class="stat-label">Reviews</div><div class="stat-value" id="stat-testi">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span>total</div></div>
         </div>
         <div class="row">
           <div class="col-6">
-            <div class="section-head"><div class="section-title">Recent Messages</div><button class="btn btn-ghost" onclick="showPage('messages')">View all</button></div>
-            <div id="dash-msgs-table"><div class="loading">Loading...</div></div>
+            <div class="section-head"><div class="section-title">Recent Projects</div><button class="btn btn-ghost" onclick="showPage('projects')">View all</button></div>
+            <div class="table-wrap" id="dash-projects-table"><div class="loading">Loading...</div></div>
           </div>
           <div class="col-6">
             <div class="section-head"><div class="section-title">Quick Actions</div></div>
             <div class="form-panel">
               <div style="display:flex;flex-direction:column;gap:8px;">
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('projects')">+ Add new project</button>
-                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('blog')">+ Write blog post</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('jobs')">+ Add job / experience</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('skills')">+ Add skill category</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('testimonials')">+ Add testimonial</button>
@@ -403,6 +401,8 @@
                 <div class="form-group full"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com" /></div>
                 <div class="form-group full"><label>GitHub URL</label><input id="p-github" placeholder="https://github.com/..." /></div>
                 <div class="form-group full"><label>LinkedIn URL</label><input id="p-linkedin" placeholder="https://linkedin.com/in/..." /></div>
+
+                <!-- ── PHOTO UPLOAD ── -->
                 <div class="form-group full">
                   <label>Photo Upload</label>
                   <input type="file" id="photo-file-input" accept="image/*" style="display:none" />
@@ -411,18 +411,28 @@
                     <div style="font-size:0.78rem;color:var(--muted)"><strong style="color:var(--accent)">Click karo image select karne ke liye</strong><br>JPG, PNG, WEBP — max 5MB</div>
                   </div>
                   <div id="upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
-                  <div id="upload-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;"><div id="upload-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div></div>
+                  <div id="upload-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
+                    <div id="upload-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div>
+                  </div>
                 </div>
                 <div class="form-group full"><label>Ya Photo URL paste karo</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
+
+                <!-- ── RESUME UPLOAD ── -->
                 <div class="form-group full">
                   <label>Resume / CV Upload</label>
                   <input type="file" id="resume-file-input" accept=".pdf,application/pdf" style="display:none" />
                   <div class="resume-zone" id="resume-upload-zone" onclick="document.getElementById('resume-file-input').click()">
                     <div style="font-size:1.8rem;margin-bottom:6px;">📄</div>
-                    <div style="font-size:0.78rem;color:var(--muted)"><strong style="color:var(--accent)">Click karo PDF select karne ke liye</strong><br>Sirf PDF — max 5MB</div>
+                    <div style="font-size:0.78rem;color:var(--muted)">
+                      <strong style="color:var(--accent)">Click karo PDF select karne ke liye</strong><br>
+                      Sirf PDF — max 5MB
+                    </div>
                   </div>
                   <div id="resume-upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
-                  <div id="resume-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;"><div id="resume-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div></div>
+                  <div id="resume-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
+                    <div id="resume-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div>
+                  </div>
+                  <!-- Resume status bar — shown when resume is set -->
                   <div class="resume-status-bar" id="resume-status-bar" style="display:none;">
                     <span class="resume-status-icon">📄</span>
                     <span class="resume-status-text" id="resume-status-text">Resume set hai</span>
@@ -437,6 +447,7 @@
                   <input id="p-resume" placeholder="https://drive.google.com/file/d/..." />
                   <div class="field-hint">💡 Google Drive link use karo: Share → "Anyone with link" → link copy karo</div>
                 </div>
+
               </div>
               <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;">
                 <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
@@ -452,10 +463,22 @@
                 <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Upar se file select karo ya URL paste karo</div>
               </div>
             </div>
-            <div class="form-panel" style="margin-top:1rem;">
+
+            <!-- Resume Preview Card -->
+            <div class="form-panel" style="margin-top:1rem;" id="resume-preview-panel">
               <div class="panel-title"><span class="panel-icon">📄</span> Resume Status</div>
-              <div id="resume-preview-empty" style="text-align:center;padding:1rem;"><div style="font-size:2rem;opacity:0.25;margin-bottom:8px;">📄</div><div style="font-size:0.75rem;color:var(--muted)">Koi resume set nahi hai</div></div>
-              <div id="resume-preview-set" style="display:none;"><div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:12px;text-align:center;"><div style="font-size:2rem;margin-bottom:6px;">✅</div><div style="font-size:0.78rem;color:var(--now);font-weight:700;margin-bottom:4px;">Resume Set Hai!</div><a id="resume-preview-link" href="#" target="_blank" class="btn btn-ghost" style="font-size:0.72rem;margin-top:8px;display:inline-flex;">📥 Download / View Resume</a></div></div>
+              <div id="resume-preview-empty" style="text-align:center;padding:1rem;">
+                <div style="font-size:2rem;opacity:0.25;margin-bottom:8px;">📄</div>
+                <div style="font-size:0.75rem;color:var(--muted)">Koi resume set nahi hai<br>Left side se upload karo</div>
+              </div>
+              <div id="resume-preview-set" style="display:none;">
+                <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-size:2rem;margin-bottom:6px;">✅</div>
+                  <div style="font-size:0.78rem;color:var(--now);font-weight:700;margin-bottom:4px;">Resume Set Hai!</div>
+                  <div style="font-size:0.7rem;color:var(--muted);margin-bottom:10px)">Portfolio pe download button dikhega</div>
+                  <a id="resume-preview-link" href="#" target="_blank" class="btn btn-ghost" style="font-size:0.72rem;margin-top:8px;display:inline-flex;">📥 Download / View Resume</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -467,13 +490,29 @@
           <div class="section-title" id="projects-count">All Projects</div>
           <button class="btn btn-primary" onclick="clearProjectForm()">+ New Project</button>
         </div>
+
+        <!-- ORDER MANAGER -->
         <div class="form-panel" style="margin-bottom:1rem;">
-          <div class="panel-title"><span class="panel-icon">⇅</span> Project Order &amp; Featured Top 3 <span style="margin-left:auto;font-size:0.65rem;color:var(--muted);font-weight:500;">Drag ya ↑↓ se order badlo · Top 3 = Featured</span></div>
-          <div class="order-save-bar"><div class="order-save-hint"><strong>⭐ Top 3</strong> portfolio mein featured dikhenge. Baaki "More Projects" mein.</div><button class="btn btn-primary" id="save-order-btn" onclick="saveProjectOrder()">💾 Save Order</button></div>
-          <div class="order-list" id="order-list"><div class="loading">Loading...</div></div>
+          <div class="panel-title">
+            <span class="panel-icon">⇅</span> Project Order &amp; Featured Top 3
+            <span style="margin-left:auto;font-size:0.65rem;color:var(--muted);font-weight:500;">Drag ya ↑↓ se order badlo · Top 3 = Featured</span>
+          </div>
+          <div class="order-save-bar">
+            <div class="order-save-hint">
+              <strong>⭐ Top 3</strong> portfolio mein featured dikhenge. Baaki "More Projects" mein.
+            </div>
+            <button class="btn btn-primary" id="save-order-btn" onclick="saveProjectOrder()">💾 Save Order</button>
+          </div>
+          <div class="order-list" id="order-list">
+            <div class="loading">Loading...</div>
+          </div>
         </div>
+
+        <!-- Project cards grid -->
         <div class="project-grid" id="projects-grid"><div class="loading">Loading projects...</div></div>
         <div class="divider"></div>
+
+        <!-- Add/Edit form -->
         <div class="form-panel" id="project-form-panel">
           <div class="panel-title" id="proj-form-title"><span class="panel-icon">+</span> Add / Edit Project</div>
           <input type="hidden" id="proj-id" />
@@ -487,7 +526,9 @@
               <label>Project Screenshot / Image URL</label>
               <input id="proj-image" placeholder="https://i.imgur.com/..." oninput="updateProjImagePreview(this.value)" />
               <div class="field-hint">📌 Imgur pe upload karo → direct link copy karo | <a href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
-              <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none;"><img id="proj-img-preview" src="" alt="Preview" onerror="document.getElementById('proj-img-preview-wrap').style.display='none'" /></div>
+              <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none;">
+                <img id="proj-img-preview" src="" alt="Preview" onerror="document.getElementById('proj-img-preview-wrap').style.display='none'" />
+              </div>
             </div>
             <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="proj-tech" placeholder="React, Node.js, MongoDB..." /></div>
           </div>
@@ -500,7 +541,10 @@
 
       <!-- ── JOBS ── -->
       <div class="page" id="page-jobs">
-        <div class="section-head"><div class="section-title" id="jobs-count">Career Timeline</div><button class="btn btn-primary" onclick="clearJobForm()">+ Add Job</button></div>
+        <div class="section-head">
+          <div class="section-title" id="jobs-count">Career Timeline</div>
+          <button class="btn btn-primary" onclick="clearJobForm()">+ Add Job</button>
+        </div>
         <div class="table-wrap" style="margin-bottom:1rem" id="jobs-table"><div class="loading">Loading jobs...</div></div>
         <div class="form-panel">
           <div class="panel-title"><span class="panel-icon">◈</span> Add / Edit Job</div>
@@ -516,13 +560,19 @@
             <div class="form-group"><label>Current Job?</label><select id="job-current"><option value="false">No</option><option value="true">Yes – show "Now" badge</option></select></div>
             <div class="form-group full"><label>Panel Title</label><input id="job-panel-title" placeholder="e.g. Led platform engineering team" /></div>
           </div>
-          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><button class="btn btn-ghost" onclick="clearJobForm()">Clear</button><button class="btn btn-primary" onclick="saveJob()">Save Job</button></div>
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="clearJobForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveJob()">Save Job</button>
+          </div>
         </div>
       </div>
 
       <!-- ── SKILLS ── -->
       <div class="page" id="page-skills">
-        <div class="section-head"><div class="section-title">Skill Categories</div><button class="btn btn-primary" onclick="clearSkillForm()">+ New Category</button></div>
+        <div class="section-head">
+          <div class="section-title">Skill Categories</div>
+          <button class="btn btn-primary" onclick="clearSkillForm()">+ New Category</button>
+        </div>
         <div id="skills-list"><div class="loading">Loading skills...</div></div>
         <div class="divider"></div>
         <div class="form-panel" id="skill-form-panel">
@@ -538,52 +588,19 @@
             </div>
             <div class="form-group full"><label>Text Tags (comma separated)</label><input id="skill-tags" placeholder="REST APIs, GraphQL..." /></div>
           </div>
-          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><button class="btn btn-ghost" onclick="clearSkillForm()">Clear</button><button class="btn btn-primary" onclick="saveSkill()">Save Category</button></div>
-        </div>
-      </div>
-
-      <!-- ── BLOG ── -->
-      <div class="page" id="page-blog">
-        <div class="section-head">
-          <div class="section-title" id="blog-count">Blog Posts</div>
-          <button class="btn btn-primary" onclick="clearBlogForm()">+ New Post</button>
-        </div>
-        <div class="blog-grid-admin" id="blog-grid-admin"><div class="loading" style="grid-column:1/-1">Loading posts...</div></div>
-        <div class="divider"></div>
-        <div class="form-panel" id="blog-form-panel">
-          <div class="panel-title" id="blog-form-title"><span class="panel-icon">✍</span> Add / Edit Blog Post</div>
-          <input type="hidden" id="blog-id" />
-          <div class="form-grid">
-            <div class="form-group full"><label>Post Title</label><input id="blog-title" placeholder="How I built my portfolio..." /></div>
-            <div class="form-group"><label>Category</label><input id="blog-category" placeholder="Tutorial, Update, DevLog..." /></div>
-            <div class="form-group"><label>Read Time</label><input id="blog-read-time" placeholder="5 min read" /></div>
-            <div class="form-group full"><label>Short Excerpt (shown on card)</label><textarea id="blog-excerpt" rows="2" placeholder="A short description of this post..."></textarea></div>
-            <div class="form-group full">
-              <label>Cover Image URL</label>
-              <input id="blog-cover" placeholder="https://i.imgur.com/..." oninput="updateBlogImagePreview(this.value)" />
-              <div class="field-hint">📌 Imgur pe upload karo → direct link copy karo | <a href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
-              <div class="img-preview-wrap" id="blog-img-preview-wrap" style="display:none;"><img id="blog-img-preview" src="" alt="Preview" onerror="document.getElementById('blog-img-preview-wrap').style.display='none'" /></div>
-            </div>
-            <div class="form-group full">
-              <label>External URL (if post lives on Medium / Dev.to / etc.)</label>
-              <input id="blog-external" placeholder="https://medium.com/@you/post-slug" />
-              <div class="field-hint">💡 Agar external URL hai to portfolio se wahan link karega. Khali chodho agar post is site pe hai.</div>
-            </div>
-            <div class="form-group full"><label>Tags (comma separated)</label><input id="blog-tags" placeholder="React, JavaScript, Tutorial" /></div>
-            <div class="form-group full"><label>Full Content (optional — for future blog detail page)</label><textarea id="blog-content" rows="6" placeholder="Full post content ya markdown..."></textarea></div>
-            <div class="form-group"><label>Published?</label><select id="blog-published"><option value="true">Yes — Show on portfolio</option><option value="false">No — Draft (hidden)</option></select></div>
-            <div class="form-group"><label>Custom Slug (auto-generated if blank)</label><input id="blog-slug" placeholder="my-awesome-post" /></div>
-          </div>
           <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
-            <button class="btn btn-ghost" onclick="clearBlogForm()">Clear</button>
-            <button class="btn btn-primary" onclick="saveBlog()">Save Post</button>
+            <button class="btn btn-ghost" onclick="clearSkillForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveSkill()">Save Category</button>
           </div>
         </div>
       </div>
 
       <!-- ── TESTIMONIALS ── -->
       <div class="page" id="page-testimonials">
-        <div class="section-head"><div class="section-title" id="testi-count">Testimonials</div><button class="btn btn-primary" onclick="clearTestiForm()">+ Add Testimonial</button></div>
+        <div class="section-head">
+          <div class="section-title" id="testi-count">Testimonials</div>
+          <button class="btn btn-primary" onclick="clearTestiForm()">+ Add Testimonial</button>
+        </div>
         <div class="table-wrap" style="margin-bottom:1rem" id="testi-table"><div class="loading">Loading...</div></div>
         <div class="form-panel" id="testi-form-panel">
           <div class="panel-title"><span class="panel-icon">◉</span> Add / Edit Testimonial</div>
@@ -595,22 +612,11 @@
             <div class="form-group"><label>Visible on site?</label><select id="testi-visible"><option value="true">Yes</option><option value="false">No</option></select></div>
             <div class="form-group full"><label>Quote</label><textarea id="testi-quote" placeholder="Write the testimonial here..."></textarea></div>
           </div>
-          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><button class="btn btn-ghost" onclick="clearTestiForm()">Clear</button><button class="btn btn-primary" onclick="saveTestimonial()">Save Testimonial</button></div>
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="clearTestiForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveTestimonial()">Save Testimonial</button>
+          </div>
         </div>
-      </div>
-
-      <!-- ── MESSAGES ── -->
-      <div class="page" id="page-messages">
-        <div class="section-head">
-          <div class="section-title">Contact Messages <span id="msgs-count-label" style="color:var(--muted);font-weight:400;font-size:0.8rem"></span></div>
-          <button class="btn btn-ghost" onclick="loadMessages()">↻ Refresh</button>
-        </div>
-        <div class="msg-filter-bar">
-          <button class="msg-filter-btn active" onclick="filterMsgs('all',this)">All</button>
-          <button class="msg-filter-btn" onclick="filterMsgs('unread',this)">Unread</button>
-          <button class="msg-filter-btn" onclick="filterMsgs('starred',this)">⭐ Starred</button>
-        </div>
-        <div class="msg-list" id="msg-list"><div class="loading">Loading messages...</div></div>
       </div>
 
       <!-- ── SETTINGS ── -->
@@ -643,10 +649,6 @@
                 <button class="toggle on" id="toggle-career" onclick="this.classList.toggle('on')"></button>
               </div>
               <div class="toggle-row">
-                <div><div class="toggle-label">Show Blog section</div><div class="toggle-desc">Blog posts on portfolio</div></div>
-                <button class="toggle on" id="toggle-blog" onclick="this.classList.toggle('on')"></button>
-              </div>
-              <div class="toggle-row">
                 <div><div class="toggle-label">Show Testimonials section</div><div class="toggle-desc">Display on portfolio page</div></div>
                 <button class="toggle on" id="toggle-testimonials" onclick="this.classList.toggle('on')"></button>
               </div>
@@ -664,7 +666,9 @@
               <div class="panel-title"><span class="panel-icon">⬡</span> Admin Password</div>
               <div class="form-group" style="margin-bottom:10px"><label>New Password</label><input type="password" id="new-pw" placeholder="Min 6 characters" /></div>
               <div class="form-group"><label>Confirm Password</label><input type="password" id="confirm-pw" placeholder="Repeat password" /></div>
-              <div style="margin-top:1rem"><button class="btn btn-ghost" onclick="changePassword()">Update Password</button></div>
+              <div style="margin-top:1rem">
+                <button class="btn btn-ghost" onclick="changePassword()">Update Password</button>
+              </div>
             </div>
           </div>
         </div>
@@ -675,35 +679,56 @@
 </div><!-- end .layout -->
 
 <div class="pwa-banner" id="pwa-banner">
-  <div class="pwa-banner-icon"><svg width="26" height="26" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg"><rect width="192" height="192" rx="40" fill="#0d0d18"/><text x="96" y="124" font-family="Georgia,serif" font-weight="800" font-size="88" fill="#eeeef5" text-anchor="middle">SA</text><circle cx="148" cy="56" r="14" fill="#c084fc"/></svg></div>
-  <div class="pwa-banner-text"><div class="pwa-banner-title">Admin Panel install karo</div><div class="pwa-banner-sub">Home screen pe add karo — offline bhi kaam karega</div></div>
-  <div class="pwa-banner-actions"><button class="pwa-install-main" onclick="triggerInstall()">Install</button><button class="pwa-banner-close" onclick="dismissBanner()" title="Dismiss">✕</button></div>
+  <div class="pwa-banner-icon">
+    <svg width="26" height="26" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+      <rect width="192" height="192" rx="40" fill="#0d0d18"/>
+      <text x="96" y="124" font-family="Georgia,serif" font-weight="800" font-size="88" fill="#eeeef5" text-anchor="middle">SA</text>
+      <circle cx="148" cy="56" r="14" fill="#c084fc"/>
+    </svg>
+  </div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Admin Panel install karo</div>
+    <div class="pwa-banner-sub">Home screen pe add karo — offline bhi kaam karega</div>
+  </div>
+  <div class="pwa-banner-actions">
+    <button class="pwa-install-main" onclick="triggerInstall()">Install</button>
+    <button class="pwa-banner-close" onclick="dismissBanner()" title="Dismiss">✕</button>
+  </div>
 </div>
 
 <script>
 const API_BASE = 'https://portfolio-shafaq.onrender.com';
 let token   = localStorage.getItem('portfolio_admin_token') || '';
-let allData = { projects:[], jobs:[], skills:[], testimonials:[], settings:{}, blog:[], messages:[] };
+let allData = { projects:[], jobs:[], skills:[], testimonials:[], settings:{} };
+
 let orderedProjects = [];
 let dragSrcIndex    = null;
-let allMessages     = [];
-let currentMsgFilter = 'all';
 
-// ── PWA ──────────────────────────────────────
+// ─────────────────────────────────────────────
+// PWA
+// ─────────────────────────────────────────────
 let deferredPrompt = null;
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Failed:', err));
+  });
 }
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredPrompt = e;
   document.getElementById('pwa-install-btn').classList.add('visible');
-  setTimeout(() => { if (!localStorage.getItem('pwa_banner_dismissed') && deferredPrompt) document.getElementById('pwa-banner').classList.add('visible'); }, 3000);
+  setTimeout(() => {
+    if (!localStorage.getItem('pwa_banner_dismissed') && deferredPrompt)
+      document.getElementById('pwa-banner').classList.add('visible');
+  }, 3000);
 });
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
   document.getElementById('pwa-install-btn').classList.remove('visible');
   document.getElementById('pwa-installed-badge').classList.add('visible');
   document.getElementById('pwa-banner').classList.remove('visible');
+  localStorage.setItem('pwa_installed', '1');
   showToast('✅ App install ho gaya!');
 });
 async function triggerInstall() {
@@ -714,58 +739,86 @@ async function triggerInstall() {
   showToast(outcome === 'accepted' ? 'Installing... 🚀' : 'Install cancel kar diya');
   deferredPrompt = null;
 }
-function dismissBanner() { document.getElementById('pwa-banner').classList.remove('visible'); localStorage.setItem('pwa_banner_dismissed','1'); }
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) document.getElementById('pwa-installed-badge').classList.add('visible');
+function dismissBanner() {
+  document.getElementById('pwa-banner').classList.remove('visible');
+  localStorage.setItem('pwa_banner_dismissed', '1');
+}
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)
+  document.getElementById('pwa-installed-badge').classList.add('visible');
 
-// ── SIDEBAR ────────────────────────────────────
-function toggleSidebar() { document.getElementById('sidebar').classList.contains('open') ? closeSidebar() : openSidebar(); }
+// ─────────────────────────────────────────────
+// SIDEBAR
+// ─────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.contains('open') ? closeSidebar() : openSidebar();
+}
 function openSidebar() {
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebar-overlay').classList.add('visible');
-  const btn = document.getElementById('hamburger-btn'); btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
+  const btn = document.getElementById('hamburger-btn');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
   document.body.style.overflow = 'hidden';
 }
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('visible');
-  const btn = document.getElementById('hamburger-btn'); btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  const btn = document.getElementById('hamburger-btn');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
 
+// ─────────────────────────────────────────────
+// DOM READY
+// ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+  // Login enter key
   const loginPw = document.getElementById('login-pw');
   if (loginPw) loginPw.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+  // Photo upload
   const photoInput = document.getElementById('photo-file-input');
   if (photoInput) photoInput.addEventListener('change', handlePhotoUpload);
+
+  // Photo URL live preview
   const pPhotoInput = document.getElementById('p-photo');
   if (pPhotoInput) pPhotoInput.addEventListener('input', function() { updatePhotoPreview(this.value); });
+
+  // ── RESUME: file input change ──
   const resumeInput = document.getElementById('resume-file-input');
   if (resumeInput) resumeInput.addEventListener('change', handleResumeUpload);
+
+  // ── RESUME: URL input live update ──
   const pResumeInput = document.getElementById('p-resume');
   if (pResumeInput) pResumeInput.addEventListener('input', function() { updateResumeUI(this.value); });
 });
 
-// ── LOGIN ──────────────────────────────────────
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
 async function doLogin() {
-  const pw = document.getElementById('login-pw').value.trim();
+  const pw    = document.getElementById('login-pw').value.trim();
   const errEl = document.getElementById('login-err');
   errEl.textContent = '';
   if (!pw) { errEl.textContent = 'Password enter karo'; return; }
   errEl.textContent = '⏳ Logging in...';
   try {
-    const r = await fetch(API_BASE + '/api/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ password:pw }) });
+    const r = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Login failed');
     token = data.token;
     localStorage.setItem('portfolio_admin_token', token);
     showApp();
   } catch (e) {
-    errEl.textContent = (e.message.includes('fetch')||e.message.includes('Failed'))
+    errEl.textContent = (e.message.includes('fetch') || e.message.includes('Failed'))
       ? '⚠️ Server wake ho raha hai (Render free tier), 30-60 sec mein dobara try karo'
       : e.message;
   }
 }
+
 function logout() {
   if (!confirm('Logout?')) return;
   localStorage.removeItem('portfolio_admin_token'); token = '';
@@ -774,102 +827,94 @@ function logout() {
   document.getElementById('login-pw').value = '';
   closeSidebar();
 }
+
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   loadAll();
 }
+
 if (token) showApp();
 
-// ── API HELPER ─────────────────────────────────
+// ─────────────────────────────────────────────
+// API HELPER
+// ─────────────────────────────────────────────
 async function api(method, path, body) {
-  const opts = { method, headers:{ 'Authorization':'Bearer '+token, 'Content-Type':'application/json' } };
+  const opts = {
+    method,
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+  };
   if (body !== undefined) opts.body = JSON.stringify(body);
   let r;
   try { r = await fetch(API_BASE + path, opts); }
-  catch (networkErr) { throw new Error('Network error: ' + networkErr.message); }
+  catch (networkErr) { throw new Error('Network error — server se connect nahi ho pa raha: ' + networkErr.message); }
   if (r.status === 401) { logout(); throw new Error('Session expired — dobara login karo'); }
   let data;
-  try { data = await r.json(); } catch { throw new Error('Invalid server response (status: ' + r.status + ')'); }
+  try { data = await r.json(); }
+  catch { throw new Error('Server ne invalid response diya (status: ' + r.status + ')'); }
   if (!r.ok) throw new Error(data.error || data.message || 'Request failed (' + r.status + ')');
   return data;
 }
 
-// ── LOAD ALL ───────────────────────────────────
+// ─────────────────────────────────────────────
+// LOAD ALL
+// ─────────────────────────────────────────────
 async function loadAll() {
   hideBanner();
   try {
-    const [settings, projects, jobs, skills, testimonials, blog, messages] = await Promise.all([
-      api('GET','/api/admin/settings'),
-      api('GET','/api/admin/projects'),
-      api('GET','/api/admin/jobs'),
-      api('GET','/api/admin/skills'),
-      api('GET','/api/admin/testimonials'),
-      api('GET','/api/admin/blog'),
-      api('GET','/api/admin/messages')
+    const [settings, projects, jobs, skills, testimonials] = await Promise.all([
+      api('GET', '/api/admin/settings'),
+      api('GET', '/api/admin/projects'),
+      api('GET', '/api/admin/jobs'),
+      api('GET', '/api/admin/skills'),
+      api('GET', '/api/admin/testimonials')
     ]);
-    allData = { settings, projects, jobs, skills, testimonials, blog, messages };
-    allMessages = messages;
-    orderedProjects = [...projects].sort((a,b)=>(a.order||0)-(b.order||0));
+    allData = { settings, projects, jobs, skills, testimonials };
+    orderedProjects = [...projects].sort((a,b) => (a.order||0) - (b.order||0));
     renderDashboard();
     renderProfile();
     renderProjects();
     renderJobs();
     renderSkills();
-    renderBlogAdmin();
     renderTestimonials();
-    renderMessages();
     renderSettingsToggles();
-    updateMsgBadge();
   } catch (e) {
     showConnBanner();
     showToast('Load failed: ' + e.message, true);
   }
 }
-async function loadMessages() {
-  try {
-    allMessages = await api('GET','/api/admin/messages');
-    allData.messages = allMessages;
-    renderMessages();
-    updateMsgBadge();
-  } catch(e) { showToast(e.message, true); }
-}
+
 function retryLoad() { hideBanner(); showToast('Retrying...'); loadAll(); }
 function showConnBanner() { document.getElementById('conn-banner').classList.add('visible'); }
 function hideBanner()     { document.getElementById('conn-banner').classList.remove('visible'); }
-function updateMsgBadge() {
-  const unread = allMessages.filter(m=>!m.read).length;
-  const badge = document.getElementById('msg-nav-badge');
-  if (unread > 0) { badge.textContent = unread; badge.classList.add('visible'); }
-  else { badge.classList.remove('visible'); }
-}
 
-// ── DASHBOARD ──────────────────────────────────
+// ─────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────
 function renderDashboard() {
-  const { projects, blog, messages, testimonials } = allData;
+  const { projects, jobs, skills, testimonials } = allData;
   document.getElementById('stat-projects').textContent = projects.length;
-  document.getElementById('stat-blog').textContent     = blog.length;
-  document.getElementById('stat-msgs').textContent     = messages.length;
+  document.getElementById('stat-jobs').textContent     = jobs.length;
+  document.getElementById('stat-skills').textContent   = skills.length;
   document.getElementById('stat-testi').textContent    = testimonials.length;
-  document.getElementById('stat-projects-sub').textContent = projects.filter(p=>p.status==='Live').length + ' live';
-  document.getElementById('stat-blog-sub').textContent     = blog.filter(b=>b.published).length + ' published';
-  document.getElementById('stat-msgs-sub').textContent     = messages.filter(m=>!m.read).length + ' unread';
+  document.getElementById('stat-projects-sub').textContent = projects.filter(p => p.status === 'Live').length + ' live';
+  document.getElementById('stat-jobs-sub').textContent     = jobs.filter(j => j.is_current).length + ' current';
 
-  const dashMsgs = document.getElementById('dash-msgs-table');
-  if (!messages.length) { dashMsgs.innerHTML='<div class="empty-state">No messages yet</div>'; return; }
-  const recent = [...messages].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5);
-  dashMsgs.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">${recent.map(m=>`
-    <div class="form-panel" style="padding:0.75rem 1rem;cursor:pointer;${!m.read?'border-left:3px solid var(--accent)':''}" onclick="showPage('messages')">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        ${!m.read?'<div style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>':''}
-        <strong style="font-size:0.82rem">${esc(m.name)}</strong>
-        <span style="font-size:0.7rem;color:var(--muted);margin-left:auto">${relTime(m.createdAt)}</span>
-      </div>
-      <div style="font-size:0.75rem;color:var(--muted)">${esc((m.message||'').substring(0,80))}${m.message&&m.message.length>80?'...':''}</div>
-    </div>`).join('')}</div>`;
+  const table = document.getElementById('dash-projects-table');
+  if (!projects.length) { table.innerHTML = '<div class="empty-state">No projects yet</div>'; return; }
+  const sorted = [...projects].sort((a,b) => (a.order||0)-(b.order||0));
+  table.innerHTML = `<table><tr><th>#</th><th>Project</th><th>Status</th></tr>
+    ${sorted.slice(0,5).map((p,i) => `<tr>
+      <td><span style="font-size:0.7rem;color:${i<3?'#fbbf24':'var(--dim)'};">${i<3?'⭐':''} ${i+1}</span></td>
+      <td><strong>${esc(p.name)}</strong></td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>`).join('')}
+  </table>`;
 }
 
-// ── PROFILE ────────────────────────────────────
+// ─────────────────────────────────────────────
+// PROFILE
+// ─────────────────────────────────────────────
 function renderProfile() {
   const s = allData.settings || {};
   document.getElementById('p-name').value     = s.name       || '';
@@ -882,74 +927,184 @@ function renderProfile() {
   document.getElementById('p-resume').value   = s.resume_url || '';
   updatePhotoPreview(s.photo_url);
   updateResumeUI(s.resume_url);
-  const initials = (s.name||'SA').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const initials = (s.name || 'SA').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
   document.getElementById('side-avatar').textContent = initials;
   document.getElementById('side-name').textContent   = s.name || 'Admin';
 }
+
 function updatePhotoPreview(url) {
-  const img=document.getElementById('p-photo-preview'), ph=document.getElementById('p-photo-placeholder');
-  if(url){img.src=url;img.style.display='block';ph.style.display='none';}
-  else{img.style.display='none';ph.style.display='inline-flex';}
-}
-function updateResumeUI(url) {
-  const zone=document.getElementById('resume-upload-zone'),statusBar=document.getElementById('resume-status-bar');
-  const statusTxt=document.getElementById('resume-status-text'),viewBtn=document.getElementById('resume-view-btn');
-  const previewEmpty=document.getElementById('resume-preview-empty'),previewSet=document.getElementById('resume-preview-set');
-  const previewLink=document.getElementById('resume-preview-link');
-  if(url&&url.trim()){
-    statusBar.style.display='flex';viewBtn.href=url.trim();
-    statusTxt.textContent=url.startsWith('data:')?'PDF uploaded (base64)':(url.length>50?url.substring(0,50)+'...':url);
-    zone.classList.add('has-file');previewEmpty.style.display='none';previewSet.style.display='block';previewLink.href=url.trim();
-  }else{statusBar.style.display='none';zone.classList.remove('has-file');previewEmpty.style.display='block';previewSet.style.display='none';}
-}
-function clearResume(){document.getElementById('p-resume').value='';document.getElementById('resume-upload-msg').textContent='';updateResumeUI('');showToast('Resume hata diya — Save Profile karo');}
-function handleResumeUpload(event){
-  const file=event.target.files[0];if(!file)return;
-  const msg=document.getElementById('resume-upload-msg'),barWrap=document.getElementById('resume-bar-wrap'),bar=document.getElementById('resume-bar');
-  if(file.type!=='application/pdf'&&!file.name.endsWith('.pdf')){msg.style.color='var(--danger)';msg.textContent='❌ Sirf PDF allowed hai!';return;}
-  if(file.size>5*1024*1024){msg.style.color='var(--danger)';msg.textContent='❌ File 5MB se bada hai!';return;}
-  msg.style.color='var(--accent)';msg.textContent='⏳ PDF load ho raha hai...';barWrap.style.display='block';bar.style.width='30%';
-  const reader=new FileReader();
-  reader.onload=function(e){bar.style.width='100%';const base64=e.target.result;document.getElementById('p-resume').value=base64;updateResumeUI(base64);msg.style.color='var(--now)';msg.textContent='✅ PDF ready! Save Profile karo.';setTimeout(()=>{barWrap.style.display='none';bar.style.width='0%';},1500);showToast('Resume ready! Save Profile click karo ✓');};
-  reader.onerror=()=>{msg.style.color='var(--danger)';msg.textContent='❌ Read failed.';barWrap.style.display='none';};
-  reader.readAsDataURL(file);event.target.value='';
-}
-function handlePhotoUpload(event){
-  const file=event.target.files[0];if(!file)return;
-  const msg=document.getElementById('upload-msg'),barWrap=document.getElementById('upload-bar-wrap'),bar=document.getElementById('upload-bar');
-  if(file.size>5*1024*1024){msg.style.color='var(--danger)';msg.textContent='❌ File bahut bada hai! Max 5MB.';return;}
-  msg.style.color='var(--accent)';msg.textContent='⏳ Processing...';barWrap.style.display='block';bar.style.width='20%';
-  const reader=new FileReader();
-  reader.onload=function(e){bar.style.width='60%';const img=new Image();
-    img.onload=function(){const canvas=document.createElement('canvas');const MAX=800;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);const base64=canvas.toDataURL('image/jpeg',0.82);bar.style.width='100%';document.getElementById('p-photo').value=base64;updatePhotoPreview(base64);msg.style.color='var(--now)';msg.textContent='✅ Image ready! Save Profile karo.';setTimeout(()=>{barWrap.style.display='none';bar.style.width='0%';},1500);showToast('Image ready! Save Profile click karo ✓');};
-    img.onerror=()=>{msg.style.color='var(--danger)';msg.textContent='❌ Load failed.';barWrap.style.display='none';};img.src=e.target.result;};
-  reader.onerror=()=>{msg.style.color='var(--danger)';msg.textContent='❌ Read failed.';};reader.readAsDataURL(file);event.target.value='';
-}
-async function saveProfile(){
-  try{
-    const update={name:document.getElementById('p-name').value,tagline:document.getElementById('p-tagline').value,bio:document.getElementById('p-bio').value,email:document.getElementById('p-email').value,github:document.getElementById('p-github').value,linkedin:document.getElementById('p-linkedin').value,photo_url:document.getElementById('p-photo').value,resume_url:document.getElementById('p-resume').value};
-    allData.settings=await api('PUT','/api/admin/settings',update);renderProfile();showToast('Profile saved! ✓');
-  }catch(e){showToast(e.message,true);}
+  const img = document.getElementById('p-photo-preview');
+  const ph  = document.getElementById('p-photo-placeholder');
+  if (url) { img.src = url; img.style.display = 'block'; ph.style.display = 'none'; }
+  else      { img.style.display = 'none'; ph.style.display = 'inline-flex'; }
 }
 
-// ── PROJECTS ───────────────────────────────────
-function renderProjects(){
-  orderedProjects=[...allData.projects].sort((a,b)=>(a.order||0)-(b.order||0));
-  document.getElementById('projects-count').textContent=`All Projects (${allData.projects.length})`;
-  renderOrderList();renderProjectGrid();
+// ── RESUME UI helpers ──
+function updateResumeUI(url) {
+  const zone      = document.getElementById('resume-upload-zone');
+  const statusBar = document.getElementById('resume-status-bar');
+  const statusTxt = document.getElementById('resume-status-text');
+  const viewBtn   = document.getElementById('resume-view-btn');
+  const previewEmpty = document.getElementById('resume-preview-empty');
+  const previewSet   = document.getElementById('resume-preview-set');
+  const previewLink  = document.getElementById('resume-preview-link');
+
+  if (url && url.trim()) {
+    // Status bar below upload zone
+    statusBar.style.display = 'flex';
+    viewBtn.href = url.trim();
+    // Show shortened label
+    if (url.startsWith('data:')) {
+      statusTxt.textContent = 'PDF uploaded (base64)';
+    } else {
+      statusTxt.textContent = url.length > 50 ? url.substring(0,50) + '...' : url;
+    }
+    // Upload zone style
+    zone.classList.add('has-file');
+    // Right-side preview card
+    previewEmpty.style.display = 'none';
+    previewSet.style.display   = 'block';
+    previewLink.href = url.trim();
+  } else {
+    statusBar.style.display    = 'none';
+    zone.classList.remove('has-file');
+    previewEmpty.style.display = 'block';
+    previewSet.style.display   = 'none';
+  }
 }
-function renderOrderList(){
-  const list=document.getElementById('order-list');
-  if(!orderedProjects.length){list.innerHTML='<div class="empty-state">No projects yet</div>';return;}
-  list.innerHTML=orderedProjects.map((p,i)=>{
-    const isTop3=i<3;
-    const thumbHtml=p.image_url?`<div class="order-thumb"><img src="${esc(p.image_url)}" onerror="this.style.display='none'" /></div>`:`<div class="order-thumb">${['🖥️','🌐','💡','⚡','🚀'][i%5]}</div>`;
-    return `<div class="order-item" id="oi-${p._id}" draggable="true" ondragstart="dragStart(event,${i})" ondragover="dragOver(event,${i})" ondragleave="dragLeave(event)" ondrop="dragDrop(event,${i})" ondragend="dragEnd()">
+
+function clearResume() {
+  document.getElementById('p-resume').value = '';
+  document.getElementById('resume-upload-msg').textContent = '';
+  updateResumeUI('');
+  showToast('Resume hata diya — Save Profile karo');
+}
+
+function handleResumeUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const msg     = document.getElementById('resume-upload-msg');
+  const barWrap = document.getElementById('resume-bar-wrap');
+  const bar     = document.getElementById('resume-bar');
+
+  if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ Sirf PDF allowed hai!'; return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File 5MB se bada hai!'; return;
+  }
+
+  msg.style.color = 'var(--accent)'; msg.textContent = '⏳ PDF load ho raha hai...';
+  barWrap.style.display = 'block'; bar.style.width = '30%';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    bar.style.width = '100%';
+    const base64 = e.target.result;           // full data URI
+    document.getElementById('p-resume').value = base64;
+    updateResumeUI(base64);
+    msg.style.color = 'var(--now)';
+    msg.textContent = '✅ PDF ready! Save Profile karo.';
+    setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
+    showToast('Resume ready! Save Profile click karo ✓');
+  };
+  reader.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Read failed.'; barWrap.style.display='none'; };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const msg     = document.getElementById('upload-msg');
+  const barWrap = document.getElementById('upload-bar-wrap');
+  const bar     = document.getElementById('upload-bar');
+  if (file.size > 5 * 1024 * 1024) {
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File bahut bada hai! Max 5MB.'; return;
+  }
+  msg.style.color = 'var(--accent)'; msg.textContent = '⏳ Processing...';
+  barWrap.style.display = 'block'; bar.style.width = '20%';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    bar.style.width = '60%';
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 800; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
+        else       { w = Math.round(w*MAX/h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const base64 = canvas.toDataURL('image/jpeg', 0.82);
+      bar.style.width = '100%';
+      document.getElementById('p-photo').value = base64;
+      updatePhotoPreview(base64);
+      msg.style.color = 'var(--now)'; msg.textContent = '✅ Image ready! Save Profile karo.';
+      setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
+      showToast('Image ready! Save Profile click karo ✓');
+    };
+    img.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Load failed.'; barWrap.style.display='none'; };
+    img.src = e.target.result;
+  };
+  reader.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Read failed.'; };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+async function saveProfile() {
+  try {
+    const update = {
+      name:       document.getElementById('p-name').value,
+      tagline:    document.getElementById('p-tagline').value,
+      bio:        document.getElementById('p-bio').value,
+      email:      document.getElementById('p-email').value,
+      github:     document.getElementById('p-github').value,
+      linkedin:   document.getElementById('p-linkedin').value,
+      photo_url:  document.getElementById('p-photo').value,
+      resume_url: document.getElementById('p-resume').value   // ← resume saved here
+    };
+    allData.settings = await api('PUT', '/api/admin/settings', update);
+    renderProfile();
+    showToast('Profile saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// PROJECTS
+// ─────────────────────────────────────────────
+function renderProjects() {
+  orderedProjects = [...allData.projects].sort((a,b) => (a.order||0) - (b.order||0));
+  document.getElementById('projects-count').textContent = `All Projects (${allData.projects.length})`;
+  renderOrderList();
+  renderProjectGrid();
+}
+
+function renderOrderList() {
+  const list = document.getElementById('order-list');
+  if (!orderedProjects.length) {
+    list.innerHTML = '<div class="empty-state">No projects yet</div>'; return;
+  }
+  list.innerHTML = orderedProjects.map((p, i) => {
+    const isTop3 = i < 3;
+    const thumbHtml = p.image_url
+      ? `<div class="order-thumb"><img src="${esc(p.image_url)}" onerror="this.style.display='none'" /></div>`
+      : `<div class="order-thumb">${['🖥️','🌐','💡','⚡','🚀'][i%5]}</div>`;
+    return `
+    <div class="order-item" id="oi-${p._id}"
+      draggable="true"
+      ondragstart="dragStart(event,${i})"
+      ondragover="dragOver(event,${i})"
+      ondragleave="dragLeave(event)"
+      ondrop="dragDrop(event,${i})"
+      ondragend="dragEnd()">
       <div class="drag-handle" title="Drag to reorder">⠿</div>
       <div class="order-num ${isTop3?'top3':''}">${i+1}</div>
       ${thumbHtml}
-      <div class="order-info"><div class="order-name">${esc(p.name)}</div><div class="order-meta">${esc(p.status||'')}${p.tech_tags&&p.tech_tags.length?' · '+p.tech_tags.slice(0,2).join(', '):''}</div></div>
-      ${isTop3?`<span class="feat-label">⭐ Featured</span>`:''}
+      <div class="order-info">
+        <div class="order-name">${esc(p.name)}</div>
+        <div class="order-meta">${esc(p.status||'')}${p.tech_tags&&p.tech_tags.length?' · '+p.tech_tags.slice(0,2).join(', '):''}</div>
+      </div>
+      ${isTop3 ? `<span class="feat-label">⭐ Featured</span>` : ''}
       <div class="order-controls">
         <button class="order-btn" onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">↑</button>
         <button class="order-btn" onclick="moveProject(${i},1)" ${i===orderedProjects.length-1?'disabled':''} title="Move down">↓</button>
@@ -957,253 +1112,488 @@ function renderOrderList(){
     </div>`;
   }).join('');
 }
-function moveProject(index,dir){const target=index+dir;if(target<0||target>=orderedProjects.length)return;[orderedProjects[index],orderedProjects[target]]=[orderedProjects[target],orderedProjects[index]];renderOrderList();showToast(dir<0?'↑ Moved up':'↓ Moved down');}
-function dragStart(e,i){dragSrcIndex=i;e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
-function dragOver(e,i){e.preventDefault();e.dataTransfer.dropEffect='move';document.querySelectorAll('.order-item').forEach(el=>el.classList.remove('drag-over'));if(i!==dragSrcIndex)e.currentTarget.classList.add('drag-over');}
-function dragLeave(e){e.currentTarget.classList.remove('drag-over');}
-function dragDrop(e,i){e.preventDefault();if(dragSrcIndex===null||dragSrcIndex===i)return;const moved=orderedProjects.splice(dragSrcIndex,1)[0];orderedProjects.splice(i,0,moved);dragSrcIndex=null;renderOrderList();showToast('Order updated — Save karo!');}
-function dragEnd(){dragSrcIndex=null;document.querySelectorAll('.order-item').forEach(el=>{el.classList.remove('dragging');el.classList.remove('drag-over');});}
-async function saveProjectOrder(){
-  const btn=document.getElementById('save-order-btn');btn.disabled=true;btn.textContent='⏳ Saving...';
-  try{
-    await Promise.all(orderedProjects.map((p,i)=>api('PUT','/api/admin/projects/'+p._id,{order:i,is_featured:i<3})));
-    allData.projects=await api('GET','/api/admin/projects');
-    orderedProjects=[...allData.projects].sort((a,b)=>(a.order||0)-(b.order||0));
-    renderOrderList();renderProjectGrid();renderDashboard();showToast('✅ Order saved! Top 3 are now featured.');
-  }catch(e){showToast('Save failed: '+e.message,true);}finally{btn.disabled=false;btn.textContent='💾 Save Order';}
+
+function moveProject(index, dir) {
+  const target = index + dir;
+  if (target < 0 || target >= orderedProjects.length) return;
+  const tmp = orderedProjects[index];
+  orderedProjects[index] = orderedProjects[target];
+  orderedProjects[target] = tmp;
+  renderOrderList();
+  showToast(dir < 0 ? '↑ Moved up' : '↓ Moved down');
 }
-function renderProjectGrid(){
-  const grid=document.getElementById('projects-grid');
-  if(!orderedProjects.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>';return;}
-  grid.innerHTML=orderedProjects.map((p,i)=>`
-    <div class="project-card" style="${i<3?'border-color:rgba(251,191,36,0.3);':''}position:relative;">
-      ${i<3?`<div style="position:absolute;top:8px;right:8px;z-index:5;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;border-radius:100px;padding:2px 9px;font-size:0.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase">⭐ #${i+1}</div>`:''}
-      ${p.image_url?`<img class="project-card-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'" />`:`<div class="project-card-thumb-placeholder">🖥️</div>`}
+
+function dragStart(e, i) {
+  dragSrcIndex = i;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e, i) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.order-item').forEach(el => el.classList.remove('drag-over'));
+  if (i !== dragSrcIndex) e.currentTarget.classList.add('drag-over');
+}
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dragDrop(e, i) {
+  e.preventDefault();
+  if (dragSrcIndex === null || dragSrcIndex === i) return;
+  const moved = orderedProjects.splice(dragSrcIndex, 1)[0];
+  orderedProjects.splice(i, 0, moved);
+  dragSrcIndex = null;
+  renderOrderList();
+  showToast('Order updated — Save karo!');
+}
+function dragEnd() {
+  dragSrcIndex = null;
+  document.querySelectorAll('.order-item').forEach(el => {
+    el.classList.remove('dragging'); el.classList.remove('drag-over');
+  });
+}
+
+async function saveProjectOrder() {
+  const btn = document.getElementById('save-order-btn');
+  btn.disabled = true; btn.textContent = '⏳ Saving...';
+  try {
+    await Promise.all(orderedProjects.map((p, i) =>
+      api('PUT', '/api/admin/projects/' + p._id, { order: i, is_featured: i < 3 })
+    ));
+    allData.projects = await api('GET', '/api/admin/projects');
+    orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
+    renderOrderList();
+    renderProjectGrid();
+    renderDashboard();
+    showToast('✅ Order saved! Top 3 are now featured.');
+  } catch (e) {
+    showToast('Save failed: ' + e.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Save Order';
+  }
+}
+
+function renderProjectGrid() {
+  const grid = document.getElementById('projects-grid');
+  if (!orderedProjects.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>';
+    return;
+  }
+  grid.innerHTML = orderedProjects.map((p, i) => `
+    <div class="project-card" style="${i<3?'border-color:rgba(251,191,36,0.3);':''} position:relative;">
+      ${i<3 ? `<div style="position:absolute;top:8px;right:8px;z-index:5;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;border-radius:100px;padding:2px 9px;font-size:0.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase">⭐ #${i+1}</div>` : ''}
+      ${p.image_url
+        ? `<img class="project-card-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'" />`
+        : `<div class="project-card-thumb-placeholder">🖥️</div>`}
       <div class="project-card-body">
         <div class="project-name">${esc(p.name)}</div>
         <div class="project-desc">${esc((p.description||'').substring(0,80))}${(p.description||'').length>80?'...':''}</div>
         <div class="project-tech">${(p.tech_tags||[]).map(t=>`<span class="tech-chip">${esc(t)}</span>`).join('')}</div>
         <div class="project-actions" style="margin-top:8px;">
-          ${statusBadge(p.status)}<div style="flex:1"></div>
-          ${p.github?`<a href="${esc(p.github)}" target="_blank" class="icon-btn" title="GitHub">⎇</a>`:''}
-          ${p.live?`<a href="${esc(p.live)}" target="_blank" class="icon-btn" title="Live Demo">⬡</a>`:''}
+          ${statusBadge(p.status)}
+          <div style="flex:1"></div>
+          ${p.github ? `<a href="${esc(p.github)}" target="_blank" class="icon-btn" title="GitHub">⎇</a>` : ''}
+          ${p.live   ? `<a href="${esc(p.live)}"   target="_blank" class="icon-btn" title="Live Demo">⬡</a>` : ''}
           <button class="icon-btn" onclick="editProject('${p._id}')">✎</button>
           <button class="icon-btn del" onclick="deleteProject('${p._id}')">✕</button>
         </div>
       </div>
-    </div>`).join('')+`<div class="project-card" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:160px;" onclick="clearProjectForm()"><div style="text-align:center;color:var(--muted)"><div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div><div style="font-size:0.75rem;font-weight:600;">Add New Project</div></div></div>`;
-}
-function updateProjImagePreview(url){const wrap=document.getElementById('proj-img-preview-wrap'),img=document.getElementById('proj-img-preview');if(url&&url.trim()){wrap.style.display='flex';img.src=url;}else{wrap.style.display='none';img.src='';}}
-function editProject(id){
-  const p=allData.projects.find(x=>x._id===id);if(!p)return;
-  document.getElementById('proj-id').value=p._id;document.getElementById('proj-name').value=p.name||'';document.getElementById('proj-status').value=p.status||'WIP';document.getElementById('proj-desc').value=p.description||'';document.getElementById('proj-github').value=p.github||'';document.getElementById('proj-live').value=p.live||'';document.getElementById('proj-image').value=p.image_url||'';document.getElementById('proj-tech').value=(p.tech_tags||[]).join(', ');
-  updateProjImagePreview(p.image_url||'');document.getElementById('proj-form-title').innerHTML='<span class="panel-icon">✎</span> Edit Project';document.getElementById('project-form-panel').scrollIntoView({behavior:'smooth'});
-}
-function clearProjectForm(){document.getElementById('proj-id').value='';['proj-name','proj-desc','proj-github','proj-live','proj-image','proj-tech'].forEach(id=>document.getElementById(id).value='');document.getElementById('proj-status').value='WIP';document.getElementById('proj-form-title').innerHTML='<span class="panel-icon">+</span> Add / Edit Project';updateProjImagePreview('');}
-async function saveProject(){
-  const id=document.getElementById('proj-id').value;
-  const body={name:document.getElementById('proj-name').value.trim(),status:document.getElementById('proj-status').value,description:document.getElementById('proj-desc').value,github:document.getElementById('proj-github').value.trim(),live:document.getElementById('proj-live').value.trim(),image_url:document.getElementById('proj-image').value.trim(),tech_tags:document.getElementById('proj-tech').value.split(',').map(s=>s.trim()).filter(Boolean)};
-  if(!id)body.order=allData.projects.length;
-  if(!body.name)return showToast('Project name required',true);
-  try{if(id)await api('PUT','/api/admin/projects/'+id,body);else await api('POST','/api/admin/projects',body);clearProjectForm();allData.projects=await api('GET','/api/admin/projects');orderedProjects=[...allData.projects].sort((a,b)=>(a.order||0)-(b.order||0));renderProjects();renderDashboard();showToast('Project saved! ✓');}
-  catch(e){showToast(e.message,true);}
-}
-async function deleteProject(id){if(!confirm('Delete this project?'))return;try{await api('DELETE','/api/admin/projects/'+id);allData.projects=await api('GET','/api/admin/projects');orderedProjects=[...allData.projects].sort((a,b)=>(a.order||0)-(b.order||0));renderProjects();renderDashboard();showToast('Project deleted');}catch(e){showToast(e.message,true);}}
-
-// ── JOBS ───────────────────────────────────────
-function renderJobs(){
-  const jobs=allData.jobs;document.getElementById('jobs-count').textContent=`Career Timeline (${jobs.length} jobs)`;
-  const table=document.getElementById('jobs-table');
-  if(!jobs.length){table.innerHTML='<div class="empty-state">No jobs yet</div>';return;}
-  table.innerHTML=`<table><tr><th>#</th><th>Company</th><th>Role</th><th>Period</th><th>Status</th><th>Actions</th></tr>${jobs.map((j,i)=>`<tr><td>${i+1}</td><td><strong>${esc(j.company)}</strong></td><td>${esc(j.role)}</td><td>${esc(j.date_text||'')}</td><td>${j.is_current?'<span class="badge badge-green">Current</span>':'<span class="badge badge-purple">Past</span>'}</td><td style="display:flex;gap:6px;"><button class="icon-btn" onclick="editJob('${j._id}')">✎</button><button class="icon-btn del" onclick="deleteJob('${j._id}')">✕</button></td></tr>`).join('')}</table>`;
-}
-function editJob(id){const j=allData.jobs.find(x=>x._id===id);if(!j)return;const parts=(j.date_text||'').split(' – ');document.getElementById('job-id').value=j._id;document.getElementById('job-company').value=j.company||'';document.getElementById('job-role').value=j.role||'';document.getElementById('job-start').value=parts[0]||'';document.getElementById('job-end').value=parts[1]||'';document.getElementById('job-bullets').value=(j.bullets||[]).join('\n');document.getElementById('job-tech').value=(j.tech_tags||[]).join(', ');document.getElementById('job-theme').value=j.panel_theme||'theme-blue';document.getElementById('job-current').value=j.is_current?'true':'false';document.getElementById('job-panel-title').value=j.panel_title||'';document.querySelector('#page-jobs .form-panel').scrollIntoView({behavior:'smooth'});}
-function clearJobForm(){document.getElementById('job-id').value='';['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title'].forEach(id=>document.getElementById(id).value='');document.getElementById('job-current').value='false';document.getElementById('job-theme').value='theme-blue';}
-async function saveJob(){
-  const id=document.getElementById('job-id').value,start=document.getElementById('job-start').value.trim(),end=document.getElementById('job-end').value.trim();
-  const body={company:document.getElementById('job-company').value.trim(),role:document.getElementById('job-role').value.trim(),date_text:end?`${start} – ${end}`:start,is_current:document.getElementById('job-current').value==='true',bullets:document.getElementById('job-bullets').value.split('\n').map(s=>s.trim()).filter(Boolean),tech_tags:document.getElementById('job-tech').value.split(',').map(s=>s.trim()).filter(Boolean),panel_theme:document.getElementById('job-theme').value,panel_title:document.getElementById('job-panel-title').value.trim()};
-  if(!body.company)return showToast('Company name required',true);
-  try{if(id)await api('PUT','/api/admin/jobs/'+id,body);else await api('POST','/api/admin/jobs',body);clearJobForm();allData.jobs=await api('GET','/api/admin/jobs');renderJobs();renderDashboard();showToast('Job saved! ✓');}
-  catch(e){showToast(e.message,true);}
-}
-async function deleteJob(id){if(!confirm('Delete this job?'))return;try{await api('DELETE','/api/admin/jobs/'+id);allData.jobs=await api('GET','/api/admin/jobs');renderJobs();renderDashboard();showToast('Job deleted');}catch(e){showToast(e.message,true);}}
-
-// ── SKILLS ─────────────────────────────────────
-function renderSkills(){
-  const skills=allData.skills,list=document.getElementById('skills-list');
-  if(!skills.length){list.innerHTML='<div class="empty-state">No skill categories yet</div>';return;}
-  list.innerHTML=skills.map(s=>`<div class="form-panel" style="margin-bottom:0.8rem"><div class="panel-title"><span class="panel-icon">◎</span> ${esc(s.title)}<div style="margin-left:auto;display:flex;gap:6px"><button class="icon-btn" onclick="editSkill('${s._id}')">✎</button><button class="icon-btn del" onclick="deleteSkill('${s._id}')">✕</button></div></div><div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">${esc(s.description||'')}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${(s.tags||[]).map(t=>`<span class="badge badge-purple">${esc(t.label||t)}</span>`).join('')}</div></div>`).join('');
-}
-function editSkill(id){const s=allData.skills.find(x=>x._id===id);if(!s)return;document.getElementById('skill-id').value=s._id;document.getElementById('skill-title').value=s.title||'';document.getElementById('skill-desc').value=s.description||'';document.getElementById('skill-tags').value=(s.tags||[]).map(t=>t.label||t).join(', ');document.getElementById('skill-tools').value=(s.tools||[]).map(t=>t.name+'|'+t.icon_url).join('\n');document.getElementById('skill-form-panel').scrollIntoView({behavior:'smooth'});}
-function clearSkillForm(){document.getElementById('skill-id').value='';['skill-title','skill-desc','skill-tags','skill-tools'].forEach(id=>document.getElementById(id).value='');}
-async function saveSkill(){
-  const id=document.getElementById('skill-id').value;
-  const toolLines=document.getElementById('skill-tools').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  const tools=toolLines.map(line=>{const[name,icon_url]=line.split('|').map(s=>s.trim());return(name&&icon_url)?{name,icon_url}:null;}).filter(Boolean);
-  const body={title:document.getElementById('skill-title').value.trim(),description:document.getElementById('skill-desc').value.trim(),tools,tags:document.getElementById('skill-tags').value.split(',').map(s=>({label:s.trim()})).filter(t=>t.label)};
-  if(!body.title)return showToast('Category title required',true);
-  try{if(id)await api('PUT','/api/admin/skills/'+id,body);else await api('POST','/api/admin/skills',body);clearSkillForm();allData.skills=await api('GET','/api/admin/skills');renderSkills();renderDashboard();showToast('Skill saved! ✓');}
-  catch(e){showToast(e.message,true);}
-}
-async function deleteSkill(id){if(!confirm('Delete this skill category?'))return;try{await api('DELETE','/api/admin/skills/'+id);allData.skills=await api('GET','/api/admin/skills');renderSkills();renderDashboard();showToast('Skill deleted');}catch(e){showToast(e.message,true);}}
-
-// ── BLOG ADMIN ─────────────────────────────────
-function renderBlogAdmin(){
-  const posts=allData.blog;
-  document.getElementById('blog-count').textContent=`Blog Posts (${posts.length})`;
-  const grid=document.getElementById('blog-grid-admin');
-  if(!posts.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">No blog posts yet — add one below!</div>';return;}
-  grid.innerHTML=posts.map(p=>`
-    <div class="blog-card-admin">
-      ${p.cover_image?`<img class="blog-thumb-admin" src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.style.display='none'" />`:`<div class="blog-thumb-placeholder-admin">📝</div>`}
-      <div class="blog-card-body-admin">
-        <div class="blog-title-admin">${esc(p.title)}</div>
-        <div class="blog-meta-admin">${p.category?esc(p.category)+' · ':''} ${p.read_time||''}</div>
-        <div class="blog-actions-admin">
-          ${p.published?'<span class="badge badge-green">Published</span>':'<span class="badge badge-dim">Draft</span>'}
-          <div style="flex:1"></div>
-          ${p.external_url?`<a href="${esc(p.external_url)}" target="_blank" class="icon-btn" title="External Link">↗</a>`:''}
-          <button class="icon-btn" onclick="editBlog('${p._id}')">✎</button>
-          <button class="icon-btn del" onclick="deleteBlog('${p._id}')">✕</button>
-        </div>
-      </div>
-    </div>`).join('')+`<div class="blog-card-admin" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:140px;" onclick="clearBlogForm()"><div style="text-align:center;color:var(--muted)"><div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">✍</div><div style="font-size:0.75rem;font-weight:600;">New Post</div></div></div>`;
-}
-function updateBlogImagePreview(url){const wrap=document.getElementById('blog-img-preview-wrap'),img=document.getElementById('blog-img-preview');if(url&&url.trim()){wrap.style.display='flex';img.src=url;}else{wrap.style.display='none';img.src='';}}
-function editBlog(id){
-  const p=allData.blog.find(x=>x._id===id);if(!p)return;
-  document.getElementById('blog-id').value=p._id;document.getElementById('blog-title').value=p.title||'';document.getElementById('blog-category').value=p.category||'';document.getElementById('blog-read-time').value=p.read_time||'';document.getElementById('blog-excerpt').value=p.excerpt||'';document.getElementById('blog-cover').value=p.cover_image||'';document.getElementById('blog-external').value=p.external_url||'';document.getElementById('blog-tags').value=(p.tags||[]).join(', ');document.getElementById('blog-content').value=p.content||'';document.getElementById('blog-published').value=p.published?'true':'false';document.getElementById('blog-slug').value=p.slug||'';
-  updateBlogImagePreview(p.cover_image||'');document.getElementById('blog-form-title').innerHTML='<span class="panel-icon">✎</span> Edit Blog Post';document.getElementById('blog-form-panel').scrollIntoView({behavior:'smooth'});
-}
-function clearBlogForm(){document.getElementById('blog-id').value='';['blog-title','blog-category','blog-read-time','blog-excerpt','blog-cover','blog-external','blog-tags','blog-content','blog-slug'].forEach(id=>document.getElementById(id).value='');document.getElementById('blog-published').value='false';document.getElementById('blog-form-title').innerHTML='<span class="panel-icon">✍</span> Add / Edit Blog Post';updateBlogImagePreview('');}
-async function saveBlog(){
-  const id=document.getElementById('blog-id').value;
-  const body={title:document.getElementById('blog-title').value.trim(),category:document.getElementById('blog-category').value.trim(),read_time:document.getElementById('blog-read-time').value.trim()||'5 min read',excerpt:document.getElementById('blog-excerpt').value.trim(),cover_image:document.getElementById('blog-cover').value.trim(),external_url:document.getElementById('blog-external').value.trim(),tags:document.getElementById('blog-tags').value.split(',').map(s=>s.trim()).filter(Boolean),content:document.getElementById('blog-content').value.trim(),published:document.getElementById('blog-published').value==='true',slug:document.getElementById('blog-slug').value.trim()};
-  if(!body.title)return showToast('Post title required',true);
-  try{if(id)await api('PUT','/api/admin/blog/'+id,body);else await api('POST','/api/admin/blog',body);clearBlogForm();allData.blog=await api('GET','/api/admin/blog');renderBlogAdmin();renderDashboard();showToast('Blog post saved! ✓');}
-  catch(e){showToast(e.message,true);}
-}
-async function deleteBlog(id){if(!confirm('Delete this blog post?'))return;try{await api('DELETE','/api/admin/blog/'+id);allData.blog=await api('GET','/api/admin/blog');renderBlogAdmin();renderDashboard();showToast('Post deleted');}catch(e){showToast(e.message,true);}}
-
-// ── TESTIMONIALS ───────────────────────────────
-function renderTestimonials(){
-  const testis=allData.testimonials;document.getElementById('testi-count').textContent=`Testimonials (${testis.length})`;
-  const table=document.getElementById('testi-table');
-  if(!testis.length){table.innerHTML='<div class="empty-state">No testimonials yet</div>';return;}
-  table.innerHTML=`<table><tr><th>Author</th><th>Role</th><th>Quote</th><th>Visible</th><th></th></tr>${testis.map(t=>`<tr><td><strong>${esc(t.author_name)}</strong></td><td>${esc(t.author_role)}</td><td style="color:var(--muted)">${esc((t.quote||'').substring(0,40))}...</td><td>${t.visible?'<span class="badge badge-green">On</span>':'<span class="badge badge-red">Off</span>'}</td><td style="display:flex;gap:6px;"><button class="icon-btn" onclick="editTesti('${t._id}')">✎</button><button class="icon-btn del" onclick="deleteTesti('${t._id}')">✕</button></td></tr>`).join('')}</table>`;
-}
-function editTesti(id){const t=allData.testimonials.find(x=>x._id===id);if(!t)return;document.getElementById('testi-id').value=t._id;document.getElementById('testi-name').value=t.author_name||'';document.getElementById('testi-role').value=t.author_role||'';document.getElementById('testi-emoji').value=t.author_emoji||'🧑';document.getElementById('testi-visible').value=t.visible?'true':'false';document.getElementById('testi-quote').value=t.quote||'';document.getElementById('testi-form-panel').scrollIntoView({behavior:'smooth'});}
-function clearTestiForm(){document.getElementById('testi-id').value='';['testi-name','testi-role','testi-quote'].forEach(id=>document.getElementById(id).value='');document.getElementById('testi-emoji').value='🧑';document.getElementById('testi-visible').value='true';}
-async function saveTestimonial(){
-  const id=document.getElementById('testi-id').value;
-  const body={author_name:document.getElementById('testi-name').value.trim(),author_role:document.getElementById('testi-role').value.trim(),author_emoji:document.getElementById('testi-emoji').value||'🧑',visible:document.getElementById('testi-visible').value==='true',quote:document.getElementById('testi-quote').value.trim()};
-  if(!body.author_name||!body.quote)return showToast('Name and quote required',true);
-  try{if(id)await api('PUT','/api/admin/testimonials/'+id,body);else await api('POST','/api/admin/testimonials',body);clearTestiForm();allData.testimonials=await api('GET','/api/admin/testimonials');renderTestimonials();renderDashboard();showToast('Testimonial saved! ✓');}
-  catch(e){showToast(e.message,true);}
-}
-async function deleteTesti(id){if(!confirm('Delete this testimonial?'))return;try{await api('DELETE','/api/admin/testimonials/'+id);allData.testimonials=await api('GET','/api/admin/testimonials');renderTestimonials();renderDashboard();showToast('Testimonial deleted');}catch(e){showToast(e.message,true);}}
-
-// ── MESSAGES ───────────────────────────────────
-function filterMsgs(filter, btn) {
-  currentMsgFilter = filter;
-  document.querySelectorAll('.msg-filter-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderMessages();
-}
-function renderMessages(){
-  const list=document.getElementById('msg-list');
-  let msgs=[...allMessages].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  if(currentMsgFilter==='unread') msgs=msgs.filter(m=>!m.read);
-  if(currentMsgFilter==='starred') msgs=msgs.filter(m=>m.starred);
-  const unread=allMessages.filter(m=>!m.read).length;
-  document.getElementById('msgs-count-label').textContent=`(${allMessages.length} total, ${unread} unread)`;
-  if(!msgs.length){list.innerHTML=`<div class="msg-empty"><span class="empty-icon">✉️</span>${currentMsgFilter==='all'?'Koi message nahi abhi tak. Contact form portfolio pe available hai.':currentMsgFilter==='unread'?'Sab messages padh liye hain! ✓':'Koi starred message nahi.'}</div>`;return;}
-  list.innerHTML=msgs.map(m=>{
-    const date=new Date(m.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    return `<div class="msg-card ${!m.read?'unread':''} ${m.starred?'starred-card':''}">
-      <div class="msg-header">
-        ${!m.read?'<div class="msg-unread-dot"></div>':''}
-        <div>
-          <div class="msg-from">${esc(m.name)}</div>
-          <div class="msg-email"><a href="mailto:${esc(m.email)}" style="color:var(--muted);text-decoration:none;">${esc(m.email)}</a></div>
-        </div>
-        <span class="msg-time">${date}</span>
-      </div>
-      ${m.subject?`<div class="msg-subject">${esc(m.subject)}</div>`:''}
-      <div class="msg-body">${esc(m.message)}</div>
-      <div class="msg-actions">
-        <button class="icon-btn star-btn ${m.starred?'starred':''}" onclick="toggleMsgStar('${m._id}',${!m.starred})" title="${m.starred?'Unstar':'Star'}">⭐</button>
-        ${!m.read?`<button class="btn btn-success" style="padding:4px 12px;font-size:0.7rem;" onclick="markMsgRead('${m._id}',true)">✓ Mark read</button>`:`<button class="btn btn-ghost" style="padding:4px 12px;font-size:0.7rem;" onclick="markMsgRead('${m._id}',false)">Mark unread</button>`}
-        <a href="mailto:${esc(m.email)}?subject=Re: ${esc(m.subject||'Your message')}" class="btn btn-ghost" style="padding:4px 12px;font-size:0.7rem;">↩ Reply</a>
-        <div style="flex:1"></div>
-        <button class="icon-btn del" onclick="deleteMsg('${m._id}')" title="Delete">✕</button>
+    </div>`).join('') + `
+    <div class="project-card" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:160px;" onclick="clearProjectForm()">
+      <div style="text-align:center;color:var(--muted)">
+        <div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div>
+        <div style="font-size:0.75rem;font-weight:600;">Add New Project</div>
       </div>
     </div>`;
-  }).join('');
-}
-async function markMsgRead(id, readVal){
-  try{
-    const updated=await api('PUT','/api/admin/messages/'+id,{read:readVal});
-    const idx=allMessages.findIndex(m=>m._id===id);
-    if(idx>-1)allMessages[idx]=updated;
-    renderMessages();updateMsgBadge();renderDashboard();
-  }catch(e){showToast(e.message,true);}
-}
-async function toggleMsgStar(id, starVal){
-  try{
-    const updated=await api('PUT','/api/admin/messages/'+id,{starred:starVal});
-    const idx=allMessages.findIndex(m=>m._id===id);
-    if(idx>-1)allMessages[idx]=updated;
-    renderMessages();
-  }catch(e){showToast(e.message,true);}
-}
-async function deleteMsg(id){
-  if(!confirm('Delete this message?'))return;
-  try{await api('DELETE','/api/admin/messages/'+id);allMessages=allMessages.filter(m=>m._id!==id);renderMessages();updateMsgBadge();renderDashboard();showToast('Message deleted');}
-  catch(e){showToast(e.message,true);}
 }
 
-// ── SETTINGS ───────────────────────────────────
-function renderSettingsToggles(){
-  const s=allData.settings;
-  setToggle('toggle-available',s.available==='1'||s.available===true);
-  setToggle('toggle-freelance',!!s.freelance);
-  setToggle('toggle-projects',s.show_projects!==false);
-  setToggle('toggle-skills',s.show_skills!==false);
-  setToggle('toggle-career',s.show_career!==false);
-  setToggle('toggle-blog',s.show_blog!==false);
-  setToggle('toggle-testimonials',s.show_testimonials!==false);
-  setToggle('toggle-contact',s.show_contact!==false);
-}
-function setToggle(id,val){const el=document.getElementById(id);val?el.classList.add('on'):el.classList.remove('on');}
-async function saveSettings(){
-  const body={available:document.getElementById('toggle-available').classList.contains('on')?'1':'0',freelance:document.getElementById('toggle-freelance').classList.contains('on'),show_projects:document.getElementById('toggle-projects').classList.contains('on'),show_skills:document.getElementById('toggle-skills').classList.contains('on'),show_career:document.getElementById('toggle-career').classList.contains('on'),show_blog:document.getElementById('toggle-blog').classList.contains('on'),show_testimonials:document.getElementById('toggle-testimonials').classList.contains('on'),show_contact:document.getElementById('toggle-contact').classList.contains('on')};
-  try{allData.settings=await api('PUT','/api/admin/settings',body);showToast('Settings saved! ✓');}
-  catch(e){showToast(e.message,true);}
-}
-async function changePassword(){
-  const np=document.getElementById('new-pw').value,cp=document.getElementById('confirm-pw').value;
-  if(!np)return showToast('Enter a new password',true);if(np.length<6)return showToast('Min 6 characters required',true);if(np!==cp)return showToast('Passwords do not match',true);
-  try{await api('PUT','/api/admin/settings',{new_password:np});document.getElementById('new-pw').value='';document.getElementById('confirm-pw').value='';showToast('Password updated! ✓');}
-  catch(e){showToast(e.message,true);}
+function updateProjImagePreview(url) {
+  const wrap = document.getElementById('proj-img-preview-wrap');
+  const img  = document.getElementById('proj-img-preview');
+  if (url && url.trim()) { wrap.style.display='flex'; img.src=url; }
+  else { wrap.style.display='none'; img.src=''; }
 }
 
-// ── UI HELPERS ─────────────────────────────────
-function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const pageEl=document.getElementById('page-'+id);if(pageEl)pageEl.classList.add('active');
-  if(el){el.classList.add('active');}else{const navEl=document.querySelector('.nav-item[data-page="'+id+'"]');if(navEl)navEl.classList.add('active');}
-  const titles={dashboard:'Dashboard',profile:'Profile & Photo',projects:'Projects',jobs:'Career / Jobs',skills:'Skills',blog:'Blog Posts',testimonials:'Testimonials',messages:'Messages',settings:'Site Settings'};
-  document.getElementById('page-title').textContent=titles[id]||id;
-  if(id==='messages'){loadMessages();}
-  if(window.innerWidth<=768)closeSidebar();
+function editProject(id) {
+  const p = allData.projects.find(x => x._id === id); if (!p) return;
+  document.getElementById('proj-id').value     = p._id;
+  document.getElementById('proj-name').value   = p.name       || '';
+  document.getElementById('proj-status').value = p.status     || 'WIP';
+  document.getElementById('proj-desc').value   = p.description|| '';
+  document.getElementById('proj-github').value = p.github     || '';
+  document.getElementById('proj-live').value   = p.live       || '';
+  document.getElementById('proj-image').value  = p.image_url  || '';
+  document.getElementById('proj-tech').value   = (p.tech_tags||[]).join(', ');
+  updateProjImagePreview(p.image_url || '');
+  document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">✎</span> Edit Project';
+  document.getElementById('project-form-panel').scrollIntoView({ behavior:'smooth' });
 }
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function statusBadge(status){const map={Live:'badge-green',WIP:'badge-blue',Archived:'badge-purple'};return `<span class="badge ${map[status]||'badge-purple'}">${esc(status)}</span>`;}
-function relTime(dateStr){if(!dateStr)return '';const d=new Date(dateStr),now=new Date(),diff=now-d;if(diff<60000)return 'just now';if(diff<3600000)return Math.floor(diff/60000)+'m ago';if(diff<86400000)return Math.floor(diff/3600000)+'h ago';if(diff<604800000)return Math.floor(diff/86400000)+'d ago';return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
+
+function clearProjectForm() {
+  document.getElementById('proj-id').value = '';
+  ['proj-name','proj-desc','proj-github','proj-live','proj-image','proj-tech'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('proj-status').value = 'WIP';
+  document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">+</span> Add / Edit Project';
+  updateProjImagePreview('');
+}
+
+async function saveProject() {
+  const id = document.getElementById('proj-id').value;
+  const body = {
+    name:        document.getElementById('proj-name').value.trim(),
+    status:      document.getElementById('proj-status').value,
+    description: document.getElementById('proj-desc').value,
+    github:      document.getElementById('proj-github').value.trim(),
+    live:        document.getElementById('proj-live').value.trim(),
+    image_url:   document.getElementById('proj-image').value.trim(),
+    tech_tags:   document.getElementById('proj-tech').value.split(',').map(s=>s.trim()).filter(Boolean)
+  };
+  if (!id) body.order = allData.projects.length;
+  if (!body.name) return showToast('Project name required', true);
+  try {
+    if (id) await api('PUT',  '/api/admin/projects/' + id, body);
+    else    await api('POST', '/api/admin/projects', body);
+    clearProjectForm();
+    allData.projects = await api('GET', '/api/admin/projects');
+    orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
+    renderProjects();
+    renderDashboard();
+    showToast('Project saved! ✓ Order section mein adjust karo agar chahiye.');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project?')) return;
+  try {
+    await api('DELETE', '/api/admin/projects/' + id);
+    allData.projects = await api('GET', '/api/admin/projects');
+    orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
+    renderProjects();
+    renderDashboard();
+    showToast('Project deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// JOBS
+// ─────────────────────────────────────────────
+function renderJobs() {
+  const jobs = allData.jobs;
+  document.getElementById('jobs-count').textContent = `Career Timeline (${jobs.length} jobs)`;
+  const table = document.getElementById('jobs-table');
+  if (!jobs.length) { table.innerHTML = '<div class="empty-state">No jobs yet</div>'; return; }
+  table.innerHTML = `<table>
+    <tr><th>#</th><th>Company</th><th>Role</th><th>Period</th><th>Status</th><th>Actions</th></tr>
+    ${jobs.map((j,i) => `<tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(j.company)}</strong></td>
+      <td>${esc(j.role)}</td>
+      <td>${esc(j.date_text||'')}</td>
+      <td>${j.is_current?'<span class="badge badge-green">Current</span>':'<span class="badge badge-purple">Past</span>'}</td>
+      <td style="display:flex;gap:6px;">
+        <button class="icon-btn" onclick="editJob('${j._id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteJob('${j._id}')">✕</button>
+      </td>
+    </tr>`).join('')}
+  </table>`;
+}
+
+function editJob(id) {
+  const j = allData.jobs.find(x => x._id === id); if (!j) return;
+  const parts = (j.date_text||'').split(' – ');
+  const start = parts[0] || '';
+  const end   = parts[1] || '';
+  document.getElementById('job-id').value          = j._id;
+  document.getElementById('job-company').value     = j.company     || '';
+  document.getElementById('job-role').value        = j.role        || '';
+  document.getElementById('job-start').value       = start;
+  document.getElementById('job-end').value         = end;
+  document.getElementById('job-bullets').value     = (j.bullets||[]).join('\n');
+  document.getElementById('job-tech').value        = (j.tech_tags||[]).join(', ');
+  document.getElementById('job-theme').value       = j.panel_theme || 'theme-blue';
+  document.getElementById('job-current').value     = j.is_current ? 'true' : 'false';
+  document.getElementById('job-panel-title').value = j.panel_title || '';
+  document.querySelector('#page-jobs .form-panel').scrollIntoView({ behavior:'smooth' });
+}
+
+function clearJobForm() {
+  document.getElementById('job-id').value = '';
+  ['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title']
+    .forEach(id => document.getElementById(id).value='');
+  document.getElementById('job-current').value = 'false';
+  document.getElementById('job-theme').value   = 'theme-blue';
+}
+
+async function saveJob() {
+  const id    = document.getElementById('job-id').value;
+  const start = document.getElementById('job-start').value.trim();
+  const end   = document.getElementById('job-end').value.trim();
+  const body  = {
+    company:     document.getElementById('job-company').value.trim(),
+    role:        document.getElementById('job-role').value.trim(),
+    date_text:   end ? `${start} – ${end}` : start,
+    is_current:  document.getElementById('job-current').value === 'true',
+    bullets:     document.getElementById('job-bullets').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    tech_tags:   document.getElementById('job-tech').value.split(',').map(s=>s.trim()).filter(Boolean),
+    panel_theme: document.getElementById('job-theme').value,
+    panel_title: document.getElementById('job-panel-title').value.trim()
+  };
+  if (!body.company) return showToast('Company name required', true);
+  try {
+    if (id) await api('PUT',  '/api/admin/jobs/' + id, body);
+    else    await api('POST', '/api/admin/jobs', body);
+    clearJobForm();
+    allData.jobs = await api('GET', '/api/admin/jobs');
+    renderJobs();
+    renderDashboard();
+    showToast('Job saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteJob(id) {
+  if (!confirm('Delete this job?')) return;
+  try {
+    await api('DELETE', '/api/admin/jobs/' + id);
+    allData.jobs = await api('GET', '/api/admin/jobs');
+    renderJobs();
+    renderDashboard();
+    showToast('Job deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// SKILLS
+// ─────────────────────────────────────────────
+function renderSkills() {
+  const skills = allData.skills;
+  const list   = document.getElementById('skills-list');
+  if (!skills.length) { list.innerHTML = '<div class="empty-state">No skill categories yet</div>'; return; }
+  list.innerHTML = skills.map(s => `
+    <div class="form-panel" style="margin-bottom:0.8rem">
+      <div class="panel-title">
+        <span class="panel-icon">◎</span> ${esc(s.title)}
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="icon-btn" onclick="editSkill('${s._id}')">✎</button>
+          <button class="icon-btn del" onclick="deleteSkill('${s._id}')">✕</button>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">${esc(s.description||'')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${(s.tags||[]).map(t=>`<span class="badge badge-purple">${esc(t.label||t)}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function editSkill(id) {
+  const s = allData.skills.find(x => x._id === id); if (!s) return;
+  document.getElementById('skill-id').value    = s._id;
+  document.getElementById('skill-title').value = s.title        || '';
+  document.getElementById('skill-desc').value  = s.description  || '';
+  document.getElementById('skill-tags').value  = (s.tags||[]).map(t=>t.label||t).join(', ');
+  document.getElementById('skill-tools').value = (s.tools||[]).map(t=>t.name+'|'+t.icon_url).join('\n');
+  document.getElementById('skill-form-panel').scrollIntoView({ behavior:'smooth' });
+}
+
+function clearSkillForm() {
+  document.getElementById('skill-id').value = '';
+  ['skill-title','skill-desc','skill-tags','skill-tools'].forEach(id => document.getElementById(id).value='');
+}
+
+async function saveSkill() {
+  const id        = document.getElementById('skill-id').value;
+  const toolLines = document.getElementById('skill-tools').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const tools     = toolLines.map(line => {
+    const [name, icon_url] = line.split('|').map(s=>s.trim());
+    return (name && icon_url) ? { name, icon_url } : null;
+  }).filter(Boolean);
+  const body = {
+    title:       document.getElementById('skill-title').value.trim(),
+    description: document.getElementById('skill-desc').value.trim(),
+    tools,
+    tags: document.getElementById('skill-tags').value.split(',').map(s=>({ label:s.trim() })).filter(t=>t.label)
+  };
+  if (!body.title) return showToast('Category title required', true);
+  try {
+    if (id) await api('PUT',  '/api/admin/skills/' + id, body);
+    else    await api('POST', '/api/admin/skills', body);
+    clearSkillForm();
+    allData.skills = await api('GET', '/api/admin/skills');
+    renderSkills();
+    renderDashboard();
+    showToast('Skill saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteSkill(id) {
+  if (!confirm('Delete this skill category?')) return;
+  try {
+    await api('DELETE', '/api/admin/skills/' + id);
+    allData.skills = await api('GET', '/api/admin/skills');
+    renderSkills();
+    renderDashboard();
+    showToast('Skill deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// TESTIMONIALS
+// ─────────────────────────────────────────────
+function renderTestimonials() {
+  const testis = allData.testimonials;
+  document.getElementById('testi-count').textContent = `Testimonials (${testis.length})`;
+  const table = document.getElementById('testi-table');
+  if (!testis.length) { table.innerHTML = '<div class="empty-state">No testimonials yet</div>'; return; }
+  table.innerHTML = `<table>
+    <tr><th>Author</th><th>Role</th><th>Quote</th><th>Visible</th><th></th></tr>
+    ${testis.map(t => `<tr>
+      <td><strong>${esc(t.author_name)}</strong></td>
+      <td>${esc(t.author_role)}</td>
+      <td style="color:var(--muted)">${esc((t.quote||'').substring(0,40))}...</td>
+      <td>${t.visible?'<span class="badge badge-green">On</span>':'<span class="badge badge-red">Off</span>'}</td>
+      <td style="display:flex;gap:6px;">
+        <button class="icon-btn" onclick="editTesti('${t._id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteTesti('${t._id}')">✕</button>
+      </td>
+    </tr>`).join('')}
+  </table>`;
+}
+
+function editTesti(id) {
+  const t = allData.testimonials.find(x => x._id === id); if (!t) return;
+  document.getElementById('testi-id').value      = t._id;
+  document.getElementById('testi-name').value    = t.author_name  || '';
+  document.getElementById('testi-role').value    = t.author_role  || '';
+  document.getElementById('testi-emoji').value   = t.author_emoji || '🧑';
+  document.getElementById('testi-visible').value = t.visible ? 'true' : 'false';
+  document.getElementById('testi-quote').value   = t.quote        || '';
+  document.getElementById('testi-form-panel').scrollIntoView({ behavior:'smooth' });
+}
+
+function clearTestiForm() {
+  document.getElementById('testi-id').value = '';
+  ['testi-name','testi-role','testi-quote'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('testi-emoji').value   = '🧑';
+  document.getElementById('testi-visible').value = 'true';
+}
+
+async function saveTestimonial() {
+  const id   = document.getElementById('testi-id').value;
+  const body = {
+    author_name:  document.getElementById('testi-name').value.trim(),
+    author_role:  document.getElementById('testi-role').value.trim(),
+    author_emoji: document.getElementById('testi-emoji').value || '🧑',
+    visible:      document.getElementById('testi-visible').value === 'true',
+    quote:        document.getElementById('testi-quote').value.trim()
+  };
+  if (!body.author_name || !body.quote) return showToast('Name and quote required', true);
+  try {
+    if (id) await api('PUT',  '/api/admin/testimonials/' + id, body);
+    else    await api('POST', '/api/admin/testimonials', body);
+    clearTestiForm();
+    allData.testimonials = await api('GET', '/api/admin/testimonials');
+    renderTestimonials();
+    renderDashboard();
+    showToast('Testimonial saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteTesti(id) {
+  if (!confirm('Delete this testimonial?')) return;
+  try {
+    await api('DELETE', '/api/admin/testimonials/' + id);
+    allData.testimonials = await api('GET', '/api/admin/testimonials');
+    renderTestimonials();
+    renderDashboard();
+    showToast('Testimonial deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
+function renderSettingsToggles() {
+  const s = allData.settings;
+  setToggle('toggle-available',    s.available === '1' || s.available === true);
+  setToggle('toggle-freelance',    !!s.freelance);
+  setToggle('toggle-projects',     s.show_projects     !== false);
+  setToggle('toggle-skills',       s.show_skills       !== false);
+  setToggle('toggle-career',       s.show_career       !== false);
+  setToggle('toggle-testimonials', s.show_testimonials !== false);
+  setToggle('toggle-contact',      s.show_contact      !== false);
+}
+function setToggle(id, val) {
+  const el = document.getElementById(id);
+  val ? el.classList.add('on') : el.classList.remove('on');
+}
+async function saveSettings() {
+  const body = {
+    available:         document.getElementById('toggle-available').classList.contains('on') ? '1' : '0',
+    freelance:         document.getElementById('toggle-freelance').classList.contains('on'),
+    show_projects:     document.getElementById('toggle-projects').classList.contains('on'),
+    show_skills:       document.getElementById('toggle-skills').classList.contains('on'),
+    show_career:       document.getElementById('toggle-career').classList.contains('on'),
+    show_testimonials: document.getElementById('toggle-testimonials').classList.contains('on'),
+    show_contact:      document.getElementById('toggle-contact').classList.contains('on')
+  };
+  try {
+    allData.settings = await api('PUT', '/api/admin/settings', body);
+    showToast('Settings saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function changePassword() {
+  const np = document.getElementById('new-pw').value;
+  const cp = document.getElementById('confirm-pw').value;
+  if (!np)           return showToast('Enter a new password', true);
+  if (np.length < 6) return showToast('Min 6 characters required', true);
+  if (np !== cp)     return showToast('Passwords do not match', true);
+  try {
+    await api('PUT', '/api/admin/settings', { new_password: np });
+    document.getElementById('new-pw').value = '';
+    document.getElementById('confirm-pw').value = '';
+    showToast('Password updated! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// UI HELPERS
+// ─────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + id);
+  if (pageEl) pageEl.classList.add('active');
+  if (el) {
+    el.classList.add('active');
+  } else {
+    const navEl = document.querySelector('.nav-item[data-page="' + id + '"]');
+    if (navEl) navEl.classList.add('active');
+  }
+  const titles = {
+    dashboard:'Dashboard', profile:'Profile & Photo', projects:'Projects',
+    jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials', settings:'Site Settings'
+  };
+  document.getElementById('page-title').textContent = titles[id] || id;
+  if (window.innerWidth <= 768) closeSidebar();
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function statusBadge(status) {
+  const map = { Live:'badge-green', WIP:'badge-blue', Archived:'badge-purple' };
+  return `<span class="badge ${map[status]||'badge-purple'}">${esc(status)}</span>`;
+}
+
 let toastTimer;
-function showToast(msg,isError){const old=document.querySelector('.toast');if(old)old.remove();clearTimeout(toastTimer);const t=document.createElement('div');t.className='toast'+(isError?' error':'');t.innerHTML=`<div class="toast-dot"></div>${msg||'Done!'}`;document.body.appendChild(t);toastTimer=setTimeout(()=>{if(t.parentNode)t.remove();},4000);}
+function showToast(msg, isError) {
+  const old = document.querySelector('.toast'); if (old) old.remove();
+  clearTimeout(toastTimer);
+  const t = document.createElement('div');
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.innerHTML = `<div class="toast-dot"></div>${msg || 'Done!'}`;
+  document.body.appendChild(t);
+  toastTimer = setTimeout(() => { if (t.parentNode) t.remove(); }, 4000);
+}
 </script>
 </body>
 </html>
