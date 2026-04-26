@@ -24,9 +24,13 @@ const SettingsSchema = new mongoose.Schema({
   linkedin:           { type: String, default: '' },
   github:             { type: String, default: '' },
   photo_url:          { type: String, default: '', maxlength: 2000000 },
-  resume_url:         { type: String, default: '', maxlength: 8000000 }, // ✅ NEW: base64 PDF or external URL
+  resume_url:         { type: String, default: '', maxlength: 8000000 },
   available:          { type: String, default: '0' },
   show_testimonials:  { type: Boolean, default: true },
+  show_projects:      { type: Boolean, default: true },
+  show_skills:        { type: Boolean, default: true },
+  show_career:        { type: Boolean, default: true },
+  show_contact:       { type: Boolean, default: true },
   freelance:          { type: Boolean, default: false },
   admin_password_hash:{ type: String, select: false }
 }, { timestamps: true });
