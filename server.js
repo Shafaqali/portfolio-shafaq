@@ -7,7 +7,8 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 app.use(cors({ origin: '*' }));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 // ── MongoDB Connection ──────────────────────────────────────────────
 mongoose.connect(process.env.MONGODB_URI)
@@ -22,7 +23,8 @@ const SettingsSchema = new mongoose.Schema({
   email:              { type: String, default: '' },
   linkedin:           { type: String, default: '' },
   github:             { type: String, default: '' },
-  photo_url:          { type: String, default: '' },
+  photo_url:          { type: String, default: '', maxlength: 2000000 },
+  resume_url:         { type: String, default: '', maxlength: 8000000 }, // ✅ NEW: base64 PDF or external URL
   available:          { type: String, default: '0' },
   show_testimonials:  { type: Boolean, default: true },
   freelance:          { type: Boolean, default: false },
@@ -35,8 +37,10 @@ const ProjectSchema = new mongoose.Schema({
   status:      { type: String, enum: ['Live','WIP','Archived'], default: 'WIP' },
   github:      { type: String, default: '' },
   live:        { type: String, default: '' },
+  image_url:   { type: String, default: '' },
   tech_tags:   [String],
   featured:    { type: Boolean, default: false },
+  is_featured: { type: Boolean, default: false },
   order:       { type: Number, default: 0 }
 }, { timestamps: true });
 
@@ -93,14 +97,16 @@ app.get('/', (req, res) => res.json({ status: 'ok', message: 'Portfolio backend 
 // ── PUBLIC: Portfolio Data ──────────────────────────────────────────
 app.get('/api/portfolio', async (req, res) => {
   try {
-    const [settings, jobs, skillCategories, testimonials] = await Promise.all([
+    const [settings, projects, jobs, skillCategories, testimonials] = await Promise.all([
       Settings.findOne().select('-admin_password_hash'),
+      Project.find().sort({ order: 1, createdAt: -1 }),
       Job.find().sort({ order: 1, createdAt: -1 }),
       SkillCat.find().sort({ order: 1 }),
       Testimonial.find({ visible: true })
     ]);
     res.json({
       settings: settings || {},
+      projects,
       jobs,
       skillCategories,
       testimonials
@@ -122,7 +128,6 @@ app.post('/api/auth/login', async (req, res) => {
     if (settings?.admin_password_hash) {
       valid = await bcrypt.compare(password, settings.admin_password_hash);
     } else {
-      // Default password before first setup
       valid = (password === (process.env.ADMIN_PASSWORD || 'admin123'));
     }
 

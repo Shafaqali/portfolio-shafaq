@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard</title>
+  <title>Admin Panel — SA</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#c084fc" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AdminPanel" />
+  <link rel="apple-touch-icon" href="icon-192.svg" />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -14,15 +20,16 @@
     --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.11);
     --card:#161624; --now:#4ade80;
     --danger:#f87171; --success:#4ade80;
+    --sidebar-w: 220px;
+    --topbar-h: 52px;
   }
-  body { font-family: 'Instrument Sans', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
-  body::before { content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  body { font-family: 'Instrument Sans', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; overflow-x: hidden; }
+  body::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
     background-image: linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);
     background-size:48px 48px; }
 
-  /* Login Screen */
-  .login-screen { position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; align-items:center; justify-content:center; }
-  .login-box { background:var(--card); border:1px solid var(--border2); border-radius:18px; padding:2rem; width:340px; text-align:center; }
+  .login-screen { position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .login-box { background:var(--card); border:1px solid var(--border2); border-radius:18px; padding:2rem; width:100%; max-width:340px; text-align:center; }
   .login-logo { font-family:'Bricolage Grotesque',serif; font-size:1.5rem; font-weight:800; margin-bottom:0.5rem; }
   .login-logo em { font-style:normal; color:var(--accent); }
   .login-subtitle { font-size:0.78rem; color:var(--muted); margin-bottom:1.8rem; }
@@ -31,10 +38,12 @@
   .login-box .btn-primary { width:100%; padding:10px; justify-content:center; }
   .login-error { font-size:0.75rem; color:var(--danger); margin-top:0.5rem; min-height:18px; }
 
-  .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
+  .layout { display:flex; min-height:100vh; }
 
-  /* Sidebar */
-  .sidebar { width:220px; flex-shrink:0; background:rgba(13,13,24,0.92); border-right:1px solid var(--border2); display:flex; flex-direction:column; padding:1.2rem 0.8rem; gap:4px; }
+  .sidebar-overlay { display:block; position:fixed; inset:0; z-index:8999; background:rgba(0,0,0,0.7); opacity:0; transition:opacity .25s; pointer-events:none; }
+  .sidebar-overlay.visible { opacity:1; pointer-events:auto; }
+
+  .sidebar { width:var(--sidebar-w); flex-shrink:0; background:#0d0d18; border-right:1px solid var(--border2); display:flex; flex-direction:column; padding:1.2rem 0.8rem; gap:4px; position:relative; z-index:1; transition:transform .28s cubic-bezier(.4,0,.2,1); }
   .sidebar-logo { font-family:'Bricolage Grotesque','Georgia',serif; font-weight:800; font-size:1rem; letter-spacing:-0.02em; color:var(--text); padding:0.4rem 0.8rem 1.2rem; border-bottom:1px solid var(--border); margin-bottom:0.5rem; }
   .sidebar-logo em { font-style:normal; color:var(--accent); }
   .sidebar-logo span { font-size:0.65rem; font-weight:600; color:var(--muted); display:block; letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
@@ -50,12 +59,20 @@
   .user-name { font-size:0.75rem; font-weight:600; color:var(--text); }
   .user-role { font-size:0.65rem; color:var(--muted); }
 
-  /* Main */
-  .main { flex:1; overflow:auto; display:flex; flex-direction:column; }
-  .topbar { height:52px; background:rgba(13,13,24,0.82); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; flex-shrink:0; }
-  .topbar-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:1rem; font-weight:700; letter-spacing:-0.02em; }
-  .topbar-actions { display:flex; gap:8px; align-items:center; }
-  .btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; font-size:0.75rem; font-weight:600; cursor:pointer; border:none; transition:all .15s; font-family:inherit; }
+  .main { flex:1; overflow:auto; display:flex; flex-direction:column; min-width:0; }
+  .topbar { height:var(--topbar-h); background:#0d0d18; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 1rem; flex-shrink:0; gap:8px; position:sticky; top:0; z-index:500; }
+  .topbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
+  .topbar-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:1rem; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .topbar-actions { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+
+  .hamburger { display:none; background:none; border:1px solid var(--border2); color:var(--text); cursor:pointer; width:36px; height:36px; border-radius:9px; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; flex-direction:column; gap:5px; padding:8px; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .hamburger:hover { background:rgba(128,128,128,0.1); }
+  .hamburger span { display:block; width:18px; height:2px; background:var(--text); border-radius:2px; transition:all .25s cubic-bezier(.4,0,.2,1); transform-origin:center; }
+  .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:8px; font-size:0.75rem; font-weight:600; cursor:pointer; border:none; transition:all .15s; font-family:inherit; white-space:nowrap; }
   .btn-primary { background:var(--accent); color:#0d0d18; }
   .btn-primary:hover { filter:brightness(1.1); }
   .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border2); }
@@ -63,11 +80,10 @@
   .btn-danger { background:rgba(248,113,113,0.12); color:var(--danger); border:1px solid rgba(248,113,113,0.25); }
   .btn:disabled { opacity:0.5; cursor:not-allowed; }
 
-  .content { padding:1.5rem; flex:1; }
+  .content { padding:1.2rem; flex:1; }
   .page { display:none; }
   .page.active { display:block; }
 
-  /* Stats row */
   .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem; }
   .stat-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem 1.1rem; }
   .stat-label { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
@@ -75,27 +91,25 @@
   .stat-sub { font-size:0.68rem; color:var(--muted); margin-top:3px; }
   .stat-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block; margin-right:4px; }
 
-  /* Section title */
-  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; gap:8px; flex-wrap:wrap; }
   .section-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.9rem; font-weight:700; letter-spacing:-0.01em; }
 
-  /* Table */
-  .table-wrap { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; }
-  table { width:100%; border-collapse:collapse; }
-  th { font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px; text-align:left; border-bottom:1px solid var(--border2); background:rgba(255,255,255,0.02); }
+  .table-wrap { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; min-width:400px; }
+  th { font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px; text-align:left; border-bottom:1px solid var(--border2); background:rgba(255,255,255,0.02); white-space:nowrap; }
   td { padding:10px 14px; font-size:0.78rem; color:var(--text); border-bottom:1px solid var(--border); }
   tr:last-child td { border-bottom:none; }
   tr:hover td { background:rgba(255,255,255,0.02); }
-  .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:6px; font-size:0.65rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
+  .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:6px; font-size:0.65rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; white-space:nowrap; }
   .badge-purple { background:rgba(192,132,252,0.12); color:var(--accent); border:1px solid rgba(192,132,252,0.25); }
   .badge-green { background:rgba(74,222,128,0.1); color:var(--now); border:1px solid rgba(74,222,128,0.25); }
   .badge-blue { background:rgba(56,189,248,0.1); color:#38bdf8; border:1px solid rgba(56,189,248,0.25); }
   .badge-red { background:rgba(248,113,113,0.1); color:var(--danger); border:1px solid rgba(248,113,113,0.25); }
-  .icon-btn { background:none; border:1px solid var(--border2); color:var(--muted); width:28px; height:28px; border-radius:7px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:13px; transition:all .15s; }
-  .icon-btn:hover { color:var(--text); border-color:var(--border2); background:rgba(128,128,128,0.1); }
+  .badge-gold { background:rgba(251,191,36,0.1); color:#fbbf24; border:1px solid rgba(251,191,36,0.28); }
+  .icon-btn { background:none; border:1px solid var(--border2); color:var(--muted); width:28px; height:28px; border-radius:7px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:13px; transition:all .15s; flex-shrink:0; }
+  .icon-btn:hover { color:var(--text); background:rgba(128,128,128,0.1); }
   .icon-btn.del:hover { color:var(--danger); border-color:rgba(248,113,113,0.4); }
 
-  /* Form */
   .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
   .form-group { display:flex; flex-direction:column; gap:5px; }
   .form-group.full { grid-column:1/-1; }
@@ -105,21 +119,15 @@
   textarea { resize:vertical; min-height:80px; }
   select option { background:var(--bg3); }
 
-  /* Card form panel */
   .form-panel { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1.2rem; }
   .form-panel + .form-panel { margin-top:1rem; }
   .panel-title { font-size:0.78rem; font-weight:700; color:var(--text); margin-bottom:1rem; padding-bottom:0.6rem; border-bottom:1px solid var(--border2); display:flex; align-items:center; gap:6px; }
   .panel-icon { font-size:14px; }
 
-  /* Photo upload area */
-  .upload-zone { border:1.5px dashed var(--border2); border-radius:12px; padding:1.5rem; text-align:center; cursor:pointer; transition:border-color .15s; position:relative; }
-  .upload-zone:hover { border-color:rgba(192,132,252,0.5); }
-  .upload-icon { font-size:1.8rem; margin-bottom:8px; opacity:0.4; }
-  .upload-text { font-size:0.75rem; color:var(--muted); }
-  .upload-text strong { color:var(--accent); }
+  .img-preview-wrap { margin-top:8px; border-radius:10px; overflow:hidden; border:1px solid var(--border2); background:var(--bg3); height:110px; display:flex; align-items:center; justify-content:center; }
+  .img-preview-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
 
-  /* Toggle switch */
-  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); gap:12px; }
   .toggle-row:last-child { border-bottom:none; }
   .toggle-label { font-size:0.78rem; color:var(--text); font-weight:500; }
   .toggle-desc { font-size:0.68rem; color:var(--muted); margin-top:1px; }
@@ -128,126 +136,320 @@
   .toggle::after { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:3px; left:3px; transition:transform .2s; }
   .toggle.on::after { transform:translateX(18px); }
 
-  /* Skill tags */
-  .tags-input { display:flex; flex-wrap:wrap; gap:6px; padding:8px; background:var(--bg3); border:1px solid var(--border2); border-radius:9px; min-height:42px; cursor:text; }
-  .tag { display:inline-flex; align-items:center; gap:4px; background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.25); color:var(--accent); border-radius:6px; padding:2px 8px; font-size:0.7rem; font-weight:600; }
-  .tag-x { cursor:pointer; opacity:0.6; font-size:11px; }
-  .tag-x:hover { opacity:1; }
+  /* ORDER LIST */
+  .order-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1rem; }
+  .order-item {
+    display:flex; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--border2);
+    border-radius:12px; padding:10px 12px;
+    transition:border-color .15s, background .15s;
+    cursor:default;
+  }
+  .order-item:hover { border-color:rgba(192,132,252,0.3); background:rgba(192,132,252,0.04); }
+  .order-item.dragging { opacity:0.5; border-color:var(--accent); background:rgba(192,132,252,0.08); }
+  .order-item.drag-over { border-color:var(--accent); border-style:dashed; background:rgba(192,132,252,0.06); }
+  .order-num {
+    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-size:0.72rem; font-weight:800; flex-shrink:0; letter-spacing:0.04em;
+    background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.2); color:var(--accent);
+  }
+  .order-num.top3 {
+    background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); color:#fbbf24;
+  }
+  .order-thumb {
+    width:38px; height:38px; border-radius:8px; object-fit:cover; flex-shrink:0;
+    background:var(--bg3); border:1px solid var(--border2);
+    display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden;
+  }
+  .order-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .order-info { flex:1; min-width:0; }
+  .order-name { font-size:0.82rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .order-meta { font-size:0.68rem; color:var(--muted); margin-top:1px; }
+  .order-controls { display:flex; gap:4px; flex-shrink:0; }
+  .order-btn {
+    width:28px; height:28px; border-radius:7px; border:1px solid var(--border2);
+    background:none; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    font-size:12px; transition:all .15s; font-family:inherit;
+  }
+  .order-btn:hover { color:var(--text); background:rgba(192,132,252,0.1); border-color:rgba(192,132,252,0.3); }
+  .order-btn:disabled { opacity:0.25; cursor:not-allowed; }
+  .drag-handle {
+    cursor:grab; color:var(--dim); padding:0 2px; font-size:14px; flex-shrink:0;
+    display:flex; align-items:center;
+  }
+  .drag-handle:active { cursor:grabbing; }
+  .feat-label {
+    font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
+    color:#fbbf24; background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25);
+    border-radius:5px; padding:1px 6px; flex-shrink:0; white-space:nowrap;
+  }
+  .order-save-bar {
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 14px; background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.2);
+    border-radius:10px; margin-bottom:1rem;
+  }
+  .order-save-hint { font-size:0.73rem; color:var(--muted); }
+  .order-save-hint strong { color:var(--accent); }
 
-  /* Toast */
-  .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--card); border:1px solid rgba(74,222,128,0.3); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.78rem; font-weight:600; display:flex; align-items:center; gap:7px; z-index:999; animation:slideIn .3s ease; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
-  .toast.error { border-color:rgba(248,113,113,0.4); }
-  @keyframes slideIn { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
-  .toast-dot { width:7px; height:7px; border-radius:50%; background:var(--now); }
-  .toast.error .toast-dot { background:var(--danger); }
-
-  /* Project card grid */
+  /* project cards grid */
   .project-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
-  .project-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem; transition:border-color .2s; }
+  .project-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
   .project-card:hover { border-color:rgba(192,132,252,0.35); }
+  .project-card-thumb { width:100%; height:110px; object-fit:cover; display:block; background:var(--bg3); }
+  .project-card-thumb-placeholder { width:100%; height:110px; background:linear-gradient(135deg,#1a1a3e,#0d0d20); display:flex; align-items:center; justify-content:center; font-size:1.6rem; opacity:0.3; }
+  .project-card-body { padding:0.85rem; }
   .project-name { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.95rem; font-weight:700; margin-bottom:4px; }
   .project-desc { font-size:0.75rem; color:var(--muted); line-height:1.55; margin-bottom:10px; }
   .project-actions { display:flex; gap:6px; align-items:center; }
   .project-tech { display:flex; flex-wrap:wrap; gap:4px; flex:1; }
   .tech-chip { font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:5px; background:var(--border); border:1px solid var(--border2); color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; }
 
+  /* ── RESUME UPLOAD ZONE ── */
+  .resume-zone {
+    border:1.5px dashed var(--border2); border-radius:12px; padding:1.1rem;
+    text-align:center; cursor:pointer; transition:border-color .2s, background .2s;
+  }
+  .resume-zone:hover { border-color:rgba(192,132,252,0.45); background:rgba(192,132,252,0.04); }
+  .resume-zone.has-file { border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.04); }
+  .resume-status-bar {
+    display:flex; align-items:center; gap:10px; margin-top:8px;
+    background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.2);
+    border-radius:9px; padding:8px 12px;
+  }
+  .resume-status-icon { font-size:1.1rem; flex-shrink:0; }
+  .resume-status-text { flex:1; font-size:0.75rem; color:var(--now); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .resume-status-actions { display:flex; gap:6px; flex-shrink:0; }
+
   .divider { height:1px; background:var(--border); margin:1.2rem 0; }
   .row { display:flex; gap:1rem; }
-  .col-6 { flex:1; }
+  .col-6 { flex:1; min-width:0; }
 
-  /* Loading */
   .loading { text-align:center; color:var(--muted); padding:2rem; font-size:0.8rem; }
   .empty-state { text-align:center; color:var(--muted); padding:2rem; font-size:0.82rem; }
+
+  .field-hint { font-size:0.68rem; color:var(--muted); margin-top:4px; line-height:1.5; }
+  .field-hint a { color:var(--accent); text-decoration:none; }
+  .field-hint a:hover { text-decoration:underline; }
+
+  .btn-install { display:none; align-items:center; gap:7px; background:linear-gradient(135deg,rgba(192,132,252,0.15),rgba(124,58,237,0.12)); border:1px solid rgba(192,132,252,0.35); color:var(--accent); padding:6px 13px; border-radius:9px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all .2s; white-space:nowrap; }
+  .btn-install:hover { border-color:rgba(192,132,252,0.6); box-shadow:0 0 16px rgba(192,132,252,0.2); }
+  .btn-install.visible { display:inline-flex; }
+  .pwa-installed-badge { display:none; align-items:center; gap:5px; font-size:0.68rem; font-weight:700; color:var(--now); letter-spacing:0.05em; text-transform:uppercase; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.2); border-radius:7px; padding:4px 9px; }
+  .pwa-installed-badge.visible { display:inline-flex; }
+  .pwa-banner { display:none; position:fixed; bottom:0; left:0; right:0; z-index:888; background:rgba(22,22,36,0.97); border-top:1px solid rgba(192,132,252,0.25); backdrop-filter:blur(20px); padding:14px 16px 20px; align-items:center; gap:12px; }
+  .pwa-banner.visible { display:flex; }
+  .pwa-banner-icon { width:46px; height:46px; border-radius:12px; background:linear-gradient(135deg,#1a1a3e,#0d0d18); border:1px solid rgba(192,132,252,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .pwa-banner-text { flex:1; min-width:0; }
+  .pwa-banner-title { font-size:0.85rem; font-weight:700; color:var(--text); }
+  .pwa-banner-sub { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+  .pwa-banner-actions { display:flex; gap:8px; flex-shrink:0; }
+  .pwa-banner-close { background:none; border:none; color:var(--muted); cursor:pointer; padding:4px; font-size:16px; line-height:1; }
+  .pwa-install-main { background:var(--accent); color:#0d0d18; border:none; border-radius:8px; padding:8px 16px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; }
+
+  .toast { position:fixed; bottom:1.5rem; right:1.5rem; left:1.5rem; max-width:340px; margin:0 auto; background:var(--card); border:1px solid rgba(74,222,128,0.3); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.78rem; font-weight:600; display:flex; align-items:center; gap:7px; z-index:9999; animation:slideIn .3s ease; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+  .toast.error { border-color:rgba(248,113,113,0.4); }
+  @keyframes slideIn { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  .toast-dot { width:7px; height:7px; border-radius:50%; background:var(--now); flex-shrink:0; }
+  .toast.error .toast-dot { background:var(--danger); }
+
+  .conn-banner { display:none; align-items:center; gap:8px; background:rgba(248,113,113,0.1); border-bottom:1px solid rgba(248,113,113,0.25); padding:8px 1rem; font-size:0.75rem; color:var(--danger); }
+  .conn-banner.visible { display:flex; }
+  .conn-banner button { margin-left:auto; background:rgba(248,113,113,0.15); border:1px solid rgba(248,113,113,0.3); color:var(--danger); border-radius:6px; padding:3px 10px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; }
+  .conn-banner button:hover { background:rgba(248,113,113,0.25); }
+
+  @media (max-width: 768px) {
+    .hamburger { display:inline-flex; }
+    .sidebar { position:fixed; top:0; left:0; bottom:0; z-index:9000; transform:translateX(-100%); box-shadow:4px 0 30px rgba(0,0,0,0.8); overflow-y:auto; }
+    .sidebar.open { transform:translateX(0); }
+    .sidebar-close { display:flex; align-items:center; justify-content:flex-end; margin-bottom:0.5rem; }
+    .sidebar-close-btn { background:none; border:1px solid var(--border2); color:var(--muted); cursor:pointer; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+    .sidebar-close-btn:hover { color:var(--danger); border-color:rgba(248,113,113,0.4); }
+    .main { width:100%; }
+    .btn-view-portfolio span { display:none; }
+    .stats-row { grid-template-columns:1fr 1fr; gap:8px; margin-bottom:1rem; }
+    .stat-value { font-size:1.3rem; }
+    .row { flex-direction:column; }
+    .col-6 { width:100%; }
+    .project-grid { grid-template-columns:1fr; }
+    .form-grid { grid-template-columns:1fr; }
+    .form-group.full { grid-column:1; }
+    .content { padding:0.9rem; }
+    .table-wrap { -webkit-overflow-scrolling:touch; }
+    .toast { left:1rem; right:1rem; max-width:none; bottom:1rem; }
+    .form-panel { padding:1rem; }
+  }
+  @media (max-width: 420px) {
+    .stats-row { grid-template-columns:1fr 1fr; gap:6px; }
+    .stat-card { padding:0.75rem 0.8rem; }
+    .stat-label { font-size:0.6rem; }
+    .stat-value { font-size:1.1rem; }
+    .topbar { padding:0 0.75rem; }
+    .content { padding:0.75rem; }
+    .section-head .btn { padding:5px 10px; font-size:0.7rem; }
+  }
+  @media (min-width: 769px) {
+    .sidebar-close { display:none; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ── LOGIN SCREEN ── -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
-    <div class="login-logo">MN<em>.</em></div>
+    <div class="login-logo">SA<em>.</em></div>
     <div class="login-subtitle">Admin Panel — Enter your password</div>
-    <input type="password" id="login-pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <input type="password" id="login-pw" placeholder="Password" />
     <button class="btn btn-primary" onclick="doLogin()">Login →</button>
     <div class="login-error" id="login-err"></div>
   </div>
 </div>
 
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <div class="layout" id="app" style="display:none">
-  <aside class="sidebar">
-    <div class="sidebar-logo">MN<em>.</em><span>Admin Panel</span></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-close">
+      <button class="sidebar-close-btn" onclick="closeSidebar()" title="Close menu">✕</button>
+    </div>
+    <div class="sidebar-logo">SA<em>.</em><span>Admin Panel</span></div>
     <div class="nav-section">Main</div>
-    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">⬡</span> Dashboard</div>
-    <div class="nav-item" onclick="showPage('profile',this)"><span class="nav-icon">◈</span> Profile & Photo</div>
+    <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" data-page="profile" onclick="showPage('profile',this)"><span class="nav-icon">◈</span> Profile & Photo</div>
     <div class="nav-section">Content</div>
-    <div class="nav-item" onclick="showPage('projects',this)"><span class="nav-icon">◻</span> Projects</div>
-    <div class="nav-item" onclick="showPage('jobs',this)"><span class="nav-icon">◈</span> Career / Jobs</div>
-    <div class="nav-item" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
-    <div class="nav-item" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
+    <div class="nav-item" data-page="projects" onclick="showPage('projects',this)"><span class="nav-icon">◻</span> Projects</div>
+    <div class="nav-item" data-page="jobs" onclick="showPage('jobs',this)"><span class="nav-icon">◈</span> Career / Jobs</div>
+    <div class="nav-item" data-page="skills" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
+    <div class="nav-item" data-page="testimonials" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
     <div class="nav-section">Settings</div>
-    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⊙</span> Site Settings</div>
+    <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⊙</span> Site Settings</div>
     <div class="sidebar-bottom">
       <div class="user-pill" onclick="logout()" title="Click to logout">
-        <div class="user-avatar" id="side-avatar">MN</div>
-        <div><div class="user-name" id="side-name">Mohammed Natsha</div><div class="user-role">Admin · Logout</div></div>
+        <div class="user-avatar" id="side-avatar">SA</div>
+        <div><div class="user-name" id="side-name">Shafaq Ali</div><div class="user-role">Admin · Logout</div></div>
       </div>
     </div>
   </aside>
 
   <div class="main">
+    <div class="conn-banner" id="conn-banner">
+      ⚠️ Server se connect nahi ho pa raha. Render free tier pe server 50-60 seconds mein wake up hoga — thoda wait karo.
+      <button onclick="retryLoad()">Retry</button>
+    </div>
+
     <div class="topbar">
-      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+      </div>
       <div class="topbar-actions">
-        <button class="btn btn-ghost" onclick="window.open('index.html','_blank')">⬡ View Portfolio</button>
+        <button class="btn-install" id="pwa-install-btn" onclick="triggerInstall()" title="Install as App">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v13M7 11l5 5 5-5"/><path d="M3 18h18v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"/>
+          </svg>
+          <span class="btn-install-label">Install App</span>
+        </button>
+        <span class="pwa-installed-badge" id="pwa-installed-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+          Installed
+        </span>
+        <button class="btn btn-ghost btn-view-portfolio" onclick="window.open('index.html','_blank')">⬡ <span>View Portfolio</span></button>
       </div>
     </div>
 
     <div class="content">
 
-      <!-- DASHBOARD -->
+      <!-- ── DASHBOARD ── -->
       <div class="page active" id="page-dashboard">
         <div class="stats-row">
           <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value" id="stat-projects">—</div><div class="stat-sub"><span class="stat-dot"></span><span id="stat-projects-sub">loading...</span></div></div>
-          <div class="stat-card"><div class="stat-label">Jobs / Companies</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
-          <div class="stat-card"><div class="stat-label">Skill Categories</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
-          <div class="stat-card"><div class="stat-label">Testimonials</div><div class="stat-value" id="stat-testi">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span>total</div></div>
+          <div class="stat-card"><div class="stat-label">Jobs</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
+          <div class="stat-card"><div class="stat-label">Skills</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
+          <div class="stat-card"><div class="stat-label">Reviews</div><div class="stat-value" id="stat-testi">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span>total</div></div>
         </div>
         <div class="row">
           <div class="col-6">
-            <div class="section-head"><div class="section-title">Recent Projects</div><button class="btn btn-ghost" onclick="showPage('projects',null)">View all</button></div>
+            <div class="section-head"><div class="section-title">Recent Projects</div><button class="btn btn-ghost" onclick="showPage('projects')">View all</button></div>
             <div class="table-wrap" id="dash-projects-table"><div class="loading">Loading...</div></div>
           </div>
           <div class="col-6">
             <div class="section-head"><div class="section-title">Quick Actions</div></div>
             <div class="form-panel">
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('projects',null)">+ Add new project</button>
-                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('jobs',null)">+ Add job / experience</button>
-                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('skills',null)">+ Add skill category</button>
-                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('testimonials',null)">+ Add testimonial</button>
-                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('profile',null)">✎ Edit profile</button>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('projects')">+ Add new project</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('jobs')">+ Add job / experience</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('skills')">+ Add skill category</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('testimonials')">+ Add testimonial</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('profile')">✎ Edit profile</button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PROFILE -->
+      <!-- ── PROFILE ── -->
       <div class="page" id="page-profile">
         <div class="row">
           <div class="col-6">
             <div class="form-panel">
               <div class="panel-title"><span class="panel-icon">◈</span> Basic Info</div>
               <div class="form-grid">
-                <div class="form-group full"><label>Full Name</label><input id="p-name" placeholder="Mohammed Natsha" /></div>
+                <div class="form-group full"><label>Full Name</label><input id="p-name" placeholder="Shafaq Ali" /></div>
                 <div class="form-group full"><label>Tagline / Role</label><input id="p-tagline" placeholder="Full-Stack Developer" /></div>
-                <div class="form-group full"><label>Bio (short description)</label><textarea id="p-bio" placeholder="A short bio that appears on the homepage..."></textarea></div>
-                <div class="form-group"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com" /></div>
-                <div class="form-group"><label>GitHub URL</label><input id="p-github" placeholder="https://github.com/..." /></div>
+                <div class="form-group full"><label>Bio</label><textarea id="p-bio" placeholder="A short bio..."></textarea></div>
+                <div class="form-group full"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com" /></div>
+                <div class="form-group full"><label>GitHub URL</label><input id="p-github" placeholder="https://github.com/..." /></div>
                 <div class="form-group full"><label>LinkedIn URL</label><input id="p-linkedin" placeholder="https://linkedin.com/in/..." /></div>
-                <div class="form-group full"><label>Photo URL</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
+
+                <!-- ── PHOTO UPLOAD ── -->
+                <div class="form-group full">
+                  <label>Photo Upload</label>
+                  <input type="file" id="photo-file-input" accept="image/*" style="display:none" />
+                  <div id="upload-zone" style="border:1.5px dashed var(--border2);border-radius:12px;padding:1.2rem;text-align:center;cursor:pointer;" onclick="document.getElementById('photo-file-input').click()">
+                    <div style="font-size:1.8rem;margin-bottom:6px;">📸</div>
+                    <div style="font-size:0.78rem;color:var(--muted)"><strong style="color:var(--accent)">Click karo image select karne ke liye</strong><br>JPG, PNG, WEBP — max 5MB</div>
+                  </div>
+                  <div id="upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
+                  <div id="upload-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
+                    <div id="upload-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div>
+                  </div>
+                </div>
+                <div class="form-group full"><label>Ya Photo URL paste karo</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
+
+                <!-- ── RESUME UPLOAD ── -->
+                <div class="form-group full">
+                  <label>Resume / CV Upload</label>
+                  <input type="file" id="resume-file-input" accept=".pdf,application/pdf" style="display:none" />
+                  <div class="resume-zone" id="resume-upload-zone" onclick="document.getElementById('resume-file-input').click()">
+                    <div style="font-size:1.8rem;margin-bottom:6px;">📄</div>
+                    <div style="font-size:0.78rem;color:var(--muted)">
+                      <strong style="color:var(--accent)">Click karo PDF select karne ke liye</strong><br>
+                      Sirf PDF — max 5MB
+                    </div>
+                  </div>
+                  <div id="resume-upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
+                  <div id="resume-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
+                    <div id="resume-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div>
+                  </div>
+                  <!-- Resume status bar — shown when resume is set -->
+                  <div class="resume-status-bar" id="resume-status-bar" style="display:none;">
+                    <span class="resume-status-icon">📄</span>
+                    <span class="resume-status-text" id="resume-status-text">Resume set hai</span>
+                    <div class="resume-status-actions">
+                      <a id="resume-view-btn" href="#" target="_blank" class="btn btn-ghost" style="padding:4px 10px;font-size:0.7rem;">👁 View</a>
+                      <button class="btn btn-danger" style="padding:4px 10px;font-size:0.7rem;" onclick="clearResume()">✕ Remove</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group full">
+                  <label>Ya Resume URL paste karo (Google Drive / Dropbox)</label>
+                  <input id="p-resume" placeholder="https://drive.google.com/file/d/..." />
+                  <div class="field-hint">💡 Google Drive link use karo: Share → "Anyone with link" → link copy karo</div>
+                </div>
+
               </div>
-              <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+              <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;">
                 <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
               </div>
             </div>
@@ -255,43 +457,89 @@
           <div class="col-6">
             <div class="form-panel">
               <div class="panel-title"><span class="panel-icon">◻</span> Photo Preview</div>
-              <div style="text-align:center; padding:1rem;">
-                <img id="p-photo-preview" src="" alt="Photo" style="width:120px;height:150px;object-fit:cover;border-radius:14px;border:1px solid var(--border2);display:none;" />
-                <div id="p-photo-placeholder" style="width:120px;height:150px;border:1.5px dashed var(--border2);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;opacity:0.3">📸</div>
-                <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Paste image URL above to update photo</div>
+              <div style="text-align:center;padding:1rem;">
+                <img id="p-photo-preview" src="" alt="Photo" style="width:140px;height:170px;object-fit:cover;border-radius:14px;border:1px solid var(--border2);display:none;" />
+                <div id="p-photo-placeholder" style="width:140px;height:170px;border:1.5px dashed var(--border2);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;opacity:0.3">📸</div>
+                <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Upar se file select karo ya URL paste karo</div>
+              </div>
+            </div>
+
+            <!-- Resume Preview Card -->
+            <div class="form-panel" style="margin-top:1rem;" id="resume-preview-panel">
+              <div class="panel-title"><span class="panel-icon">📄</span> Resume Status</div>
+              <div id="resume-preview-empty" style="text-align:center;padding:1rem;">
+                <div style="font-size:2rem;opacity:0.25;margin-bottom:8px;">📄</div>
+                <div style="font-size:0.75rem;color:var(--muted)">Koi resume set nahi hai<br>Left side se upload karo</div>
+              </div>
+              <div id="resume-preview-set" style="display:none;">
+                <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-size:2rem;margin-bottom:6px;">✅</div>
+                  <div style="font-size:0.78rem;color:var(--now);font-weight:700;margin-bottom:4px;">Resume Set Hai!</div>
+                  <div style="font-size:0.7rem;color:var(--muted);margin-bottom:10px)">Portfolio pe download button dikhega</div>
+                  <a id="resume-preview-link" href="#" target="_blank" class="btn btn-ghost" style="font-size:0.72rem;margin-top:8px;display:inline-flex;">📥 Download / View Resume</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PROJECTS -->
+      <!-- ── PROJECTS ── -->
       <div class="page" id="page-projects">
         <div class="section-head">
           <div class="section-title" id="projects-count">All Projects</div>
           <button class="btn btn-primary" onclick="clearProjectForm()">+ New Project</button>
         </div>
+
+        <!-- ORDER MANAGER -->
+        <div class="form-panel" style="margin-bottom:1rem;">
+          <div class="panel-title">
+            <span class="panel-icon">⇅</span> Project Order &amp; Featured Top 3
+            <span style="margin-left:auto;font-size:0.65rem;color:var(--muted);font-weight:500;">Drag ya ↑↓ se order badlo · Top 3 = Featured</span>
+          </div>
+          <div class="order-save-bar">
+            <div class="order-save-hint">
+              <strong>⭐ Top 3</strong> portfolio mein featured dikhenge. Baaki "More Projects" mein.
+            </div>
+            <button class="btn btn-primary" id="save-order-btn" onclick="saveProjectOrder()">💾 Save Order</button>
+          </div>
+          <div class="order-list" id="order-list">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Project cards grid -->
         <div class="project-grid" id="projects-grid"><div class="loading">Loading projects...</div></div>
         <div class="divider"></div>
-        <div class="form-panel">
-          <div class="panel-title"><span class="panel-icon">+</span> Add / Edit Project</div>
+
+        <!-- Add/Edit form -->
+        <div class="form-panel" id="project-form-panel">
+          <div class="panel-title" id="proj-form-title"><span class="panel-icon">+</span> Add / Edit Project</div>
           <input type="hidden" id="proj-id" />
           <div class="form-grid">
             <div class="form-group"><label>Project Name</label><input id="proj-name" placeholder="My Awesome Project" /></div>
             <div class="form-group"><label>Status</label><select id="proj-status"><option>Live</option><option>WIP</option><option>Archived</option></select></div>
-            <div class="form-group full"><label>Description</label><textarea id="proj-desc" placeholder="Short description of the project..."></textarea></div>
-            <div class="form-group"><label>GitHub Link</label><input id="proj-github" placeholder="https://github.com/..." /></div>
-            <div class="form-group"><label>Live Demo Link</label><input id="proj-live" placeholder="https://..." /></div>
-            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="proj-tech" placeholder="React, Node.js, MongoDB, Tailwind..." /></div>
+            <div class="form-group full"><label>Description</label><textarea id="proj-desc" placeholder="Short description..."></textarea></div>
+            <div class="form-group full"><label>GitHub Link</label><input id="proj-github" placeholder="https://github.com/..." /></div>
+            <div class="form-group full"><label>Live Demo / Portfolio Link</label><input id="proj-live" placeholder="https://..." /></div>
+            <div class="form-group full">
+              <label>Project Screenshot / Image URL</label>
+              <input id="proj-image" placeholder="https://i.imgur.com/..." oninput="updateProjImagePreview(this.value)" />
+              <div class="field-hint">📌 Imgur pe upload karo → direct link copy karo | <a href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
+              <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none;">
+                <img id="proj-img-preview" src="" alt="Preview" onerror="document.getElementById('proj-img-preview-wrap').style.display='none'" />
+              </div>
+            </div>
+            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="proj-tech" placeholder="React, Node.js, MongoDB..." /></div>
           </div>
-          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
             <button class="btn btn-ghost" onclick="clearProjectForm()">Clear</button>
             <button class="btn btn-primary" onclick="saveProject()">Save Project</button>
           </div>
         </div>
       </div>
 
-      <!-- JOBS -->
+      <!-- ── JOBS ── -->
       <div class="page" id="page-jobs">
         <div class="section-head">
           <div class="section-title" id="jobs-count">Career Timeline</div>
@@ -302,24 +550,24 @@
           <div class="panel-title"><span class="panel-icon">◈</span> Add / Edit Job</div>
           <input type="hidden" id="job-id" />
           <div class="form-grid">
-            <div class="form-group"><label>Company Name</label><input id="job-company" placeholder="Acme Corp" /></div>
-            <div class="form-group"><label>Your Role</label><input id="job-role" placeholder="Senior Full-Stack Developer" /></div>
+            <div class="form-group full"><label>Company Name</label><input id="job-company" placeholder="Acme Corp" /></div>
+            <div class="form-group full"><label>Your Role</label><input id="job-role" placeholder="Senior Full-Stack Developer" /></div>
             <div class="form-group"><label>Start Date</label><input id="job-start" placeholder="Jan 2023" /></div>
             <div class="form-group"><label>End Date</label><input id="job-end" placeholder="Leave blank if current" /></div>
-            <div class="form-group full"><label>Bullet Points (one per line)</label><textarea id="job-bullets" placeholder="Built REST APIs with Node.js&#10;Reduced load time by 40%&#10;Led team of 3 engineers"></textarea></div>
-            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="job-tech" placeholder="React, Node.js, PostgreSQL..." /></div>
+            <div class="form-group full"><label>Bullet Points (one per line)</label><textarea id="job-bullets" placeholder="Built REST APIs&#10;Reduced load time by 40%"></textarea></div>
+            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="job-tech" placeholder="React, Node.js..." /></div>
             <div class="form-group"><label>Card Theme</label><select id="job-theme"><option value="theme-purple">Purple</option><option value="theme-blue">Blue</option><option value="theme-pink">Pink</option><option value="theme-green">Green</option><option value="theme-sky">Sky</option></select></div>
             <div class="form-group"><label>Current Job?</label><select id="job-current"><option value="false">No</option><option value="true">Yes – show "Now" badge</option></select></div>
-            <div class="form-group full"><label>Panel Title (shown on card)</label><input id="job-panel-title" placeholder="e.g. Led platform engineering team" /></div>
+            <div class="form-group full"><label>Panel Title</label><input id="job-panel-title" placeholder="e.g. Led platform engineering team" /></div>
           </div>
-          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
             <button class="btn btn-ghost" onclick="clearJobForm()">Clear</button>
             <button class="btn btn-primary" onclick="saveJob()">Save Job</button>
           </div>
         </div>
       </div>
 
-      <!-- SKILLS -->
+      <!-- ── SKILLS ── -->
       <div class="page" id="page-skills">
         <div class="section-head">
           <div class="section-title">Skill Categories</div>
@@ -327,29 +575,34 @@
         </div>
         <div id="skills-list"><div class="loading">Loading skills...</div></div>
         <div class="divider"></div>
-        <div class="form-panel">
+        <div class="form-panel" id="skill-form-panel">
           <div class="panel-title"><span class="panel-icon">◎</span> Add / Edit Skill Category</div>
           <input type="hidden" id="skill-id" />
           <div class="form-grid">
-            <div class="form-group"><label>Category Title</label><input id="skill-title" placeholder="Frontend Development" /></div>
-            <div class="form-group"><label>Description</label><input id="skill-desc" placeholder="Building fast, responsive UIs" /></div>
-            <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="skill-tags" placeholder="React, Next.js, TypeScript, Tailwind..." /></div>
+            <div class="form-group full"><label>Category Title</label><input id="skill-title" placeholder="Frontend Development" /></div>
+            <div class="form-group full"><label>Description</label><input id="skill-desc" placeholder="Building fast, responsive UIs" /></div>
+            <div class="form-group full">
+              <label>Tech Icons (Name|IconURL — per line)</label>
+              <textarea id="skill-tools" rows="4" placeholder="React|https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"></textarea>
+              <div style="font-size:0.68rem;color:var(--muted);margin-top:4px;">Format: <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;">TechName|IconURL</code></div>
+            </div>
+            <div class="form-group full"><label>Text Tags (comma separated)</label><input id="skill-tags" placeholder="REST APIs, GraphQL..." /></div>
           </div>
-          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
             <button class="btn btn-ghost" onclick="clearSkillForm()">Clear</button>
             <button class="btn btn-primary" onclick="saveSkill()">Save Category</button>
           </div>
         </div>
       </div>
 
-      <!-- TESTIMONIALS -->
+      <!-- ── TESTIMONIALS ── -->
       <div class="page" id="page-testimonials">
         <div class="section-head">
           <div class="section-title" id="testi-count">Testimonials</div>
           <button class="btn btn-primary" onclick="clearTestiForm()">+ Add Testimonial</button>
         </div>
         <div class="table-wrap" style="margin-bottom:1rem" id="testi-table"><div class="loading">Loading...</div></div>
-        <div class="form-panel">
+        <div class="form-panel" id="testi-form-panel">
           <div class="panel-title"><span class="panel-icon">◉</span> Add / Edit Testimonial</div>
           <input type="hidden" id="testi-id" />
           <div class="form-grid">
@@ -359,14 +612,14 @@
             <div class="form-group"><label>Visible on site?</label><select id="testi-visible"><option value="true">Yes</option><option value="false">No</option></select></div>
             <div class="form-group full"><label>Quote</label><textarea id="testi-quote" placeholder="Write the testimonial here..."></textarea></div>
           </div>
-          <div style="margin-top:1rem; display:flex; gap:8px; justify-content:flex-end;">
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
             <button class="btn btn-ghost" onclick="clearTestiForm()">Clear</button>
             <button class="btn btn-primary" onclick="saveTestimonial()">Save Testimonial</button>
           </div>
         </div>
       </div>
 
-      <!-- SETTINGS -->
+      <!-- ── SETTINGS ── -->
       <div class="page" id="page-settings">
         <div class="row">
           <div class="col-6">
@@ -402,29 +655,137 @@
         </div>
       </div>
 
-    </div>
+    </div><!-- end .content -->
+  </div><!-- end .main -->
+</div><!-- end .layout -->
+
+<div class="pwa-banner" id="pwa-banner">
+  <div class="pwa-banner-icon">
+    <svg width="26" height="26" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+      <rect width="192" height="192" rx="40" fill="#0d0d18"/>
+      <text x="96" y="124" font-family="Georgia,serif" font-weight="800" font-size="88" fill="#eeeef5" text-anchor="middle">SA</text>
+      <circle cx="148" cy="56" r="14" fill="#c084fc"/>
+    </svg>
+  </div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Admin Panel install karo</div>
+    <div class="pwa-banner-sub">Home screen pe add karo — offline bhi kaam karega</div>
+  </div>
+  <div class="pwa-banner-actions">
+    <button class="pwa-install-main" onclick="triggerInstall()">Install</button>
+    <button class="pwa-banner-close" onclick="dismissBanner()" title="Dismiss">✕</button>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════════════
-// ⚡ CHANGE THIS TO YOUR RENDER BACKEND URL AFTER DEPLOYING
-// ══════════════════════════════════════════════════════════════════════
-const API_BASE = 'https://your-portfolio-backend.onrender.com';
-// ══════════════════════════════════════════════════════════════════════
+const API_BASE = 'https://portfolio-shafaq.onrender.com';
+let token   = localStorage.getItem('portfolio_admin_token') || '';
+let allData = { projects:[], jobs:[], skills:[], testimonials:[], settings:{} };
 
-let token = localStorage.getItem('portfolio_admin_token') || '';
-let allData = { projects: [], jobs: [], skills: [], testimonials: [], settings: {} };
+let orderedProjects = [];
+let dragSrcIndex    = null;
 
-// ── Auth ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// PWA
+// ─────────────────────────────────────────────
+let deferredPrompt = null;
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Failed:', err));
+  });
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('pwa-install-btn').classList.add('visible');
+  setTimeout(() => {
+    if (!localStorage.getItem('pwa_banner_dismissed') && deferredPrompt)
+      document.getElementById('pwa-banner').classList.add('visible');
+  }, 3000);
+});
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('pwa-install-btn').classList.remove('visible');
+  document.getElementById('pwa-installed-badge').classList.add('visible');
+  document.getElementById('pwa-banner').classList.remove('visible');
+  localStorage.setItem('pwa_installed', '1');
+  showToast('✅ App install ho gaya!');
+});
+async function triggerInstall() {
+  if (!deferredPrompt) { showToast('Already installed ya browser support nahi karta', true); return; }
+  document.getElementById('pwa-banner').classList.remove('visible');
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  showToast(outcome === 'accepted' ? 'Installing... 🚀' : 'Install cancel kar diya');
+  deferredPrompt = null;
+}
+function dismissBanner() {
+  document.getElementById('pwa-banner').classList.remove('visible');
+  localStorage.setItem('pwa_banner_dismissed', '1');
+}
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone)
+  document.getElementById('pwa-installed-badge').classList.add('visible');
+
+// ─────────────────────────────────────────────
+// SIDEBAR
+// ─────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.contains('open') ? closeSidebar() : openSidebar();
+}
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('visible');
+  const btn = document.getElementById('hamburger-btn');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+  const btn = document.getElementById('hamburger-btn');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+
+// ─────────────────────────────────────────────
+// DOM READY
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  // Login enter key
+  const loginPw = document.getElementById('login-pw');
+  if (loginPw) loginPw.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+  // Photo upload
+  const photoInput = document.getElementById('photo-file-input');
+  if (photoInput) photoInput.addEventListener('change', handlePhotoUpload);
+
+  // Photo URL live preview
+  const pPhotoInput = document.getElementById('p-photo');
+  if (pPhotoInput) pPhotoInput.addEventListener('input', function() { updatePhotoPreview(this.value); });
+
+  // ── RESUME: file input change ──
+  const resumeInput = document.getElementById('resume-file-input');
+  if (resumeInput) resumeInput.addEventListener('change', handleResumeUpload);
+
+  // ── RESUME: URL input live update ──
+  const pResumeInput = document.getElementById('p-resume');
+  if (pResumeInput) pResumeInput.addEventListener('input', function() { updateResumeUI(this.value); });
+});
+
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
 async function doLogin() {
-  const pw = document.getElementById('login-pw').value;
+  const pw    = document.getElementById('login-pw').value.trim();
   const errEl = document.getElementById('login-err');
   errEl.textContent = '';
+  if (!pw) { errEl.textContent = 'Password enter karo'; return; }
+  errEl.textContent = '⏳ Logging in...';
   try {
     const r = await fetch(API_BASE + '/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: pw })
     });
     const data = await r.json();
@@ -433,17 +794,19 @@ async function doLogin() {
     localStorage.setItem('portfolio_admin_token', token);
     showApp();
   } catch (e) {
-    errEl.textContent = e.message;
+    errEl.textContent = (e.message.includes('fetch') || e.message.includes('Failed'))
+      ? '⚠️ Server wake ho raha hai (Render free tier), 30-60 sec mein dobara try karo'
+      : e.message;
   }
 }
 
 function logout() {
   if (!confirm('Logout?')) return;
-  localStorage.removeItem('portfolio_admin_token');
-  token = '';
+  localStorage.removeItem('portfolio_admin_token'); token = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-pw').value = '';
+  closeSidebar();
 }
 
 function showApp() {
@@ -452,25 +815,33 @@ function showApp() {
   loadAll();
 }
 
-// Check if already logged in
 if (token) showApp();
 
-// ── API Helpers ───────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// API HELPER
+// ─────────────────────────────────────────────
 async function api(method, path, body) {
   const opts = {
     method,
     headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
   };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(API_BASE + path, opts);
-  if (r.status === 401) { logout(); throw new Error('Session expired'); }
-  const data = await r.json();
-  if (!r.ok) throw new Error(data.error || 'Request failed');
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  let r;
+  try { r = await fetch(API_BASE + path, opts); }
+  catch (networkErr) { throw new Error('Network error — server se connect nahi ho pa raha: ' + networkErr.message); }
+  if (r.status === 401) { logout(); throw new Error('Session expired — dobara login karo'); }
+  let data;
+  try { data = await r.json(); }
+  catch { throw new Error('Server ne invalid response diya (status: ' + r.status + ')'); }
+  if (!r.ok) throw new Error(data.error || data.message || 'Request failed (' + r.status + ')');
   return data;
 }
 
-// ── Load All Data ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// LOAD ALL
+// ─────────────────────────────────────────────
 async function loadAll() {
+  hideBanner();
   try {
     const [settings, projects, jobs, skills, testimonials] = await Promise.all([
       api('GET', '/api/admin/settings'),
@@ -480,6 +851,7 @@ async function loadAll() {
       api('GET', '/api/admin/testimonials')
     ]);
     allData = { settings, projects, jobs, skills, testimonials };
+    orderedProjects = [...projects].sort((a,b) => (a.order||0) - (b.order||0));
     renderDashboard();
     renderProfile();
     renderProjects();
@@ -488,74 +860,189 @@ async function loadAll() {
     renderTestimonials();
     renderSettingsToggles();
   } catch (e) {
-    showToast('Failed to load: ' + e.message, true);
+    showConnBanner();
+    showToast('Load failed: ' + e.message, true);
   }
 }
 
-// ── Dashboard ─────────────────────────────────────────────────────────
+function retryLoad() { hideBanner(); showToast('Retrying...'); loadAll(); }
+function showConnBanner() { document.getElementById('conn-banner').classList.add('visible'); }
+function hideBanner()     { document.getElementById('conn-banner').classList.remove('visible'); }
+
+// ─────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────
 function renderDashboard() {
   const { projects, jobs, skills, testimonials } = allData;
   document.getElementById('stat-projects').textContent = projects.length;
-  document.getElementById('stat-jobs').textContent = jobs.length;
-  document.getElementById('stat-skills').textContent = skills.length;
-  document.getElementById('stat-testi').textContent = testimonials.length;
-  const featured = projects.filter(p => p.status === 'Live').length;
-  document.getElementById('stat-projects-sub').textContent = featured + ' live';
-  const current = jobs.filter(j => j.is_current).length;
-  document.getElementById('stat-jobs-sub').textContent = current + ' current';
+  document.getElementById('stat-jobs').textContent     = jobs.length;
+  document.getElementById('stat-skills').textContent   = skills.length;
+  document.getElementById('stat-testi').textContent    = testimonials.length;
+  document.getElementById('stat-projects-sub').textContent = projects.filter(p => p.status === 'Live').length + ' live';
+  document.getElementById('stat-jobs-sub').textContent     = jobs.filter(j => j.is_current).length + ' current';
 
   const table = document.getElementById('dash-projects-table');
   if (!projects.length) { table.innerHTML = '<div class="empty-state">No projects yet</div>'; return; }
-  table.innerHTML = `<table><tr><th>Project</th><th>Status</th><th>Tech</th></tr>${
-    projects.slice(0,5).map(p => `<tr>
+  const sorted = [...projects].sort((a,b) => (a.order||0)-(b.order||0));
+  table.innerHTML = `<table><tr><th>#</th><th>Project</th><th>Status</th></tr>
+    ${sorted.slice(0,5).map((p,i) => `<tr>
+      <td><span style="font-size:0.7rem;color:${i<3?'#fbbf24':'var(--dim)'};">${i<3?'⭐':''} ${i+1}</span></td>
       <td><strong>${esc(p.name)}</strong></td>
       <td>${statusBadge(p.status)}</td>
-      <td>${(p.tech_tags||[]).slice(0,2).map(t=>`<span class="badge badge-purple">${esc(t)}</span>`).join(' ')}</td>
-    </tr>`).join('')
-  }</table>`;
+    </tr>`).join('')}
+  </table>`;
 }
 
-// ── Profile ───────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// PROFILE
+// ─────────────────────────────────────────────
 function renderProfile() {
   const s = allData.settings || {};
-  document.getElementById('p-name').value = s.name || '';
-  document.getElementById('p-tagline').value = s.tagline || '';
-  document.getElementById('p-bio').value = s.bio || '';
-  document.getElementById('p-email').value = s.email || '';
-  document.getElementById('p-github').value = s.github || '';
-  document.getElementById('p-linkedin').value = s.linkedin || '';
-  document.getElementById('p-photo').value = s.photo_url || '';
+  document.getElementById('p-name').value     = s.name       || '';
+  document.getElementById('p-tagline').value  = s.tagline    || '';
+  document.getElementById('p-bio').value      = s.bio        || '';
+  document.getElementById('p-email').value    = s.email      || '';
+  document.getElementById('p-github').value   = s.github     || '';
+  document.getElementById('p-linkedin').value = s.linkedin   || '';
+  document.getElementById('p-photo').value    = s.photo_url  || '';
+  document.getElementById('p-resume').value   = s.resume_url || '';
   updatePhotoPreview(s.photo_url);
-
-  const initials = (s.name||'MN').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  updateResumeUI(s.resume_url);
+  const initials = (s.name || 'SA').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
   document.getElementById('side-avatar').textContent = initials;
-  document.getElementById('side-name').textContent = s.name || 'Admin';
+  document.getElementById('side-name').textContent   = s.name || 'Admin';
 }
 
 function updatePhotoPreview(url) {
   const img = document.getElementById('p-photo-preview');
-  const ph = document.getElementById('p-photo-placeholder');
-  if (url) {
-    img.src = url; img.style.display = 'block'; ph.style.display = 'none';
+  const ph  = document.getElementById('p-photo-placeholder');
+  if (url) { img.src = url; img.style.display = 'block'; ph.style.display = 'none'; }
+  else      { img.style.display = 'none'; ph.style.display = 'inline-flex'; }
+}
+
+// ── RESUME UI helpers ──
+function updateResumeUI(url) {
+  const zone      = document.getElementById('resume-upload-zone');
+  const statusBar = document.getElementById('resume-status-bar');
+  const statusTxt = document.getElementById('resume-status-text');
+  const viewBtn   = document.getElementById('resume-view-btn');
+  const previewEmpty = document.getElementById('resume-preview-empty');
+  const previewSet   = document.getElementById('resume-preview-set');
+  const previewLink  = document.getElementById('resume-preview-link');
+
+  if (url && url.trim()) {
+    // Status bar below upload zone
+    statusBar.style.display = 'flex';
+    viewBtn.href = url.trim();
+    // Show shortened label
+    if (url.startsWith('data:')) {
+      statusTxt.textContent = 'PDF uploaded (base64)';
+    } else {
+      statusTxt.textContent = url.length > 50 ? url.substring(0,50) + '...' : url;
+    }
+    // Upload zone style
+    zone.classList.add('has-file');
+    // Right-side preview card
+    previewEmpty.style.display = 'none';
+    previewSet.style.display   = 'block';
+    previewLink.href = url.trim();
   } else {
-    img.style.display = 'none'; ph.style.display = 'inline-flex';
+    statusBar.style.display    = 'none';
+    zone.classList.remove('has-file');
+    previewEmpty.style.display = 'block';
+    previewSet.style.display   = 'none';
   }
 }
 
-document.getElementById('p-photo').addEventListener('input', function() {
-  updatePhotoPreview(this.value);
-});
+function clearResume() {
+  document.getElementById('p-resume').value = '';
+  document.getElementById('resume-upload-msg').textContent = '';
+  updateResumeUI('');
+  showToast('Resume hata diya — Save Profile karo');
+}
+
+function handleResumeUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const msg     = document.getElementById('resume-upload-msg');
+  const barWrap = document.getElementById('resume-bar-wrap');
+  const bar     = document.getElementById('resume-bar');
+
+  if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ Sirf PDF allowed hai!'; return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File 5MB se bada hai!'; return;
+  }
+
+  msg.style.color = 'var(--accent)'; msg.textContent = '⏳ PDF load ho raha hai...';
+  barWrap.style.display = 'block'; bar.style.width = '30%';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    bar.style.width = '100%';
+    const base64 = e.target.result;           // full data URI
+    document.getElementById('p-resume').value = base64;
+    updateResumeUI(base64);
+    msg.style.color = 'var(--now)';
+    msg.textContent = '✅ PDF ready! Save Profile karo.';
+    setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
+    showToast('Resume ready! Save Profile click karo ✓');
+  };
+  reader.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Read failed.'; barWrap.style.display='none'; };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const msg     = document.getElementById('upload-msg');
+  const barWrap = document.getElementById('upload-bar-wrap');
+  const bar     = document.getElementById('upload-bar');
+  if (file.size > 5 * 1024 * 1024) {
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File bahut bada hai! Max 5MB.'; return;
+  }
+  msg.style.color = 'var(--accent)'; msg.textContent = '⏳ Processing...';
+  barWrap.style.display = 'block'; bar.style.width = '20%';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    bar.style.width = '60%';
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 800; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
+        else       { w = Math.round(w*MAX/h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const base64 = canvas.toDataURL('image/jpeg', 0.82);
+      bar.style.width = '100%';
+      document.getElementById('p-photo').value = base64;
+      updatePhotoPreview(base64);
+      msg.style.color = 'var(--now)'; msg.textContent = '✅ Image ready! Save Profile karo.';
+      setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
+      showToast('Image ready! Save Profile click karo ✓');
+    };
+    img.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Load failed.'; barWrap.style.display='none'; };
+    img.src = e.target.result;
+  };
+  reader.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Read failed.'; };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
 
 async function saveProfile() {
   try {
     const update = {
-      name: document.getElementById('p-name').value,
-      tagline: document.getElementById('p-tagline').value,
-      bio: document.getElementById('p-bio').value,
-      email: document.getElementById('p-email').value,
-      github: document.getElementById('p-github').value,
-      linkedin: document.getElementById('p-linkedin').value,
-      photo_url: document.getElementById('p-photo').value
+      name:       document.getElementById('p-name').value,
+      tagline:    document.getElementById('p-tagline').value,
+      bio:        document.getElementById('p-bio').value,
+      email:      document.getElementById('p-email').value,
+      github:     document.getElementById('p-github').value,
+      linkedin:   document.getElementById('p-linkedin').value,
+      photo_url:  document.getElementById('p-photo').value,
+      resume_url: document.getElementById('p-resume').value   // ← resume saved here
     };
     allData.settings = await api('PUT', '/api/admin/settings', update);
     renderProfile();
@@ -563,71 +1050,194 @@ async function saveProfile() {
   } catch (e) { showToast(e.message, true); }
 }
 
-// ── Projects ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// PROJECTS
+// ─────────────────────────────────────────────
 function renderProjects() {
-  const projects = allData.projects;
-  document.getElementById('projects-count').textContent = `All Projects (${projects.length})`;
+  orderedProjects = [...allData.projects].sort((a,b) => (a.order||0) - (b.order||0));
+  document.getElementById('projects-count').textContent = `All Projects (${allData.projects.length})`;
+  renderOrderList();
+  renderProjectGrid();
+}
+
+function renderOrderList() {
+  const list = document.getElementById('order-list');
+  if (!orderedProjects.length) {
+    list.innerHTML = '<div class="empty-state">No projects yet</div>'; return;
+  }
+  list.innerHTML = orderedProjects.map((p, i) => {
+    const isTop3 = i < 3;
+    const thumbHtml = p.image_url
+      ? `<div class="order-thumb"><img src="${esc(p.image_url)}" onerror="this.style.display='none'" /></div>`
+      : `<div class="order-thumb">${['🖥️','🌐','💡','⚡','🚀'][i%5]}</div>`;
+    return `
+    <div class="order-item" id="oi-${p._id}"
+      draggable="true"
+      ondragstart="dragStart(event,${i})"
+      ondragover="dragOver(event,${i})"
+      ondragleave="dragLeave(event)"
+      ondrop="dragDrop(event,${i})"
+      ondragend="dragEnd()">
+      <div class="drag-handle" title="Drag to reorder">⠿</div>
+      <div class="order-num ${isTop3?'top3':''}">${i+1}</div>
+      ${thumbHtml}
+      <div class="order-info">
+        <div class="order-name">${esc(p.name)}</div>
+        <div class="order-meta">${esc(p.status||'')}${p.tech_tags&&p.tech_tags.length?' · '+p.tech_tags.slice(0,2).join(', '):''}</div>
+      </div>
+      ${isTop3 ? `<span class="feat-label">⭐ Featured</span>` : ''}
+      <div class="order-controls">
+        <button class="order-btn" onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">↑</button>
+        <button class="order-btn" onclick="moveProject(${i},1)" ${i===orderedProjects.length-1?'disabled':''} title="Move down">↓</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function moveProject(index, dir) {
+  const target = index + dir;
+  if (target < 0 || target >= orderedProjects.length) return;
+  const tmp = orderedProjects[index];
+  orderedProjects[index] = orderedProjects[target];
+  orderedProjects[target] = tmp;
+  renderOrderList();
+  showToast(dir < 0 ? '↑ Moved up' : '↓ Moved down');
+}
+
+function dragStart(e, i) {
+  dragSrcIndex = i;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e, i) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.order-item').forEach(el => el.classList.remove('drag-over'));
+  if (i !== dragSrcIndex) e.currentTarget.classList.add('drag-over');
+}
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dragDrop(e, i) {
+  e.preventDefault();
+  if (dragSrcIndex === null || dragSrcIndex === i) return;
+  const moved = orderedProjects.splice(dragSrcIndex, 1)[0];
+  orderedProjects.splice(i, 0, moved);
+  dragSrcIndex = null;
+  renderOrderList();
+  showToast('Order updated — Save karo!');
+}
+function dragEnd() {
+  dragSrcIndex = null;
+  document.querySelectorAll('.order-item').forEach(el => {
+    el.classList.remove('dragging'); el.classList.remove('drag-over');
+  });
+}
+
+async function saveProjectOrder() {
+  const btn = document.getElementById('save-order-btn');
+  btn.disabled = true; btn.textContent = '⏳ Saving...';
+  try {
+    await Promise.all(orderedProjects.map((p, i) =>
+      api('PUT', '/api/admin/projects/' + p._id, { order: i, is_featured: i < 3 })
+    ));
+    allData.projects = await api('GET', '/api/admin/projects');
+    orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
+    renderOrderList();
+    renderProjectGrid();
+    renderDashboard();
+    showToast('✅ Order saved! Top 3 are now featured.');
+  } catch (e) {
+    showToast('Save failed: ' + e.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = '💾 Save Order';
+  }
+}
+
+function renderProjectGrid() {
   const grid = document.getElementById('projects-grid');
-  if (!projects.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>'; return; }
-  grid.innerHTML = projects.map(p => `
-    <div class="project-card">
-      <div class="project-name">${esc(p.name)}</div>
-      <div class="project-desc">${esc(p.description)}</div>
-      <div class="project-tech">${(p.tech_tags||[]).map(t=>`<span class="tech-chip">${esc(t)}</span>`).join('')}</div>
-      <div class="project-actions" style="margin-top:8px;">
-        ${statusBadge(p.status)}
-        <div style="flex:1"></div>
-        <button class="icon-btn" onclick="editProject('${p._id}')">✎</button>
-        <button class="icon-btn del" onclick="deleteProject('${p._id}')">✕</button>
+  if (!orderedProjects.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>';
+    return;
+  }
+  grid.innerHTML = orderedProjects.map((p, i) => `
+    <div class="project-card" style="${i<3?'border-color:rgba(251,191,36,0.3);':''} position:relative;">
+      ${i<3 ? `<div style="position:absolute;top:8px;right:8px;z-index:5;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;border-radius:100px;padding:2px 9px;font-size:0.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase">⭐ #${i+1}</div>` : ''}
+      ${p.image_url
+        ? `<img class="project-card-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'" />`
+        : `<div class="project-card-thumb-placeholder">🖥️</div>`}
+      <div class="project-card-body">
+        <div class="project-name">${esc(p.name)}</div>
+        <div class="project-desc">${esc((p.description||'').substring(0,80))}${(p.description||'').length>80?'...':''}</div>
+        <div class="project-tech">${(p.tech_tags||[]).map(t=>`<span class="tech-chip">${esc(t)}</span>`).join('')}</div>
+        <div class="project-actions" style="margin-top:8px;">
+          ${statusBadge(p.status)}
+          <div style="flex:1"></div>
+          ${p.github ? `<a href="${esc(p.github)}" target="_blank" class="icon-btn" title="GitHub">⎇</a>` : ''}
+          ${p.live   ? `<a href="${esc(p.live)}"   target="_blank" class="icon-btn" title="Live Demo">⬡</a>` : ''}
+          <button class="icon-btn" onclick="editProject('${p._id}')">✎</button>
+          <button class="icon-btn del" onclick="deleteProject('${p._id}')">✕</button>
+        </div>
       </div>
     </div>`).join('') + `
-    <div class="project-card" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:110px;" onclick="clearProjectForm()">
-      <div style="text-align:center;color:var(--muted)"><div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div><div style="font-size:0.75rem;font-weight:600;">Add New Project</div></div>
+    <div class="project-card" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:160px;" onclick="clearProjectForm()">
+      <div style="text-align:center;color:var(--muted)">
+        <div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div>
+        <div style="font-size:0.75rem;font-weight:600;">Add New Project</div>
+      </div>
     </div>`;
 }
 
+function updateProjImagePreview(url) {
+  const wrap = document.getElementById('proj-img-preview-wrap');
+  const img  = document.getElementById('proj-img-preview');
+  if (url && url.trim()) { wrap.style.display='flex'; img.src=url; }
+  else { wrap.style.display='none'; img.src=''; }
+}
+
 function editProject(id) {
-  const p = allData.projects.find(x => x._id === id);
-  if (!p) return;
-  document.getElementById('proj-id').value = p._id;
-  document.getElementById('proj-name').value = p.name;
-  document.getElementById('proj-status').value = p.status;
-  document.getElementById('proj-desc').value = p.description;
-  document.getElementById('proj-github').value = p.github || '';
-  document.getElementById('proj-live').value = p.live || '';
-  document.getElementById('proj-tech').value = (p.tech_tags||[]).join(', ');
-  document.querySelector('.form-panel .panel-title').innerHTML = '<span class="panel-icon">✎</span> Edit Project';
-  document.querySelector('.form-panel .panel-title').scrollIntoView({ behavior: 'smooth' });
+  const p = allData.projects.find(x => x._id === id); if (!p) return;
+  document.getElementById('proj-id').value     = p._id;
+  document.getElementById('proj-name').value   = p.name       || '';
+  document.getElementById('proj-status').value = p.status     || 'WIP';
+  document.getElementById('proj-desc').value   = p.description|| '';
+  document.getElementById('proj-github').value = p.github     || '';
+  document.getElementById('proj-live').value   = p.live       || '';
+  document.getElementById('proj-image').value  = p.image_url  || '';
+  document.getElementById('proj-tech').value   = (p.tech_tags||[]).join(', ');
+  updateProjImagePreview(p.image_url || '');
+  document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">✎</span> Edit Project';
+  document.getElementById('project-form-panel').scrollIntoView({ behavior:'smooth' });
 }
 
 function clearProjectForm() {
   document.getElementById('proj-id').value = '';
-  ['proj-name','proj-desc','proj-github','proj-live','proj-tech'].forEach(id => document.getElementById(id).value = '');
+  ['proj-name','proj-desc','proj-github','proj-live','proj-image','proj-tech'].forEach(id => document.getElementById(id).value='');
   document.getElementById('proj-status').value = 'WIP';
+  document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">+</span> Add / Edit Project';
+  updateProjImagePreview('');
 }
 
 async function saveProject() {
   const id = document.getElementById('proj-id').value;
   const body = {
-    name: document.getElementById('proj-name').value,
-    status: document.getElementById('proj-status').value,
+    name:        document.getElementById('proj-name').value.trim(),
+    status:      document.getElementById('proj-status').value,
     description: document.getElementById('proj-desc').value,
-    github: document.getElementById('proj-github').value,
-    live: document.getElementById('proj-live').value,
-    tech_tags: document.getElementById('proj-tech').value.split(',').map(s=>s.trim()).filter(Boolean)
+    github:      document.getElementById('proj-github').value.trim(),
+    live:        document.getElementById('proj-live').value.trim(),
+    image_url:   document.getElementById('proj-image').value.trim(),
+    tech_tags:   document.getElementById('proj-tech').value.split(',').map(s=>s.trim()).filter(Boolean)
   };
-  if (!body.name) return showToast('Project name is required', true);
+  if (!id) body.order = allData.projects.length;
+  if (!body.name) return showToast('Project name required', true);
   try {
-    if (id) {
-      await api('PUT', '/api/admin/projects/' + id, body);
-    } else {
-      await api('POST', '/api/admin/projects', body);
-    }
+    if (id) await api('PUT',  '/api/admin/projects/' + id, body);
+    else    await api('POST', '/api/admin/projects', body);
     clearProjectForm();
     allData.projects = await api('GET', '/api/admin/projects');
+    orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
     renderProjects();
     renderDashboard();
-    showToast('Project saved! ✓');
+    showToast('Project saved! ✓ Order section mein adjust karo agar chahiye.');
   } catch (e) { showToast(e.message, true); }
 }
 
@@ -636,13 +1246,16 @@ async function deleteProject(id) {
   try {
     await api('DELETE', '/api/admin/projects/' + id);
     allData.projects = await api('GET', '/api/admin/projects');
+    orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
     renderProjects();
     renderDashboard();
     showToast('Project deleted');
   } catch (e) { showToast(e.message, true); }
 }
 
-// ── Jobs ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// JOBS
+// ─────────────────────────────────────────────
 function renderJobs() {
   const jobs = allData.jobs;
   document.getElementById('jobs-count').textContent = `Career Timeline (${jobs.length} jobs)`;
@@ -655,57 +1268,59 @@ function renderJobs() {
       <td><strong>${esc(j.company)}</strong></td>
       <td>${esc(j.role)}</td>
       <td>${esc(j.date_text||'')}</td>
-      <td>${j.is_current ? '<span class="badge badge-green">Current</span>' : '<span class="badge badge-purple">Past</span>'}</td>
-      <td style="display:flex;gap:6px;"><button class="icon-btn" onclick="editJob('${j._id}')">✎</button><button class="icon-btn del" onclick="deleteJob('${j._id}')">✕</button></td>
+      <td>${j.is_current?'<span class="badge badge-green">Current</span>':'<span class="badge badge-purple">Past</span>'}</td>
+      <td style="display:flex;gap:6px;">
+        <button class="icon-btn" onclick="editJob('${j._id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteJob('${j._id}')">✕</button>
+      </td>
     </tr>`).join('')}
   </table>`;
 }
 
 function editJob(id) {
-  const j = allData.jobs.find(x => x._id === id);
-  if (!j) return;
-  const [start, end] = (j.date_text||'').split(' – ');
-  document.getElementById('job-id').value = j._id;
-  document.getElementById('job-company').value = j.company;
-  document.getElementById('job-role').value = j.role;
-  document.getElementById('job-start').value = start || '';
-  document.getElementById('job-end').value = end || '';
-  document.getElementById('job-bullets').value = (j.bullets||[]).join('\n');
-  document.getElementById('job-tech').value = (j.tech_tags||[]).join(', ');
-  document.getElementById('job-theme').value = j.panel_theme || 'theme-blue';
-  document.getElementById('job-current').value = j.is_current ? 'true' : 'false';
+  const j = allData.jobs.find(x => x._id === id); if (!j) return;
+  const parts = (j.date_text||'').split(' – ');
+  const start = parts[0] || '';
+  const end   = parts[1] || '';
+  document.getElementById('job-id').value          = j._id;
+  document.getElementById('job-company').value     = j.company     || '';
+  document.getElementById('job-role').value        = j.role        || '';
+  document.getElementById('job-start').value       = start;
+  document.getElementById('job-end').value         = end;
+  document.getElementById('job-bullets').value     = (j.bullets||[]).join('\n');
+  document.getElementById('job-tech').value        = (j.tech_tags||[]).join(', ');
+  document.getElementById('job-theme').value       = j.panel_theme || 'theme-blue';
+  document.getElementById('job-current').value     = j.is_current ? 'true' : 'false';
   document.getElementById('job-panel-title').value = j.panel_title || '';
-  document.getElementById('jobs-table').scrollIntoView({ behavior: 'smooth' });
+  document.querySelector('#page-jobs .form-panel').scrollIntoView({ behavior:'smooth' });
 }
 
 function clearJobForm() {
   document.getElementById('job-id').value = '';
-  ['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title'].forEach(id => document.getElementById(id).value = '');
+  ['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title']
+    .forEach(id => document.getElementById(id).value='');
   document.getElementById('job-current').value = 'false';
-  document.getElementById('job-theme').value = 'theme-blue';
+  document.getElementById('job-theme').value   = 'theme-blue';
 }
 
 async function saveJob() {
-  const id = document.getElementById('job-id').value;
-  const start = document.getElementById('job-start').value;
-  const end = document.getElementById('job-end').value;
-  const body = {
-    company: document.getElementById('job-company').value,
-    role: document.getElementById('job-role').value,
-    date_text: end ? `${start} – ${end}` : start,
-    is_current: document.getElementById('job-current').value === 'true',
-    bullets: document.getElementById('job-bullets').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    tech_tags: document.getElementById('job-tech').value.split(',').map(s=>s.trim()).filter(Boolean),
+  const id    = document.getElementById('job-id').value;
+  const start = document.getElementById('job-start').value.trim();
+  const end   = document.getElementById('job-end').value.trim();
+  const body  = {
+    company:     document.getElementById('job-company').value.trim(),
+    role:        document.getElementById('job-role').value.trim(),
+    date_text:   end ? `${start} – ${end}` : start,
+    is_current:  document.getElementById('job-current').value === 'true',
+    bullets:     document.getElementById('job-bullets').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    tech_tags:   document.getElementById('job-tech').value.split(',').map(s=>s.trim()).filter(Boolean),
     panel_theme: document.getElementById('job-theme').value,
-    panel_title: document.getElementById('job-panel-title').value
+    panel_title: document.getElementById('job-panel-title').value.trim()
   };
   if (!body.company) return showToast('Company name required', true);
   try {
-    if (id) {
-      await api('PUT', '/api/admin/jobs/' + id, body);
-    } else {
-      await api('POST', '/api/admin/jobs', body);
-    }
+    if (id) await api('PUT',  '/api/admin/jobs/' + id, body);
+    else    await api('POST', '/api/admin/jobs', body);
     clearJobForm();
     allData.jobs = await api('GET', '/api/admin/jobs');
     renderJobs();
@@ -725,10 +1340,12 @@ async function deleteJob(id) {
   } catch (e) { showToast(e.message, true); }
 }
 
-// ── Skills ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// SKILLS
+// ─────────────────────────────────────────────
 function renderSkills() {
   const skills = allData.skills;
-  const list = document.getElementById('skills-list');
+  const list   = document.getElementById('skills-list');
   if (!skills.length) { list.innerHTML = '<div class="empty-state">No skill categories yet</div>'; return; }
   list.innerHTML = skills.map(s => `
     <div class="form-panel" style="margin-bottom:0.8rem">
@@ -747,38 +1364,42 @@ function renderSkills() {
 }
 
 function editSkill(id) {
-  const s = allData.skills.find(x => x._id === id);
-  if (!s) return;
-  document.getElementById('skill-id').value = s._id;
-  document.getElementById('skill-title').value = s.title;
-  document.getElementById('skill-desc').value = s.description || '';
-  document.getElementById('skill-tags').value = (s.tags||[]).map(t=>t.label||t).join(', ');
+  const s = allData.skills.find(x => x._id === id); if (!s) return;
+  document.getElementById('skill-id').value    = s._id;
+  document.getElementById('skill-title').value = s.title        || '';
+  document.getElementById('skill-desc').value  = s.description  || '';
+  document.getElementById('skill-tags').value  = (s.tags||[]).map(t=>t.label||t).join(', ');
+  document.getElementById('skill-tools').value = (s.tools||[]).map(t=>t.name+'|'+t.icon_url).join('\n');
+  document.getElementById('skill-form-panel').scrollIntoView({ behavior:'smooth' });
 }
 
 function clearSkillForm() {
   document.getElementById('skill-id').value = '';
-  ['skill-title','skill-desc','skill-tags'].forEach(id => document.getElementById(id).value = '');
+  ['skill-title','skill-desc','skill-tags','skill-tools'].forEach(id => document.getElementById(id).value='');
 }
 
 async function saveSkill() {
-  const id = document.getElementById('skill-id').value;
+  const id        = document.getElementById('skill-id').value;
+  const toolLines = document.getElementById('skill-tools').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const tools     = toolLines.map(line => {
+    const [name, icon_url] = line.split('|').map(s=>s.trim());
+    return (name && icon_url) ? { name, icon_url } : null;
+  }).filter(Boolean);
   const body = {
-    title: document.getElementById('skill-title').value,
-    description: document.getElementById('skill-desc').value,
-    tags: document.getElementById('skill-tags').value.split(',').map(s=>({ label: s.trim() })).filter(t=>t.label)
+    title:       document.getElementById('skill-title').value.trim(),
+    description: document.getElementById('skill-desc').value.trim(),
+    tools,
+    tags: document.getElementById('skill-tags').value.split(',').map(s=>({ label:s.trim() })).filter(t=>t.label)
   };
   if (!body.title) return showToast('Category title required', true);
   try {
-    if (id) {
-      await api('PUT', '/api/admin/skills/' + id, body);
-    } else {
-      await api('POST', '/api/admin/skills', body);
-    }
+    if (id) await api('PUT',  '/api/admin/skills/' + id, body);
+    else    await api('POST', '/api/admin/skills', body);
     clearSkillForm();
     allData.skills = await api('GET', '/api/admin/skills');
     renderSkills();
     renderDashboard();
-    showToast('Skill category saved! ✓');
+    showToast('Skill saved! ✓');
   } catch (e) { showToast(e.message, true); }
 }
 
@@ -793,58 +1414,60 @@ async function deleteSkill(id) {
   } catch (e) { showToast(e.message, true); }
 }
 
-// ── Testimonials ──────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// TESTIMONIALS
+// ─────────────────────────────────────────────
 function renderTestimonials() {
   const testis = allData.testimonials;
   document.getElementById('testi-count').textContent = `Testimonials (${testis.length})`;
   const table = document.getElementById('testi-table');
   if (!testis.length) { table.innerHTML = '<div class="empty-state">No testimonials yet</div>'; return; }
   table.innerHTML = `<table>
-    <tr><th>Author</th><th>Role</th><th>Quote preview</th><th>Visible</th><th></th></tr>
+    <tr><th>Author</th><th>Role</th><th>Quote</th><th>Visible</th><th></th></tr>
     ${testis.map(t => `<tr>
       <td><strong>${esc(t.author_name)}</strong></td>
       <td>${esc(t.author_role)}</td>
       <td style="color:var(--muted)">${esc((t.quote||'').substring(0,40))}...</td>
-      <td>${t.visible ? '<span class="badge badge-green">On</span>' : '<span class="badge badge-red">Off</span>'}</td>
-      <td style="display:flex;gap:6px;"><button class="icon-btn" onclick="editTesti('${t._id}')">✎</button><button class="icon-btn del" onclick="deleteTesti('${t._id}')">✕</button></td>
+      <td>${t.visible?'<span class="badge badge-green">On</span>':'<span class="badge badge-red">Off</span>'}</td>
+      <td style="display:flex;gap:6px;">
+        <button class="icon-btn" onclick="editTesti('${t._id}')">✎</button>
+        <button class="icon-btn del" onclick="deleteTesti('${t._id}')">✕</button>
+      </td>
     </tr>`).join('')}
   </table>`;
 }
 
 function editTesti(id) {
-  const t = allData.testimonials.find(x => x._id === id);
-  if (!t) return;
-  document.getElementById('testi-id').value = t._id;
-  document.getElementById('testi-name').value = t.author_name;
-  document.getElementById('testi-role').value = t.author_role;
-  document.getElementById('testi-emoji').value = t.author_emoji || '🧑';
+  const t = allData.testimonials.find(x => x._id === id); if (!t) return;
+  document.getElementById('testi-id').value      = t._id;
+  document.getElementById('testi-name').value    = t.author_name  || '';
+  document.getElementById('testi-role').value    = t.author_role  || '';
+  document.getElementById('testi-emoji').value   = t.author_emoji || '🧑';
   document.getElementById('testi-visible').value = t.visible ? 'true' : 'false';
-  document.getElementById('testi-quote').value = t.quote;
+  document.getElementById('testi-quote').value   = t.quote        || '';
+  document.getElementById('testi-form-panel').scrollIntoView({ behavior:'smooth' });
 }
 
 function clearTestiForm() {
   document.getElementById('testi-id').value = '';
-  ['testi-name','testi-role','testi-quote'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('testi-emoji').value = '🧑';
+  ['testi-name','testi-role','testi-quote'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('testi-emoji').value   = '🧑';
   document.getElementById('testi-visible').value = 'true';
 }
 
 async function saveTestimonial() {
-  const id = document.getElementById('testi-id').value;
+  const id   = document.getElementById('testi-id').value;
   const body = {
-    author_name: document.getElementById('testi-name').value,
-    author_role: document.getElementById('testi-role').value,
+    author_name:  document.getElementById('testi-name').value.trim(),
+    author_role:  document.getElementById('testi-role').value.trim(),
     author_emoji: document.getElementById('testi-emoji').value || '🧑',
-    visible: document.getElementById('testi-visible').value === 'true',
-    quote: document.getElementById('testi-quote').value
+    visible:      document.getElementById('testi-visible').value === 'true',
+    quote:        document.getElementById('testi-quote').value.trim()
   };
   if (!body.author_name || !body.quote) return showToast('Name and quote required', true);
   try {
-    if (id) {
-      await api('PUT', '/api/admin/testimonials/' + id, body);
-    } else {
-      await api('POST', '/api/admin/testimonials', body);
-    }
+    if (id) await api('PUT',  '/api/admin/testimonials/' + id, body);
+    else    await api('POST', '/api/admin/testimonials', body);
     clearTestiForm();
     allData.testimonials = await api('GET', '/api/admin/testimonials');
     renderTestimonials();
@@ -864,25 +1487,24 @@ async function deleteTesti(id) {
   } catch (e) { showToast(e.message, true); }
 }
 
-// ── Settings ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
 function renderSettingsToggles() {
   const s = allData.settings;
-  setToggle('toggle-available', s.available === '1');
+  setToggle('toggle-available',    s.available === '1' || s.available === true);
   setToggle('toggle-testimonials', s.show_testimonials !== false);
-  setToggle('toggle-freelance', !!s.freelance);
+  setToggle('toggle-freelance',    !!s.freelance);
 }
-
 function setToggle(id, val) {
   const el = document.getElementById(id);
-  if (val) el.classList.add('on');
-  else el.classList.remove('on');
+  val ? el.classList.add('on') : el.classList.remove('on');
 }
-
 async function saveSettings() {
   const body = {
-    available: document.getElementById('toggle-available').classList.contains('on') ? '1' : '0',
+    available:         document.getElementById('toggle-available').classList.contains('on') ? '1' : '0',
     show_testimonials: document.getElementById('toggle-testimonials').classList.contains('on'),
-    freelance: document.getElementById('toggle-freelance').classList.contains('on')
+    freelance:         document.getElementById('toggle-freelance').classList.contains('on')
   };
   try {
     allData.settings = await api('PUT', '/api/admin/settings', body);
@@ -893,9 +1515,9 @@ async function saveSettings() {
 async function changePassword() {
   const np = document.getElementById('new-pw').value;
   const cp = document.getElementById('confirm-pw').value;
-  if (!np) return showToast('Enter a new password', true);
-  if (np.length < 6) return showToast('Password must be at least 6 characters', true);
-  if (np !== cp) return showToast('Passwords do not match', true);
+  if (!np)           return showToast('Enter a new password', true);
+  if (np.length < 6) return showToast('Min 6 characters required', true);
+  if (np !== cp)     return showToast('Passwords do not match', true);
   try {
     await api('PUT', '/api/admin/settings', { new_password: np });
     document.getElementById('new-pw').value = '';
@@ -904,33 +1526,46 @@ async function changePassword() {
   } catch (e) { showToast(e.message, true); }
 }
 
-// ── UI Helpers ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// UI HELPERS
+// ─────────────────────────────────────────────
 function showPage(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  if (el) el.classList.add('active');
-  const titles = { dashboard:'Dashboard', profile:'Profile & Photo', projects:'Projects', jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials', settings:'Site Settings' };
+  const pageEl = document.getElementById('page-' + id);
+  if (pageEl) pageEl.classList.add('active');
+  if (el) {
+    el.classList.add('active');
+  } else {
+    const navEl = document.querySelector('.nav-item[data-page="' + id + '"]');
+    if (navEl) navEl.classList.add('active');
+  }
+  const titles = {
+    dashboard:'Dashboard', profile:'Profile & Photo', projects:'Projects',
+    jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials', settings:'Site Settings'
+  };
   document.getElementById('page-title').textContent = titles[id] || id;
+  if (window.innerWidth <= 768) closeSidebar();
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function statusBadge(status) {
   const map = { Live:'badge-green', WIP:'badge-blue', Archived:'badge-purple' };
-  return `<span class="badge ${map[status]||'badge-purple'}">${status}</span>`;
+  return `<span class="badge ${map[status]||'badge-purple'}">${esc(status)}</span>`;
 }
 
 let toastTimer;
 function showToast(msg, isError) {
-  const old = document.querySelector('.toast');
-  if (old) old.remove();
+  const old = document.querySelector('.toast'); if (old) old.remove();
   clearTimeout(toastTimer);
   const t = document.createElement('div');
   t.className = 'toast' + (isError ? ' error' : '');
-  t.innerHTML = '<div class="toast-dot"></div>' + (msg || 'Done!');
+  t.innerHTML = `<div class="toast-dot"></div>${msg || 'Done!'}`;
   document.body.appendChild(t);
-  toastTimer = setTimeout(() => t.remove(), 3000);
+  toastTimer = setTimeout(() => { if (t.parentNode) t.remove(); }, 4000);
 }
 </script>
 </body>
