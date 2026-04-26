@@ -31,6 +31,7 @@ const SettingsSchema = new mongoose.Schema({
   show_skills:        { type: Boolean, default: true },
   show_career:        { type: Boolean, default: true },
   show_contact:       { type: Boolean, default: true },
+  show_blog:          { type: Boolean, default: true },
   freelance:          { type: Boolean, default: false },
   admin_password_hash:{ type: String, select: false }
 }, { timestamps: true });
@@ -77,11 +78,23 @@ const TestimonialSchema = new mongoose.Schema({
   visible:      { type: Boolean, default: true }
 }, { timestamps: true });
 
+const BlogPostSchema = new mongoose.Schema({
+  title:        { type: String, required: true },
+  slug:         { type: String, default: '' },
+  category:     { type: String, default: '' },
+  read_time:    { type: String, default: '' },
+  excerpt:      { type: String, default: '' },
+  cover_image:  { type: String, default: '' },
+  external_url: { type: String, default: '' },
+  published:    { type: Boolean, default: true }
+}, { timestamps: true });
+
 const Settings    = mongoose.model('Settings',      SettingsSchema);
 const Project     = mongoose.model('Project',       ProjectSchema);
 const Job         = mongoose.model('Job',           JobSchema);
 const SkillCat    = mongoose.model('SkillCategory', SkillCategorySchema);
 const Testimonial = mongoose.model('Testimonial',   TestimonialSchema);
+const BlogPost    = mongoose.model('BlogPost',      BlogPostSchema);
 
 // ── Auth Middleware ─────────────────────────────────────────────────
 function authRequired(req, res, next) {
@@ -101,19 +114,21 @@ app.get('/', (req, res) => res.json({ status: 'ok', message: 'Portfolio backend 
 // ── PUBLIC: Portfolio Data ──────────────────────────────────────────
 app.get('/api/portfolio', async (req, res) => {
   try {
-    const [settings, projects, jobs, skillCategories, testimonials] = await Promise.all([
+    const [settings, projects, jobs, skillCategories, testimonials, blogPosts] = await Promise.all([
       Settings.findOne().select('-admin_password_hash'),
       Project.find().sort({ order: 1, createdAt: -1 }),
       Job.find().sort({ order: 1, createdAt: -1 }),
       SkillCat.find().sort({ order: 1 }),
-      Testimonial.find({ visible: true })
+      Testimonial.find({ visible: true }),
+      BlogPost.find({ published: true }).sort({ createdAt: -1 })
     ]);
     res.json({
       settings: settings || {},
       projects,
       jobs,
       skillCategories,
-      testimonials
+      testimonials,
+      blogPosts
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -243,6 +258,26 @@ app.put('/api/admin/testimonials/:id', authRequired, async (req, res) => {
 
 app.delete('/api/admin/testimonials/:id', authRequired, async (req, res) => {
   await Testimonial.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
+});
+
+// ── ADMIN: Blog Posts ───────────────────────────────────────────────
+app.get('/api/admin/blog', authRequired, async (req, res) => {
+  res.json(await BlogPost.find().sort({ createdAt: -1 }));
+});
+
+app.post('/api/admin/blog', authRequired, async (req, res) => {
+  try { res.json(await BlogPost.create(req.body)); }
+  catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/admin/blog/:id', authRequired, async (req, res) => {
+  try { res.json(await BlogPost.findByIdAndUpdate(req.params.id, req.body, { new: true })); }
+  catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/admin/blog/:id', authRequired, async (req, res) => {
+  await BlogPost.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
 });
 
