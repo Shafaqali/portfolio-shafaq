@@ -418,6 +418,29 @@ function render({ settings, projects, skillCategories, testimonials }) {
   renderSkills(skillCategories);
   renderTestimonials(testimonials);
 
+  // Section visibility — admin se control hota hai
+  const sectionMap = {
+    'projects':     settings.show_projects,
+    'skills':       settings.show_skills,
+    'career':       settings.show_career,
+    'testimonials': settings.show_testimonials,
+    'contact':      settings.show_contact
+  };
+  Object.entries(sectionMap).forEach(([id, show]) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (show === false) ? 'none' : '';
+  });
+
+  // Nav links bhi hide karo agar section hidden hai
+  document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
+    const targetId = link.getAttribute('href').replace('#', '');
+    if (sectionMap[targetId] === false) {
+      link.style.display = 'none';
+    } else {
+      link.style.display = '';
+    }
+  });
+
   if('IntersectionObserver' in window) {
     const rv = new IntersectionObserver(entries => {
       entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); rv.unobserve(e.target); }});
