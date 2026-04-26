@@ -51,6 +51,8 @@
   .nav-item:hover { color:var(--text); background:rgba(128,128,128,0.07); }
   .nav-item.active { color:var(--accent); background:rgba(192,132,252,0.08); border-color:rgba(192,132,252,0.18); }
   .nav-icon { font-size:15px; width:18px; text-align:center; }
+  .nav-badge { margin-left:auto; background:var(--accent); color:#0d0d18; border-radius:100px; font-size:0.58rem; font-weight:800; padding:1px 7px; letter-spacing:0.04em; display:none; }
+  .nav-badge.visible { display:inline-block; }
   .nav-section { font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--dim); padding:8px 12px 4px; margin-top:8px; }
   .sidebar-bottom { margin-top:auto; padding-top:1rem; border-top:1px solid var(--border); }
   .user-pill { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; background:var(--card); border:1px solid var(--border2); cursor:pointer; }
@@ -84,7 +86,7 @@
   .page { display:none; }
   .page.active { display:block; }
 
-  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem; }
+  .stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:1.5rem; }
   .stat-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:1rem 1.1rem; }
   .stat-label { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
   .stat-value { font-family:'Bricolage Grotesque','Georgia',serif; font-size:1.6rem; font-weight:800; letter-spacing:-0.03em; color:var(--text); }
@@ -138,56 +140,25 @@
 
   /* ORDER LIST */
   .order-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1rem; }
-  .order-item {
-    display:flex; align-items:center; gap:10px;
-    background:var(--card); border:1px solid var(--border2);
-    border-radius:12px; padding:10px 12px;
-    transition:border-color .15s, background .15s;
-    cursor:default;
-  }
+  .order-item { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border2); border-radius:12px; padding:10px 12px; transition:border-color .15s, background .15s; cursor:default; }
   .order-item:hover { border-color:rgba(192,132,252,0.3); background:rgba(192,132,252,0.04); }
   .order-item.dragging { opacity:0.5; border-color:var(--accent); background:rgba(192,132,252,0.08); }
   .order-item.drag-over { border-color:var(--accent); border-style:dashed; background:rgba(192,132,252,0.06); }
-  .order-num {
-    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center;
-    font-size:0.72rem; font-weight:800; flex-shrink:0; letter-spacing:0.04em;
-    background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.2); color:var(--accent);
-  }
-  .order-num.top3 {
-    background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); color:#fbbf24;
-  }
-  .order-thumb {
-    width:38px; height:38px; border-radius:8px; object-fit:cover; flex-shrink:0;
-    background:var(--bg3); border:1px solid var(--border2);
-    display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden;
-  }
+  .order-num { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; flex-shrink:0; letter-spacing:0.04em; background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.2); color:var(--accent); }
+  .order-num.top3 { background:rgba(251,191,36,0.12); border-color:rgba(251,191,36,0.3); color:#fbbf24; }
+  .order-thumb { width:38px; height:38px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--bg3); border:1px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden; }
   .order-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .order-info { flex:1; min-width:0; }
   .order-name { font-size:0.82rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .order-meta { font-size:0.68rem; color:var(--muted); margin-top:1px; }
   .order-controls { display:flex; gap:4px; flex-shrink:0; }
-  .order-btn {
-    width:28px; height:28px; border-radius:7px; border:1px solid var(--border2);
-    background:none; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
-    font-size:12px; transition:all .15s; font-family:inherit;
-  }
+  .order-btn { width:28px; height:28px; border-radius:7px; border:1px solid var(--border2); background:none; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; font-family:inherit; }
   .order-btn:hover { color:var(--text); background:rgba(192,132,252,0.1); border-color:rgba(192,132,252,0.3); }
   .order-btn:disabled { opacity:0.25; cursor:not-allowed; }
-  .drag-handle {
-    cursor:grab; color:var(--dim); padding:0 2px; font-size:14px; flex-shrink:0;
-    display:flex; align-items:center;
-  }
+  .drag-handle { cursor:grab; color:var(--dim); padding:0 2px; font-size:14px; flex-shrink:0; display:flex; align-items:center; }
   .drag-handle:active { cursor:grabbing; }
-  .feat-label {
-    font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
-    color:#fbbf24; background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25);
-    border-radius:5px; padding:1px 6px; flex-shrink:0; white-space:nowrap;
-  }
-  .order-save-bar {
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:10px 14px; background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.2);
-    border-radius:10px; margin-bottom:1rem;
-  }
+  .feat-label { font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:#fbbf24; background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25); border-radius:5px; padding:1px 6px; flex-shrink:0; white-space:nowrap; }
+  .order-save-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.2); border-radius:10px; margin-bottom:1rem; }
   .order-save-hint { font-size:0.73rem; color:var(--muted); }
   .order-save-hint strong { color:var(--accent); }
 
@@ -204,18 +175,11 @@
   .project-tech { display:flex; flex-wrap:wrap; gap:4px; flex:1; }
   .tech-chip { font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:5px; background:var(--border); border:1px solid var(--border2); color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; }
 
-  /* ── RESUME UPLOAD ZONE ── */
-  .resume-zone {
-    border:1.5px dashed var(--border2); border-radius:12px; padding:1.1rem;
-    text-align:center; cursor:pointer; transition:border-color .2s, background .2s;
-  }
+  /* RESUME UPLOAD */
+  .resume-zone { border:1.5px dashed var(--border2); border-radius:12px; padding:1.1rem; text-align:center; cursor:pointer; transition:border-color .2s, background .2s; }
   .resume-zone:hover { border-color:rgba(192,132,252,0.45); background:rgba(192,132,252,0.04); }
   .resume-zone.has-file { border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.04); }
-  .resume-status-bar {
-    display:flex; align-items:center; gap:10px; margin-top:8px;
-    background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.2);
-    border-radius:9px; padding:8px 12px;
-  }
+  .resume-status-bar { display:flex; align-items:center; gap:10px; margin-top:8px; background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.2); border-radius:9px; padding:8px 12px; }
   .resume-status-icon { font-size:1.1rem; flex-shrink:0; }
   .resume-status-text { flex:1; font-size:0.75rem; color:var(--now); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .resume-status-actions { display:flex; gap:6px; flex-shrink:0; }
@@ -246,6 +210,22 @@
   .pwa-banner-close { background:none; border:none; color:var(--muted); cursor:pointer; padding:4px; font-size:16px; line-height:1; }
   .pwa-install-main { background:var(--accent); color:#0d0d18; border:none; border-radius:8px; padding:8px 16px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; }
 
+  /* BLOG CARDS */
+  .blog-grid-admin { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+  .blog-card-admin { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
+  .blog-card-admin:hover { border-color:rgba(192,132,252,0.35); }
+  .blog-card-admin-thumb { width:100%; height:90px; object-fit:cover; display:block; background:var(--bg3); }
+  .blog-card-admin-placeholder { width:100%; height:90px; background:linear-gradient(135deg,#1a1a3e,#0d0d20); display:flex; align-items:center; justify-content:center; font-size:1.4rem; opacity:0.3; }
+  .blog-card-admin-body { padding:0.85rem; }
+  .blog-card-admin-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.88rem; font-weight:700; margin-bottom:4px; line-height:1.3; }
+  .blog-card-admin-meta { font-size:0.68rem; color:var(--muted); margin-bottom:8px; }
+  .blog-card-admin-actions { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+
+  /* CONTACTS */
+  .contact-row { transition:border-color .15s, background .15s; }
+  .contact-row:hover { border-color:rgba(192,132,252,0.3) !important; background:rgba(192,132,252,0.03) !important; }
+  .contact-row.unread { font-weight:600; }
+
   .toast { position:fixed; bottom:1.5rem; right:1.5rem; left:1.5rem; max-width:340px; margin:0 auto; background:var(--card); border:1px solid rgba(74,222,128,0.3); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.78rem; font-weight:600; display:flex; align-items:center; gap:7px; z-index:9999; animation:slideIn .3s ease; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
   .toast.error { border-color:rgba(248,113,113,0.4); }
   @keyframes slideIn { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
@@ -256,17 +236,6 @@
   .conn-banner.visible { display:flex; }
   .conn-banner button { margin-left:auto; background:rgba(248,113,113,0.15); border:1px solid rgba(248,113,113,0.3); color:var(--danger); border-radius:6px; padding:3px 10px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; }
   .conn-banner button:hover { background:rgba(248,113,113,0.25); }
-
-  /* ── BLOG CARDS ── */
-  .blog-grid-admin { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
-  .blog-card-admin { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
-  .blog-card-admin:hover { border-color:rgba(192,132,252,0.35); }
-  .blog-card-admin-thumb { width:100%; height:90px; object-fit:cover; display:block; background:var(--bg3); }
-  .blog-card-admin-placeholder { width:100%; height:90px; background:linear-gradient(135deg,#1a1a3e,#0d0d20); display:flex; align-items:center; justify-content:center; font-size:1.4rem; opacity:0.3; }
-  .blog-card-admin-body { padding:0.85rem; }
-  .blog-card-admin-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.88rem; font-weight:700; margin-bottom:4px; line-height:1.3; }
-  .blog-card-admin-meta { font-size:0.68rem; color:var(--muted); margin-bottom:8px; }
-  .blog-card-admin-actions { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
 
   @media (max-width: 768px) {
     .hamburger { display:inline-flex; }
@@ -333,6 +302,11 @@
     <div class="nav-item" data-page="skills" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
     <div class="nav-item" data-page="testimonials" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
     <div class="nav-item" data-page="blog" onclick="showPage('blog',this)"><span class="nav-icon">✍</span> Blog</div>
+    <!-- ── CONTACTS NAV ── -->
+    <div class="nav-item" data-page="contacts" onclick="showPage('contacts',this)">
+      <span class="nav-icon">✉</span> Contacts
+      <span class="nav-badge" id="nav-unread-badge">0</span>
+    </div>
     <div class="nav-section">Settings</div>
     <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⊙</span> Site Settings</div>
     <div class="sidebar-bottom">
@@ -380,6 +354,12 @@
           <div class="stat-card"><div class="stat-label">Jobs</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
           <div class="stat-card"><div class="stat-label">Skills</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
           <div class="stat-card"><div class="stat-label">Blog Posts</div><div class="stat-value" id="stat-blog">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span><span id="stat-blog-sub">total</span></div></div>
+          <!-- ── CONTACTS STAT ── -->
+          <div class="stat-card" style="cursor:pointer" onclick="showPage('contacts')">
+            <div class="stat-label">Contacts</div>
+            <div class="stat-value" id="stat-contacts">—</div>
+            <div class="stat-sub"><span class="stat-dot" style="background:#f87171"></span><span id="stat-contacts-sub">loading...</span></div>
+          </div>
         </div>
         <div class="row">
           <div class="col-6">
@@ -395,6 +375,7 @@
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('skills')">+ Add skill category</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('testimonials')">+ Add testimonial</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('blog')">+ Write blog post</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('contacts')">✉ View messages</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('profile')">✎ Edit profile</button>
               </div>
             </div>
@@ -415,8 +396,6 @@
                 <div class="form-group full"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com" /></div>
                 <div class="form-group full"><label>GitHub URL</label><input id="p-github" placeholder="https://github.com/..." /></div>
                 <div class="form-group full"><label>LinkedIn URL</label><input id="p-linkedin" placeholder="https://linkedin.com/in/..." /></div>
-
-                <!-- ── PHOTO UPLOAD ── -->
                 <div class="form-group full">
                   <label>Photo Upload</label>
                   <input type="file" id="photo-file-input" accept="image/*" style="display:none" />
@@ -430,17 +409,12 @@
                   </div>
                 </div>
                 <div class="form-group full"><label>Or paste Photo URL</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
-
-                <!-- ── RESUME UPLOAD ── -->
                 <div class="form-group full">
                   <label>Resume / CV Upload</label>
                   <input type="file" id="resume-file-input" accept=".pdf,application/pdf" style="display:none" />
                   <div class="resume-zone" id="resume-upload-zone" onclick="document.getElementById('resume-file-input').click()">
                     <div style="font-size:1.8rem;margin-bottom:6px;">📄</div>
-                    <div style="font-size:0.78rem;color:var(--muted)">
-                      <strong style="color:var(--accent)">Click to select a PDF</strong><br>
-                      PDF only — max 5MB
-                    </div>
+                    <div style="font-size:0.78rem;color:var(--muted)"><strong style="color:var(--accent)">Click to select a PDF</strong><br>PDF only — max 5MB</div>
                   </div>
                   <div id="resume-upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
                   <div id="resume-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
@@ -460,7 +434,6 @@
                   <input id="p-resume" placeholder="https://drive.google.com/file/d/..." />
                   <div class="field-hint">💡 Use Google Drive: Share → "Anyone with link" → copy link</div>
                 </div>
-
               </div>
               <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;">
                 <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
@@ -476,7 +449,6 @@
                 <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Select a file above or paste a URL</div>
               </div>
             </div>
-
             <div class="form-panel" style="margin-top:1rem;" id="resume-preview-panel">
               <div class="panel-title"><span class="panel-icon">📄</span> Resume Status</div>
               <div id="resume-preview-empty" style="text-align:center;padding:1rem;">
@@ -502,26 +474,19 @@
           <div class="section-title" id="projects-count">All Projects</div>
           <button class="btn btn-primary" onclick="clearProjectForm()">+ New Project</button>
         </div>
-
         <div class="form-panel" style="margin-bottom:1rem;">
           <div class="panel-title">
             <span class="panel-icon">⇅</span> Project Order &amp; Featured Top 3
             <span style="margin-left:auto;font-size:0.65rem;color:var(--muted);font-weight:500;">Drag or use ↑↓ to reorder · Top 3 = Featured</span>
           </div>
           <div class="order-save-bar">
-            <div class="order-save-hint">
-              <strong>⭐ Top 3</strong> will appear as featured on the portfolio. The rest go in "More Projects".
-            </div>
+            <div class="order-save-hint"><strong>⭐ Top 3</strong> will appear as featured on the portfolio. The rest go in "More Projects".</div>
             <button class="btn btn-primary" id="save-order-btn" onclick="saveProjectOrder()">💾 Save Order</button>
           </div>
-          <div class="order-list" id="order-list">
-            <div class="loading">Loading...</div>
-          </div>
+          <div class="order-list" id="order-list"><div class="loading">Loading...</div></div>
         </div>
-
         <div class="project-grid" id="projects-grid"><div class="loading">Loading projects...</div></div>
         <div class="divider"></div>
-
         <div class="form-panel" id="project-form-panel">
           <div class="panel-title" id="proj-form-title"><span class="panel-icon">+</span> Add / Edit Project</div>
           <input type="hidden" id="proj-id" />
@@ -634,12 +599,8 @@
           <div class="section-title" id="blog-count">Blog Posts</div>
           <button class="btn btn-primary" onclick="clearBlogForm()">+ New Post</button>
         </div>
-
-        <!-- Blog cards grid -->
         <div class="blog-grid-admin" id="blog-grid-admin"><div class="loading">Loading posts...</div></div>
         <div class="divider"></div>
-
-        <!-- Add/Edit form -->
         <div class="form-panel" id="blog-form-panel">
           <div class="panel-title" id="blog-form-title"><span class="panel-icon">+</span> Add / Edit Blog Post</div>
           <input type="hidden" id="blog-id" />
@@ -647,10 +608,7 @@
             <div class="form-group full"><label>Post Title</label><input id="blog-title" placeholder="My Awesome Blog Post" /></div>
             <div class="form-group"><label>Category</label><input id="blog-category" placeholder="Tutorial, Opinion, Dev Log..." /></div>
             <div class="form-group"><label>Read Time</label><input id="blog-read-time" placeholder="5 min read" /></div>
-            <div class="form-group full">
-              <label>Excerpt / Summary</label>
-              <textarea id="blog-excerpt" placeholder="A short summary of what this post is about..." rows="3"></textarea>
-            </div>
+            <div class="form-group full"><label>Excerpt / Summary</label><textarea id="blog-excerpt" placeholder="A short summary..." rows="3"></textarea></div>
             <div class="form-group full">
               <label>Cover Image URL</label>
               <input id="blog-cover" placeholder="https://i.imgur.com/..." oninput="updateBlogImagePreview(this.value)" />
@@ -671,6 +629,51 @@
             <button class="btn btn-ghost" onclick="clearBlogForm()">Clear</button>
             <button class="btn btn-primary" onclick="saveBlogPost()">Save Post</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ── CONTACTS ── -->
+      <div class="page" id="page-contacts">
+        <div class="section-head">
+          <div class="section-title" id="contacts-count">Contacts</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="contacts-filter-all" onclick="setContactFilter('all')" style="font-size:0.72rem;">All</button>
+            <button class="btn btn-ghost" id="contacts-filter-unread" onclick="setContactFilter('unread')" style="font-size:0.72rem;">Unread</button>
+            <button class="btn btn-ghost" id="contacts-filter-starred" onclick="setContactFilter('starred')" style="font-size:0.72rem;">⭐ Starred</button>
+          </div>
+        </div>
+
+        <!-- Message detail panel -->
+        <div id="contact-detail-panel" style="display:none;margin-bottom:1rem;">
+          <div class="form-panel" style="position:relative;">
+            <button onclick="closeContactDetail()" style="position:absolute;top:12px;right:12px;background:none;border:1px solid var(--border2);color:var(--muted);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;">✕</button>
+            <div class="panel-title"><span class="panel-icon">✉</span> <span id="detail-subject">Message</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:20px;margin-bottom:1rem;">
+              <div>
+                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;">From</div>
+                <div style="font-size:0.88rem;font-weight:700;color:var(--text);" id="detail-name"></div>
+              </div>
+              <div>
+                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;">Email</div>
+                <a id="detail-email-link" href="#" style="font-size:0.88rem;color:var(--accent);text-decoration:none;"></a>
+              </div>
+              <div>
+                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;">Received</div>
+                <div style="font-size:0.82rem;color:var(--muted);" id="detail-date"></div>
+              </div>
+            </div>
+            <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:16px;font-size:0.85rem;color:var(--text);line-height:1.75;white-space:pre-wrap;" id="detail-message"></div>
+            <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap;">
+              <a id="detail-reply-btn" href="#" class="btn btn-primary">↩ Reply via Email</a>
+              <button id="detail-star-btn" class="btn btn-ghost" onclick="toggleDetailStar()">☆ Star</button>
+              <button class="btn btn-danger" onclick="deleteContactFromDetail()">✕ Delete</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contacts list -->
+        <div id="contacts-list-wrap">
+          <div class="loading">Loading contacts...</div>
         </div>
       </div>
 
@@ -758,10 +761,12 @@
 <script>
 const API_BASE = 'https://portfolio-shafaq.onrender.com';
 let token   = localStorage.getItem('portfolio_admin_token') || '';
-let allData = { projects:[], jobs:[], skills:[], testimonials:[], blogPosts:[], settings:{} };
+let allData = { projects:[], jobs:[], skills:[], testimonials:[], blogPosts:[], contacts:[], settings:{} };
 
 let orderedProjects = [];
 let dragSrcIndex    = null;
+let contactFilter   = 'all';
+let currentDetailId = null;
 
 // ─────────────────────────────────────────────
 // PWA
@@ -833,16 +838,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar
 document.addEventListener('DOMContentLoaded', function() {
   const loginPw = document.getElementById('login-pw');
   if (loginPw) loginPw.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
   const photoInput = document.getElementById('photo-file-input');
   if (photoInput) photoInput.addEventListener('change', handlePhotoUpload);
-
   const pPhotoInput = document.getElementById('p-photo');
   if (pPhotoInput) pPhotoInput.addEventListener('input', function() { updatePhotoPreview(this.value); });
-
   const resumeInput = document.getElementById('resume-file-input');
   if (resumeInput) resumeInput.addEventListener('change', handleResumeUpload);
-
   const pResumeInput = document.getElementById('p-resume');
   if (pResumeInput) pResumeInput.addEventListener('input', function() { updateResumeUI(this.value); });
 });
@@ -923,12 +924,16 @@ async function loadAll() {
       api('GET', '/api/admin/skills'),
       api('GET', '/api/admin/testimonials')
     ]);
-    // Blog posts — fetch separately, don't fail everything if endpoint missing
-    let blogPosts = [];
-    try { blogPosts = await api('GET', '/api/admin/blog'); } catch(e) { console.warn('Blog endpoint not available:', e.message); }
 
-    allData = { settings, projects, jobs, skills, testimonials, blogPosts };
+    let blogPosts = [];
+    try { blogPosts = await api('GET', '/api/admin/blog'); } catch(e) { console.warn('Blog endpoint:', e.message); }
+
+    let contacts = [];
+    try { contacts = await api('GET', '/api/admin/contacts'); } catch(e) { console.warn('Contacts endpoint:', e.message); }
+
+    allData = { settings, projects, jobs, skills, testimonials, blogPosts, contacts };
     orderedProjects = [...projects].sort((a,b) => (a.order||0) - (b.order||0));
+
     renderDashboard();
     renderProfile();
     renderProjects();
@@ -936,6 +941,8 @@ async function loadAll() {
     renderSkills();
     renderTestimonials();
     renderBlogAdmin();
+    renderContacts();
+    updateContactStats();
     renderSettingsToggles();
   } catch (e) {
     showConnBanner();
@@ -951,14 +958,17 @@ function hideBanner()     { document.getElementById('conn-banner').classList.rem
 // DASHBOARD
 // ─────────────────────────────────────────────
 function renderDashboard() {
-  const { projects, jobs, skills, testimonials, blogPosts } = allData;
-  document.getElementById('stat-projects').textContent = projects.length;
-  document.getElementById('stat-jobs').textContent     = jobs.length;
-  document.getElementById('stat-skills').textContent   = skills.length;
-  document.getElementById('stat-blog').textContent     = blogPosts.length;
+  const { projects, jobs, skills, testimonials, blogPosts, contacts } = allData;
+  document.getElementById('stat-projects').textContent  = projects.length;
+  document.getElementById('stat-jobs').textContent      = jobs.length;
+  document.getElementById('stat-skills').textContent    = skills.length;
+  document.getElementById('stat-blog').textContent      = blogPosts.length;
+  document.getElementById('stat-contacts').textContent  = contacts.length;
   document.getElementById('stat-projects-sub').textContent = projects.filter(p => p.status === 'Live').length + ' live';
   document.getElementById('stat-jobs-sub').textContent     = jobs.filter(j => j.is_current).length + ' current';
   document.getElementById('stat-blog-sub').textContent     = blogPosts.filter(p => p.published !== false).length + ' published';
+  const unread = contacts.filter(c => !c.read).length;
+  document.getElementById('stat-contacts-sub').textContent = unread + ' unread';
 
   const table = document.getElementById('dash-projects-table');
   if (!projects.length) { table.innerHTML = '<div class="empty-state">No projects yet</div>'; return; }
@@ -1000,14 +1010,13 @@ function updatePhotoPreview(url) {
 }
 
 function updateResumeUI(url) {
-  const zone      = document.getElementById('resume-upload-zone');
-  const statusBar = document.getElementById('resume-status-bar');
-  const statusTxt = document.getElementById('resume-status-text');
-  const viewBtn   = document.getElementById('resume-view-btn');
+  const zone         = document.getElementById('resume-upload-zone');
+  const statusBar    = document.getElementById('resume-status-bar');
+  const statusTxt    = document.getElementById('resume-status-text');
+  const viewBtn      = document.getElementById('resume-view-btn');
   const previewEmpty = document.getElementById('resume-preview-empty');
   const previewSet   = document.getElementById('resume-preview-set');
   const previewLink  = document.getElementById('resume-preview-link');
-
   if (url && url.trim()) {
     statusBar.style.display = 'flex';
     viewBtn.href = url.trim();
@@ -1036,25 +1045,21 @@ function handleResumeUpload(event) {
   const msg     = document.getElementById('resume-upload-msg');
   const barWrap = document.getElementById('resume-bar-wrap');
   const bar     = document.getElementById('resume-bar');
-
   if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
     msg.style.color = 'var(--danger)'; msg.textContent = '❌ Only PDF files are allowed!'; return;
   }
   if (file.size > 5 * 1024 * 1024) {
     msg.style.color = 'var(--danger)'; msg.textContent = '❌ File exceeds 5MB limit!'; return;
   }
-
   msg.style.color = 'var(--accent)'; msg.textContent = '⏳ Loading PDF...';
   barWrap.style.display = 'block'; bar.style.width = '30%';
-
   const reader = new FileReader();
   reader.onload = function(e) {
     bar.style.width = '100%';
     const base64 = e.target.result;
     document.getElementById('p-resume').value = base64;
     updateResumeUI(base64);
-    msg.style.color = 'var(--now)';
-    msg.textContent = '✅ PDF ready! Click Save Profile.';
+    msg.style.color = 'var(--now)'; msg.textContent = '✅ PDF ready! Click Save Profile.';
     setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
     showToast('Resume ready! Click Save Profile ✓');
   };
@@ -1132,22 +1137,16 @@ function renderProjects() {
 
 function renderOrderList() {
   const list = document.getElementById('order-list');
-  if (!orderedProjects.length) {
-    list.innerHTML = '<div class="empty-state">No projects yet</div>'; return;
-  }
+  if (!orderedProjects.length) { list.innerHTML = '<div class="empty-state">No projects yet</div>'; return; }
   list.innerHTML = orderedProjects.map((p, i) => {
     const isTop3 = i < 3;
     const thumbHtml = p.image_url
       ? `<div class="order-thumb"><img src="${esc(p.image_url)}" onerror="this.style.display='none'" /></div>`
       : `<div class="order-thumb">${['🖥️','🌐','💡','⚡','🚀'][i%5]}</div>`;
     return `
-    <div class="order-item" id="oi-${p._id}"
-      draggable="true"
-      ondragstart="dragStart(event,${i})"
-      ondragover="dragOver(event,${i})"
-      ondragleave="dragLeave(event)"
-      ondrop="dragDrop(event,${i})"
-      ondragend="dragEnd()">
+    <div class="order-item" id="oi-${p._id}" draggable="true"
+      ondragstart="dragStart(event,${i})" ondragover="dragOver(event,${i})"
+      ondragleave="dragLeave(event)" ondrop="dragDrop(event,${i})" ondragend="dragEnd()">
       <div class="drag-handle" title="Drag to reorder">⠿</div>
       <div class="order-num ${isTop3?'top3':''}">${i+1}</div>
       ${thumbHtml}
@@ -1157,8 +1156,8 @@ function renderOrderList() {
       </div>
       ${isTop3 ? `<span class="feat-label">⭐ Featured</span>` : ''}
       <div class="order-controls">
-        <button class="order-btn" onclick="moveProject(${i},-1)" ${i===0?'disabled':''} title="Move up">↑</button>
-        <button class="order-btn" onclick="moveProject(${i},1)" ${i===orderedProjects.length-1?'disabled':''} title="Move down">↓</button>
+        <button class="order-btn" onclick="moveProject(${i},-1)" ${i===0?'disabled':''}>↑</button>
+        <button class="order-btn" onclick="moveProject(${i},1)" ${i===orderedProjects.length-1?'disabled':''}>↓</button>
       </div>
     </div>`;
   }).join('');
@@ -1174,14 +1173,9 @@ function moveProject(index, dir) {
   showToast(dir < 0 ? '↑ Moved up' : '↓ Moved down');
 }
 
-function dragStart(e, i) {
-  dragSrcIndex = i;
-  e.currentTarget.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-}
+function dragStart(e, i) { dragSrcIndex = i; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
 function dragOver(e, i) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
   document.querySelectorAll('.order-item').forEach(el => el.classList.remove('drag-over'));
   if (i !== dragSrcIndex) e.currentTarget.classList.add('drag-over');
 }
@@ -1197,9 +1191,7 @@ function dragDrop(e, i) {
 }
 function dragEnd() {
   dragSrcIndex = null;
-  document.querySelectorAll('.order-item').forEach(el => {
-    el.classList.remove('dragging'); el.classList.remove('drag-over');
-  });
+  document.querySelectorAll('.order-item').forEach(el => { el.classList.remove('dragging'); el.classList.remove('drag-over'); });
 }
 
 async function saveProjectOrder() {
@@ -1211,48 +1203,36 @@ async function saveProjectOrder() {
     ));
     allData.projects = await api('GET', '/api/admin/projects');
     orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
-    renderOrderList();
-    renderProjectGrid();
-    renderDashboard();
+    renderOrderList(); renderProjectGrid(); renderDashboard();
     showToast('✅ Order saved! Top 3 are now featured.');
-  } catch (e) {
-    showToast('Save failed: ' + e.message, true);
-  } finally {
-    btn.disabled = false; btn.textContent = '💾 Save Order';
-  }
+  } catch (e) { showToast('Save failed: ' + e.message, true); }
+  finally { btn.disabled = false; btn.textContent = '💾 Save Order'; }
 }
 
 function renderProjectGrid() {
   const grid = document.getElementById('projects-grid');
   if (!orderedProjects.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>';
-    return;
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>'; return;
   }
   grid.innerHTML = orderedProjects.map((p, i) => `
     <div class="project-card" style="${i<3?'border-color:rgba(251,191,36,0.3);':''} position:relative;">
       ${i<3 ? `<div style="position:absolute;top:8px;right:8px;z-index:5;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;border-radius:100px;padding:2px 9px;font-size:0.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase">⭐ #${i+1}</div>` : ''}
-      ${p.image_url
-        ? `<img class="project-card-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'" />`
-        : `<div class="project-card-thumb-placeholder">🖥️</div>`}
+      ${p.image_url ? `<img class="project-card-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'" />` : `<div class="project-card-thumb-placeholder">🖥️</div>`}
       <div class="project-card-body">
         <div class="project-name">${esc(p.name)}</div>
         <div class="project-desc">${esc((p.description||'').substring(0,80))}${(p.description||'').length>80?'...':''}</div>
         <div class="project-tech">${(p.tech_tags||[]).map(t=>`<span class="tech-chip">${esc(t)}</span>`).join('')}</div>
         <div class="project-actions" style="margin-top:8px;">
-          ${statusBadge(p.status)}
-          <div style="flex:1"></div>
+          ${statusBadge(p.status)}<div style="flex:1"></div>
           ${p.github ? `<a href="${esc(p.github)}" target="_blank" class="icon-btn" title="GitHub">⎇</a>` : ''}
-          ${p.live   ? `<a href="${esc(p.live)}"   target="_blank" class="icon-btn" title="Live Demo">⬡</a>` : ''}
+          ${p.live   ? `<a href="${esc(p.live)}" target="_blank" class="icon-btn" title="Live Demo">⬡</a>` : ''}
           <button class="icon-btn" onclick="editProject('${p._id}')">✎</button>
           <button class="icon-btn del" onclick="deleteProject('${p._id}')">✕</button>
         </div>
       </div>
     </div>`).join('') + `
     <div class="project-card" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:160px;" onclick="clearProjectForm()">
-      <div style="text-align:center;color:var(--muted)">
-        <div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div>
-        <div style="font-size:0.75rem;font-weight:600;">Add New Project</div>
-      </div>
+      <div style="text-align:center;color:var(--muted)"><div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div><div style="font-size:0.75rem;font-weight:600;">Add New Project</div></div>
     </div>`;
 }
 
@@ -1266,12 +1246,12 @@ function updateProjImagePreview(url) {
 function editProject(id) {
   const p = allData.projects.find(x => x._id === id); if (!p) return;
   document.getElementById('proj-id').value     = p._id;
-  document.getElementById('proj-name').value   = p.name       || '';
-  document.getElementById('proj-status').value = p.status     || 'WIP';
-  document.getElementById('proj-desc').value   = p.description|| '';
-  document.getElementById('proj-github').value = p.github     || '';
-  document.getElementById('proj-live').value   = p.live       || '';
-  document.getElementById('proj-image').value  = p.image_url  || '';
+  document.getElementById('proj-name').value   = p.name        || '';
+  document.getElementById('proj-status').value = p.status      || 'WIP';
+  document.getElementById('proj-desc').value   = p.description || '';
+  document.getElementById('proj-github').value = p.github      || '';
+  document.getElementById('proj-live').value   = p.live        || '';
+  document.getElementById('proj-image').value  = p.image_url   || '';
   document.getElementById('proj-tech').value   = (p.tech_tags||[]).join(', ');
   updateProjImagePreview(p.image_url || '');
   document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">✎</span> Edit Project';
@@ -1305,8 +1285,7 @@ async function saveProject() {
     clearProjectForm();
     allData.projects = await api('GET', '/api/admin/projects');
     orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
-    renderProjects();
-    renderDashboard();
+    renderProjects(); renderDashboard();
     showToast('Project saved! ✓ Adjust position in the Order section if needed.');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1317,8 +1296,7 @@ async function deleteProject(id) {
     await api('DELETE', '/api/admin/projects/' + id);
     allData.projects = await api('GET', '/api/admin/projects');
     orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
-    renderProjects();
-    renderDashboard();
+    renderProjects(); renderDashboard();
     showToast('Project deleted');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1334,9 +1312,7 @@ function renderJobs() {
   table.innerHTML = `<table>
     <tr><th>#</th><th>Company</th><th>Role</th><th>Period</th><th>Status</th><th>Actions</th></tr>
     ${jobs.map((j,i) => `<tr>
-      <td>${i+1}</td>
-      <td><strong>${esc(j.company)}</strong></td>
-      <td>${esc(j.role)}</td>
+      <td>${i+1}</td><td><strong>${esc(j.company)}</strong></td><td>${esc(j.role)}</td>
       <td>${esc(j.date_text||'')}</td>
       <td>${j.is_current?'<span class="badge badge-green">Current</span>':'<span class="badge badge-purple">Past</span>'}</td>
       <td style="display:flex;gap:6px;">
@@ -1350,13 +1326,11 @@ function renderJobs() {
 function editJob(id) {
   const j = allData.jobs.find(x => x._id === id); if (!j) return;
   const parts = (j.date_text||'').split(' – ');
-  const start = parts[0] || '';
-  const end   = parts[1] || '';
   document.getElementById('job-id').value          = j._id;
   document.getElementById('job-company').value     = j.company     || '';
   document.getElementById('job-role').value        = j.role        || '';
-  document.getElementById('job-start').value       = start;
-  document.getElementById('job-end').value         = end;
+  document.getElementById('job-start').value       = parts[0]      || '';
+  document.getElementById('job-end').value         = parts[1]      || '';
   document.getElementById('job-bullets').value     = (j.bullets||[]).join('\n');
   document.getElementById('job-tech').value        = (j.tech_tags||[]).join(', ');
   document.getElementById('job-theme').value       = j.panel_theme || 'theme-blue';
@@ -1367,8 +1341,7 @@ function editJob(id) {
 
 function clearJobForm() {
   document.getElementById('job-id').value = '';
-  ['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title']
-    .forEach(id => document.getElementById(id).value='');
+  ['job-company','job-role','job-start','job-end','job-bullets','job-tech','job-panel-title'].forEach(id => document.getElementById(id).value='');
   document.getElementById('job-current').value = 'false';
   document.getElementById('job-theme').value   = 'theme-blue';
 }
@@ -1393,8 +1366,7 @@ async function saveJob() {
     else    await api('POST', '/api/admin/jobs', body);
     clearJobForm();
     allData.jobs = await api('GET', '/api/admin/jobs');
-    renderJobs();
-    renderDashboard();
+    renderJobs(); renderDashboard();
     showToast('Job saved! ✓');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1404,8 +1376,7 @@ async function deleteJob(id) {
   try {
     await api('DELETE', '/api/admin/jobs/' + id);
     allData.jobs = await api('GET', '/api/admin/jobs');
-    renderJobs();
-    renderDashboard();
+    renderJobs(); renderDashboard();
     showToast('Job deleted');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1436,8 +1407,8 @@ function renderSkills() {
 function editSkill(id) {
   const s = allData.skills.find(x => x._id === id); if (!s) return;
   document.getElementById('skill-id').value    = s._id;
-  document.getElementById('skill-title').value = s.title        || '';
-  document.getElementById('skill-desc').value  = s.description  || '';
+  document.getElementById('skill-title').value = s.title       || '';
+  document.getElementById('skill-desc').value  = s.description || '';
   document.getElementById('skill-tags').value  = (s.tags||[]).map(t=>t.label||t).join(', ');
   document.getElementById('skill-tools').value = (s.tools||[]).map(t=>t.name+'|'+t.icon_url).join('\n');
   document.getElementById('skill-form-panel').scrollIntoView({ behavior:'smooth' });
@@ -1467,8 +1438,7 @@ async function saveSkill() {
     else    await api('POST', '/api/admin/skills', body);
     clearSkillForm();
     allData.skills = await api('GET', '/api/admin/skills');
-    renderSkills();
-    renderDashboard();
+    renderSkills(); renderDashboard();
     showToast('Skill saved! ✓');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1478,8 +1448,7 @@ async function deleteSkill(id) {
   try {
     await api('DELETE', '/api/admin/skills/' + id);
     allData.skills = await api('GET', '/api/admin/skills');
-    renderSkills();
-    renderDashboard();
+    renderSkills(); renderDashboard();
     showToast('Skill deleted');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1495,8 +1464,7 @@ function renderTestimonials() {
   table.innerHTML = `<table>
     <tr><th>Author</th><th>Role</th><th>Quote</th><th>Visible</th><th></th></tr>
     ${testis.map(t => `<tr>
-      <td><strong>${esc(t.author_name)}</strong></td>
-      <td>${esc(t.author_role)}</td>
+      <td><strong>${esc(t.author_name)}</strong></td><td>${esc(t.author_role)}</td>
       <td style="color:var(--muted)">${esc((t.quote||'').substring(0,40))}...</td>
       <td>${t.visible?'<span class="badge badge-green">On</span>':'<span class="badge badge-red">Off</span>'}</td>
       <td style="display:flex;gap:6px;">
@@ -1540,8 +1508,7 @@ async function saveTestimonial() {
     else    await api('POST', '/api/admin/testimonials', body);
     clearTestiForm();
     allData.testimonials = await api('GET', '/api/admin/testimonials');
-    renderTestimonials();
-    renderDashboard();
+    renderTestimonials(); renderDashboard();
     showToast('Testimonial saved! ✓');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1551,8 +1518,7 @@ async function deleteTesti(id) {
   try {
     await api('DELETE', '/api/admin/testimonials/' + id);
     allData.testimonials = await api('GET', '/api/admin/testimonials');
-    renderTestimonials();
-    renderDashboard();
+    renderTestimonials(); renderDashboard();
     showToast('Testimonial deleted');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1565,28 +1531,19 @@ function renderBlogAdmin() {
   document.getElementById('blog-count').textContent = `Blog Posts (${posts.length})`;
   const grid = document.getElementById('blog-grid-admin');
   if (!posts.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No blog posts yet — write your first one below!</div>';
-    return;
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No blog posts yet — write your first one below!</div>'; return;
   }
   grid.innerHTML = posts.map(p => {
     const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}) : '';
     const isPublished = p.published !== false;
     return `
     <div class="blog-card-admin">
-      ${p.cover_image
-        ? `<img class="blog-card-admin-thumb" src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.style.display='none'" />`
-        : `<div class="blog-card-admin-placeholder">📝</div>`}
+      ${p.cover_image ? `<img class="blog-card-admin-thumb" src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.style.display='none'" />` : `<div class="blog-card-admin-placeholder">📝</div>`}
       <div class="blog-card-admin-body">
         <div class="blog-card-admin-title">${esc(p.title)}</div>
-        <div class="blog-card-admin-meta">
-          ${date ? date + ' · ' : ''}
-          ${p.category ? esc(p.category) + ' · ' : ''}
-          ${p.read_time ? esc(p.read_time) : ''}
-        </div>
+        <div class="blog-card-admin-meta">${date ? date + ' · ' : ''}${p.category ? esc(p.category) + ' · ' : ''}${p.read_time ? esc(p.read_time) : ''}</div>
         <div class="blog-card-admin-actions">
-          ${isPublished
-            ? '<span class="badge badge-green">Published</span>'
-            : '<span class="badge badge-red">Draft</span>'}
+          ${isPublished ? '<span class="badge badge-green">Published</span>' : '<span class="badge badge-red">Draft</span>'}
           ${p.external_url ? '<span class="badge badge-blue">External</span>' : ''}
           <div style="flex:1"></div>
           ${p.external_url ? `<a href="${esc(p.external_url)}" target="_blank" class="icon-btn" title="View post">⬡</a>` : ''}
@@ -1597,10 +1554,7 @@ function renderBlogAdmin() {
     </div>`;
   }).join('') + `
     <div class="blog-card-admin" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:160px;" onclick="clearBlogForm()">
-      <div style="text-align:center;color:var(--muted)">
-        <div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div>
-        <div style="font-size:0.75rem;font-weight:600;">New Post</div>
-      </div>
+      <div style="text-align:center;color:var(--muted)"><div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div><div style="font-size:0.75rem;font-weight:600;">New Post</div></div>
     </div>`;
 }
 
@@ -1629,8 +1583,7 @@ function editBlogPost(id) {
 
 function clearBlogForm() {
   document.getElementById('blog-id').value = '';
-  ['blog-title','blog-category','blog-read-time','blog-excerpt','blog-cover','blog-external-url','blog-slug']
-    .forEach(id => document.getElementById(id).value='');
+  ['blog-title','blog-category','blog-read-time','blog-excerpt','blog-cover','blog-external-url','blog-slug'].forEach(id => document.getElementById(id).value='');
   document.getElementById('blog-published').value = 'true';
   document.getElementById('blog-form-title').innerHTML = '<span class="panel-icon">+</span> Add / Edit Blog Post';
   updateBlogImagePreview('');
@@ -1640,14 +1593,11 @@ async function saveBlogPost() {
   const id = document.getElementById('blog-id').value;
   const titleVal = document.getElementById('blog-title').value.trim();
   if (!titleVal) return showToast('Post title is required', true);
-
-  // Auto-generate slug from title if blank
   let slugVal = document.getElementById('blog-slug').value.trim();
   if (!slugVal) {
     slugVal = titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     document.getElementById('blog-slug').value = slugVal;
   }
-
   const body = {
     title:        titleVal,
     category:     document.getElementById('blog-category').value.trim(),
@@ -1658,14 +1608,12 @@ async function saveBlogPost() {
     slug:         slugVal,
     published:    document.getElementById('blog-published').value === 'true'
   };
-
   try {
     if (id) await api('PUT',  '/api/admin/blog/' + id, body);
     else    await api('POST', '/api/admin/blog', body);
     clearBlogForm();
     allData.blogPosts = await api('GET', '/api/admin/blog');
-    renderBlogAdmin();
-    renderDashboard();
+    renderBlogAdmin(); renderDashboard();
     showToast('Blog post saved! ✓');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1675,9 +1623,170 @@ async function deleteBlogPost(id) {
   try {
     await api('DELETE', '/api/admin/blog/' + id);
     allData.blogPosts = await api('GET', '/api/admin/blog');
-    renderBlogAdmin();
-    renderDashboard();
+    renderBlogAdmin(); renderDashboard();
     showToast('Blog post deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
+// CONTACTS
+// ─────────────────────────────────────────────
+function updateContactStats() {
+  const contacts = allData.contacts || [];
+  const unread   = contacts.filter(c => !c.read).length;
+  const badge    = document.getElementById('nav-unread-badge');
+  if (unread > 0) { badge.textContent = unread; badge.classList.add('visible'); }
+  else            { badge.classList.remove('visible'); }
+}
+
+function setContactFilter(f) {
+  contactFilter = f;
+  ['all','unread','starred'].forEach(x => {
+    const btn = document.getElementById('contacts-filter-' + x);
+    if (!btn) return;
+    btn.className = 'btn ' + (x === f ? 'btn-primary' : 'btn-ghost');
+    btn.style.fontSize = '0.72rem';
+  });
+  renderContacts();
+}
+
+function renderContacts() {
+  let contacts = allData.contacts || [];
+  if (contactFilter === 'unread')  contacts = contacts.filter(c => !c.read);
+  if (contactFilter === 'starred') contacts = contacts.filter(c => c.starred);
+
+  const total  = (allData.contacts || []).length;
+  const unread = (allData.contacts || []).filter(c => !c.read).length;
+  document.getElementById('contacts-count').textContent = `Contacts (${total} total · ${unread} unread)`;
+
+  const wrap = document.getElementById('contacts-list-wrap');
+  if (!contacts.length) {
+    wrap.innerHTML = `<div class="empty-state">
+      ${contactFilter === 'all'     ? '📭 No messages yet — share your portfolio!' :
+        contactFilter === 'unread'  ? '🎉 All caught up! No unread messages.' :
+                                      '⭐ No starred messages yet.'}
+    </div>`;
+    return;
+  }
+
+  wrap.innerHTML = contacts.map(c => {
+    const date  = new Date(c.createdAt).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' });
+    const time  = new Date(c.createdAt).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+    const short = (c.message||'').length > 90 ? c.message.substring(0,90) + '…' : (c.message||'');
+    return `
+    <div class="contact-row ${!c.read?'unread':''}" id="crow-${c._id}"
+      style="background:${!c.read?'rgba(192,132,252,0.04)':'var(--card)'};
+             border:1px solid ${!c.read?'rgba(192,132,252,0.3)':'var(--border2)'};
+             border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;position:relative;"
+      onclick="openContactDetail('${c._id}')">
+      ${!c.read ? `<div style="position:absolute;top:50%;left:0;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0;"></div>` : ''}
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent-dark),var(--accent));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.88rem;font-weight:800;color:#fff;text-transform:uppercase;">
+          ${esc((c.name||'?')[0])}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;">
+            <span style="font-size:0.85rem;font-weight:${!c.read?'800':'600'};color:var(--text);">${esc(c.name)}</span>
+            <span style="font-size:0.72rem;color:var(--muted);">${esc(c.email)}</span>
+            ${c.starred ? '<span style="font-size:0.8rem;">⭐</span>' : ''}
+            ${!c.read ? '<span class="badge badge-purple" style="font-size:0.58rem;padding:1px 7px;">New</span>' : ''}
+            <span style="margin-left:auto;font-size:0.7rem;color:var(--dim);white-space:nowrap;">${date} · ${time}</span>
+          </div>
+          ${c.subject ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:3px;">${esc(c.subject)}</div>` : ''}
+          <div style="font-size:0.78rem;color:var(--muted);line-height:1.5;">${esc(short)}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0;" onclick="event.stopPropagation()">
+          <button class="icon-btn" title="${c.starred?'Unstar':'Star'}"
+            onclick="toggleContactStar('${c._id}',${!c.starred})"
+            style="${c.starred?'color:#fbbf24;border-color:rgba(251,191,36,0.4)':''}">
+            ${c.starred ? '★' : '☆'}
+          </button>
+          <button class="icon-btn" title="${c.read?'Mark unread':'Mark read'}"
+            onclick="toggleContactRead('${c._id}',${!c.read})">
+            ${c.read ? '○' : '●'}
+          </button>
+          <button class="icon-btn del" title="Delete" onclick="deleteContact('${c._id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openContactDetail(id) {
+  const c = (allData.contacts||[]).find(x => x._id === id); if (!c) return;
+  currentDetailId = id;
+
+  document.getElementById('detail-subject').textContent    = c.subject || 'No subject';
+  document.getElementById('detail-name').textContent       = c.name;
+  document.getElementById('detail-email-link').textContent = c.email;
+  document.getElementById('detail-email-link').href        = 'mailto:' + c.email;
+  document.getElementById('detail-date').textContent       =
+    new Date(c.createdAt).toLocaleString('en-US', { dateStyle:'medium', timeStyle:'short' });
+  document.getElementById('detail-message').textContent    = c.message;
+  document.getElementById('detail-reply-btn').href         =
+    `mailto:${c.email}?subject=Re: ${encodeURIComponent(c.subject || 'Your message')}`;
+
+  const starBtn = document.getElementById('detail-star-btn');
+  starBtn.textContent = c.starred ? '★ Starred' : '☆ Star';
+  starBtn.style.color = c.starred ? '#fbbf24' : '';
+
+  document.getElementById('contact-detail-panel').style.display = 'block';
+  document.getElementById('contact-detail-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+
+  if (!c.read) toggleContactRead(id, true, true);
+}
+
+function closeContactDetail() {
+  document.getElementById('contact-detail-panel').style.display = 'none';
+  currentDetailId = null;
+}
+
+async function toggleDetailStar() {
+  if (!currentDetailId) return;
+  const c = (allData.contacts||[]).find(x => x._id === currentDetailId);
+  if (c) {
+    await toggleContactStar(currentDetailId, !c.starred, true);
+    openContactDetail(currentDetailId);
+  }
+}
+
+async function deleteContactFromDetail() {
+  if (!currentDetailId) return;
+  closeContactDetail();
+  await deleteContact(currentDetailId);
+}
+
+async function toggleContactRead(id, val, silent = false) {
+  try {
+    const updated = await api('PUT', '/api/admin/contacts/' + id + '/read', { read: val });
+    const idx = (allData.contacts||[]).findIndex(x => x._id === id);
+    if (idx !== -1) allData.contacts[idx] = updated;
+    renderContacts();
+    updateContactStats();
+    renderDashboard();
+    if (!silent) showToast(val ? '✓ Marked as read' : '✓ Marked as unread');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function toggleContactStar(id, val, silent = false) {
+  try {
+    const updated = await api('PUT', '/api/admin/contacts/' + id + '/star', { starred: val });
+    const idx = (allData.contacts||[]).findIndex(x => x._id === id);
+    if (idx !== -1) allData.contacts[idx] = updated;
+    renderContacts();
+    if (!silent) showToast(val ? '⭐ Starred!' : 'Unstarred');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteContact(id) {
+  if (!confirm('Delete this message?')) return;
+  try {
+    await api('DELETE', '/api/admin/contacts/' + id);
+    allData.contacts = (allData.contacts||[]).filter(x => x._id !== id);
+    renderContacts();
+    updateContactStats();
+    renderDashboard();
+    showToast('Message deleted');
   } catch (e) { showToast(e.message, true); }
 }
 
@@ -1696,8 +1805,7 @@ function renderSettingsToggles() {
   setToggle('toggle-contact',      s.show_contact      !== false);
 }
 function setToggle(id, val) {
-  const el = document.getElementById(id);
-  if (!el) return;
+  const el = document.getElementById(id); if (!el) return;
   val ? el.classList.add('on') : el.classList.remove('on');
 }
 async function saveSettings() {
@@ -1748,7 +1856,7 @@ function showPage(id, el) {
   const titles = {
     dashboard:'Dashboard', profile:'Profile & Photo', projects:'Projects',
     jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials',
-    blog:'Blog', settings:'Site Settings'
+    blog:'Blog', contacts:'Contacts', settings:'Site Settings'
   };
   document.getElementById('page-title').textContent = titles[id] || id;
   if (window.innerWidth <= 768) closeSidebar();
