@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="40" fill="#0d0d18"/>
+  <rect x="8" y="8" width="176" height="176" rx="34" fill="#161624"/>
+  <!-- Grid pattern subtle -->
+  <line x1="0" y1="48" x2="192" y2="48" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="0" y1="96" x2="192" y2="96" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="0" y1="144" x2="192" y2="144" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="48" y1="0" x2="48" y2="192" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="96" y1="0" x2="96" y2="192" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="144" y1="0" x2="144" y2="192" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <!-- SA letters -->
+  <text x="96" y="118" font-family="Georgia,serif" font-weight="800" font-size="72" fill="#eeeef5" text-anchor="middle" letter-spacing="-4">SA</text>
+  <!-- Accent dot -->
+  <circle cx="138" cy="72" r="10" fill="#c084fc"/>
+  <!-- Bottom bar accent -->
+  <rect x="40" y="148" width="112" height="4" rx="2" fill="#c084fc" opacity="0.6"/>
+</svg>
