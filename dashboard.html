@@ -257,6 +257,17 @@
   .conn-banner button { margin-left:auto; background:rgba(248,113,113,0.15); border:1px solid rgba(248,113,113,0.3); color:var(--danger); border-radius:6px; padding:3px 10px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; }
   .conn-banner button:hover { background:rgba(248,113,113,0.25); }
 
+  /* ── BLOG CARDS ── */
+  .blog-grid-admin { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+  .blog-card-admin { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
+  .blog-card-admin:hover { border-color:rgba(192,132,252,0.35); }
+  .blog-card-admin-thumb { width:100%; height:90px; object-fit:cover; display:block; background:var(--bg3); }
+  .blog-card-admin-placeholder { width:100%; height:90px; background:linear-gradient(135deg,#1a1a3e,#0d0d20); display:flex; align-items:center; justify-content:center; font-size:1.4rem; opacity:0.3; }
+  .blog-card-admin-body { padding:0.85rem; }
+  .blog-card-admin-title { font-family:'Bricolage Grotesque','Georgia',serif; font-size:0.88rem; font-weight:700; margin-bottom:4px; line-height:1.3; }
+  .blog-card-admin-meta { font-size:0.68rem; color:var(--muted); margin-bottom:8px; }
+  .blog-card-admin-actions { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+
   @media (max-width: 768px) {
     .hamburger { display:inline-flex; }
     .sidebar { position:fixed; top:0; left:0; bottom:0; z-index:9000; transform:translateX(-100%); box-shadow:4px 0 30px rgba(0,0,0,0.8); overflow-y:auto; }
@@ -271,6 +282,7 @@
     .row { flex-direction:column; }
     .col-6 { width:100%; }
     .project-grid { grid-template-columns:1fr; }
+    .blog-grid-admin { grid-template-columns:1fr; }
     .form-grid { grid-template-columns:1fr; }
     .form-group.full { grid-column:1; }
     .content { padding:0.9rem; }
@@ -320,6 +332,7 @@
     <div class="nav-item" data-page="jobs" onclick="showPage('jobs',this)"><span class="nav-icon">◈</span> Career / Jobs</div>
     <div class="nav-item" data-page="skills" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
     <div class="nav-item" data-page="testimonials" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
+    <div class="nav-item" data-page="blog" onclick="showPage('blog',this)"><span class="nav-icon">✍</span> Blog</div>
     <div class="nav-section">Settings</div>
     <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⊙</span> Site Settings</div>
     <div class="sidebar-bottom">
@@ -332,7 +345,7 @@
 
   <div class="main">
     <div class="conn-banner" id="conn-banner">
-      ⚠️ Server se connect nahi ho pa raha. Render free tier pe server 50-60 seconds mein wake up hoga — thoda wait karo.
+      ⚠️ Cannot connect to server. Render free tier server wakes up in 50-60 seconds — please wait and retry.
       <button onclick="retryLoad()">Retry</button>
     </div>
 
@@ -366,7 +379,7 @@
           <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value" id="stat-projects">—</div><div class="stat-sub"><span class="stat-dot"></span><span id="stat-projects-sub">loading...</span></div></div>
           <div class="stat-card"><div class="stat-label">Jobs</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
           <div class="stat-card"><div class="stat-label">Skills</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
-          <div class="stat-card"><div class="stat-label">Reviews</div><div class="stat-value" id="stat-testi">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span>total</div></div>
+          <div class="stat-card"><div class="stat-label">Blog Posts</div><div class="stat-value" id="stat-blog">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span><span id="stat-blog-sub">total</span></div></div>
         </div>
         <div class="row">
           <div class="col-6">
@@ -381,6 +394,7 @@
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('jobs')">+ Add job / experience</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('skills')">+ Add skill category</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('testimonials')">+ Add testimonial</button>
+                <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('blog')">+ Write blog post</button>
                 <button class="btn btn-ghost" style="justify-content:flex-start;width:100%" onclick="showPage('profile')">✎ Edit profile</button>
               </div>
             </div>
@@ -408,14 +422,14 @@
                   <input type="file" id="photo-file-input" accept="image/*" style="display:none" />
                   <div id="upload-zone" style="border:1.5px dashed var(--border2);border-radius:12px;padding:1.2rem;text-align:center;cursor:pointer;" onclick="document.getElementById('photo-file-input').click()">
                     <div style="font-size:1.8rem;margin-bottom:6px;">📸</div>
-                    <div style="font-size:0.78rem;color:var(--muted)"><strong style="color:var(--accent)">Click karo image select karne ke liye</strong><br>JPG, PNG, WEBP — max 5MB</div>
+                    <div style="font-size:0.78rem;color:var(--muted)"><strong style="color:var(--accent)">Click to select an image</strong><br>JPG, PNG, WEBP — max 5MB</div>
                   </div>
                   <div id="upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
                   <div id="upload-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
                     <div id="upload-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div>
                   </div>
                 </div>
-                <div class="form-group full"><label>Ya Photo URL paste karo</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
+                <div class="form-group full"><label>Or paste Photo URL</label><input id="p-photo" placeholder="https://... (direct image link)" /></div>
 
                 <!-- ── RESUME UPLOAD ── -->
                 <div class="form-group full">
@@ -424,18 +438,17 @@
                   <div class="resume-zone" id="resume-upload-zone" onclick="document.getElementById('resume-file-input').click()">
                     <div style="font-size:1.8rem;margin-bottom:6px;">📄</div>
                     <div style="font-size:0.78rem;color:var(--muted)">
-                      <strong style="color:var(--accent)">Click karo PDF select karne ke liye</strong><br>
-                      Sirf PDF — max 5MB
+                      <strong style="color:var(--accent)">Click to select a PDF</strong><br>
+                      PDF only — max 5MB
                     </div>
                   </div>
                   <div id="resume-upload-msg" style="margin-top:6px;font-size:0.75rem;text-align:center;min-height:18px;color:var(--accent);"></div>
                   <div id="resume-bar-wrap" style="display:none;margin-top:6px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden;">
                     <div id="resume-bar" style="height:100%;width:0%;background:var(--accent);border-radius:4px;transition:width .3s;"></div>
                   </div>
-                  <!-- Resume status bar — shown when resume is set -->
                   <div class="resume-status-bar" id="resume-status-bar" style="display:none;">
                     <span class="resume-status-icon">📄</span>
-                    <span class="resume-status-text" id="resume-status-text">Resume set hai</span>
+                    <span class="resume-status-text" id="resume-status-text">Resume is set</span>
                     <div class="resume-status-actions">
                       <a id="resume-view-btn" href="#" target="_blank" class="btn btn-ghost" style="padding:4px 10px;font-size:0.7rem;">👁 View</a>
                       <button class="btn btn-danger" style="padding:4px 10px;font-size:0.7rem;" onclick="clearResume()">✕ Remove</button>
@@ -443,9 +456,9 @@
                   </div>
                 </div>
                 <div class="form-group full">
-                  <label>Ya Resume URL paste karo (Google Drive / Dropbox)</label>
+                  <label>Or paste Resume URL (Google Drive / Dropbox)</label>
                   <input id="p-resume" placeholder="https://drive.google.com/file/d/..." />
-                  <div class="field-hint">💡 Google Drive link use karo: Share → "Anyone with link" → link copy karo</div>
+                  <div class="field-hint">💡 Use Google Drive: Share → "Anyone with link" → copy link</div>
                 </div>
 
               </div>
@@ -460,22 +473,21 @@
               <div style="text-align:center;padding:1rem;">
                 <img id="p-photo-preview" src="" alt="Photo" style="width:140px;height:170px;object-fit:cover;border-radius:14px;border:1px solid var(--border2);display:none;" />
                 <div id="p-photo-placeholder" style="width:140px;height:170px;border:1.5px dashed var(--border2);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;opacity:0.3">📸</div>
-                <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Upar se file select karo ya URL paste karo</div>
+                <div style="margin-top:10px;font-size:0.72rem;color:var(--muted)">Select a file above or paste a URL</div>
               </div>
             </div>
 
-            <!-- Resume Preview Card -->
             <div class="form-panel" style="margin-top:1rem;" id="resume-preview-panel">
               <div class="panel-title"><span class="panel-icon">📄</span> Resume Status</div>
               <div id="resume-preview-empty" style="text-align:center;padding:1rem;">
                 <div style="font-size:2rem;opacity:0.25;margin-bottom:8px;">📄</div>
-                <div style="font-size:0.75rem;color:var(--muted)">Koi resume set nahi hai<br>Left side se upload karo</div>
+                <div style="font-size:0.75rem;color:var(--muted)">No resume set yet<br>Upload one from the left panel</div>
               </div>
               <div id="resume-preview-set" style="display:none;">
                 <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:12px;text-align:center;">
                   <div style="font-size:2rem;margin-bottom:6px;">✅</div>
-                  <div style="font-size:0.78rem;color:var(--now);font-weight:700;margin-bottom:4px;">Resume Set Hai!</div>
-                  <div style="font-size:0.7rem;color:var(--muted);margin-bottom:10px)">Portfolio pe download button dikhega</div>
+                  <div style="font-size:0.78rem;color:var(--now);font-weight:700;margin-bottom:4px;">Resume is Set!</div>
+                  <div style="font-size:0.7rem;color:var(--muted);margin-bottom:10px;">Download button will appear on portfolio</div>
                   <a id="resume-preview-link" href="#" target="_blank" class="btn btn-ghost" style="font-size:0.72rem;margin-top:8px;display:inline-flex;">📥 Download / View Resume</a>
                 </div>
               </div>
@@ -491,15 +503,14 @@
           <button class="btn btn-primary" onclick="clearProjectForm()">+ New Project</button>
         </div>
 
-        <!-- ORDER MANAGER -->
         <div class="form-panel" style="margin-bottom:1rem;">
           <div class="panel-title">
             <span class="panel-icon">⇅</span> Project Order &amp; Featured Top 3
-            <span style="margin-left:auto;font-size:0.65rem;color:var(--muted);font-weight:500;">Drag ya ↑↓ se order badlo · Top 3 = Featured</span>
+            <span style="margin-left:auto;font-size:0.65rem;color:var(--muted);font-weight:500;">Drag or use ↑↓ to reorder · Top 3 = Featured</span>
           </div>
           <div class="order-save-bar">
             <div class="order-save-hint">
-              <strong>⭐ Top 3</strong> portfolio mein featured dikhenge. Baaki "More Projects" mein.
+              <strong>⭐ Top 3</strong> will appear as featured on the portfolio. The rest go in "More Projects".
             </div>
             <button class="btn btn-primary" id="save-order-btn" onclick="saveProjectOrder()">💾 Save Order</button>
           </div>
@@ -508,11 +519,9 @@
           </div>
         </div>
 
-        <!-- Project cards grid -->
         <div class="project-grid" id="projects-grid"><div class="loading">Loading projects...</div></div>
         <div class="divider"></div>
 
-        <!-- Add/Edit form -->
         <div class="form-panel" id="project-form-panel">
           <div class="panel-title" id="proj-form-title"><span class="panel-icon">+</span> Add / Edit Project</div>
           <input type="hidden" id="proj-id" />
@@ -525,7 +534,7 @@
             <div class="form-group full">
               <label>Project Screenshot / Image URL</label>
               <input id="proj-image" placeholder="https://i.imgur.com/..." oninput="updateProjImagePreview(this.value)" />
-              <div class="field-hint">📌 Imgur pe upload karo → direct link copy karo | <a href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
+              <div class="field-hint">📌 Upload on Imgur → copy direct link | <a href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
               <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none;">
                 <img id="proj-img-preview" src="" alt="Preview" onerror="document.getElementById('proj-img-preview-wrap').style.display='none'" />
               </div>
@@ -582,7 +591,7 @@
             <div class="form-group full"><label>Category Title</label><input id="skill-title" placeholder="Frontend Development" /></div>
             <div class="form-group full"><label>Description</label><input id="skill-desc" placeholder="Building fast, responsive UIs" /></div>
             <div class="form-group full">
-              <label>Tech Icons (Name|IconURL — per line)</label>
+              <label>Tech Icons (Name|IconURL — one per line)</label>
               <textarea id="skill-tools" rows="4" placeholder="React|https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"></textarea>
               <div style="font-size:0.68rem;color:var(--muted);margin-top:4px;">Format: <code style="background:var(--bg3);padding:1px 5px;border-radius:4px;">TechName|IconURL</code></div>
             </div>
@@ -615,6 +624,52 @@
           <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
             <button class="btn btn-ghost" onclick="clearTestiForm()">Clear</button>
             <button class="btn btn-primary" onclick="saveTestimonial()">Save Testimonial</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BLOG ── -->
+      <div class="page" id="page-blog">
+        <div class="section-head">
+          <div class="section-title" id="blog-count">Blog Posts</div>
+          <button class="btn btn-primary" onclick="clearBlogForm()">+ New Post</button>
+        </div>
+
+        <!-- Blog cards grid -->
+        <div class="blog-grid-admin" id="blog-grid-admin"><div class="loading">Loading posts...</div></div>
+        <div class="divider"></div>
+
+        <!-- Add/Edit form -->
+        <div class="form-panel" id="blog-form-panel">
+          <div class="panel-title" id="blog-form-title"><span class="panel-icon">+</span> Add / Edit Blog Post</div>
+          <input type="hidden" id="blog-id" />
+          <div class="form-grid">
+            <div class="form-group full"><label>Post Title</label><input id="blog-title" placeholder="My Awesome Blog Post" /></div>
+            <div class="form-group"><label>Category</label><input id="blog-category" placeholder="Tutorial, Opinion, Dev Log..." /></div>
+            <div class="form-group"><label>Read Time</label><input id="blog-read-time" placeholder="5 min read" /></div>
+            <div class="form-group full">
+              <label>Excerpt / Summary</label>
+              <textarea id="blog-excerpt" placeholder="A short summary of what this post is about..." rows="3"></textarea>
+            </div>
+            <div class="form-group full">
+              <label>Cover Image URL</label>
+              <input id="blog-cover" placeholder="https://i.imgur.com/..." oninput="updateBlogImagePreview(this.value)" />
+              <div class="field-hint">📌 Upload on Imgur → copy direct link | <a href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
+              <div class="img-preview-wrap" id="blog-img-preview-wrap" style="display:none;">
+                <img id="blog-img-preview" src="" alt="Preview" onerror="document.getElementById('blog-img-preview-wrap').style.display='none'" />
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>External URL (if post is on Medium, Hashnode, etc.)</label>
+              <input id="blog-external-url" placeholder="https://medium.com/..." />
+              <div class="field-hint">If set, clicking the card will open this link. Leave blank for internal posts.</div>
+            </div>
+            <div class="form-group"><label>Slug (URL-friendly ID)</label><input id="blog-slug" placeholder="my-awesome-post" /></div>
+            <div class="form-group"><label>Published?</label><select id="blog-published"><option value="true">Yes — visible on site</option><option value="false">No — draft</option></select></div>
+          </div>
+          <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="clearBlogForm()">Clear</button>
+            <button class="btn btn-primary" onclick="saveBlogPost()">Save Post</button>
           </div>
         </div>
       </div>
@@ -653,6 +708,10 @@
                 <button class="toggle on" id="toggle-testimonials" onclick="this.classList.toggle('on')"></button>
               </div>
               <div class="toggle-row">
+                <div><div class="toggle-label">Show Blog section</div><div class="toggle-desc">Blog posts on portfolio</div></div>
+                <button class="toggle on" id="toggle-blog" onclick="this.classList.toggle('on')"></button>
+              </div>
+              <div class="toggle-row">
                 <div><div class="toggle-label">Show Contact section</div><div class="toggle-desc">Contact form at bottom</div></div>
                 <button class="toggle on" id="toggle-contact" onclick="this.classList.toggle('on')"></button>
               </div>
@@ -687,8 +746,8 @@
     </svg>
   </div>
   <div class="pwa-banner-text">
-    <div class="pwa-banner-title">Admin Panel install karo</div>
-    <div class="pwa-banner-sub">Home screen pe add karo — offline bhi kaam karega</div>
+    <div class="pwa-banner-title">Install Admin Panel</div>
+    <div class="pwa-banner-sub">Add to home screen — works offline too</div>
   </div>
   <div class="pwa-banner-actions">
     <button class="pwa-install-main" onclick="triggerInstall()">Install</button>
@@ -699,7 +758,7 @@
 <script>
 const API_BASE = 'https://portfolio-shafaq.onrender.com';
 let token   = localStorage.getItem('portfolio_admin_token') || '';
-let allData = { projects:[], jobs:[], skills:[], testimonials:[], settings:{} };
+let allData = { projects:[], jobs:[], skills:[], testimonials:[], blogPosts:[], settings:{} };
 
 let orderedProjects = [];
 let dragSrcIndex    = null;
@@ -729,14 +788,14 @@ window.addEventListener('appinstalled', () => {
   document.getElementById('pwa-installed-badge').classList.add('visible');
   document.getElementById('pwa-banner').classList.remove('visible');
   localStorage.setItem('pwa_installed', '1');
-  showToast('✅ App install ho gaya!');
+  showToast('✅ App installed!');
 });
 async function triggerInstall() {
-  if (!deferredPrompt) { showToast('Already installed ya browser support nahi karta', true); return; }
+  if (!deferredPrompt) { showToast('Already installed or browser not supported', true); return; }
   document.getElementById('pwa-banner').classList.remove('visible');
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
-  showToast(outcome === 'accepted' ? 'Installing... 🚀' : 'Install cancel kar diya');
+  showToast(outcome === 'accepted' ? 'Installing... 🚀' : 'Install cancelled');
   deferredPrompt = null;
 }
 function dismissBanner() {
@@ -772,23 +831,18 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar
 // DOM READY
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-  // Login enter key
   const loginPw = document.getElementById('login-pw');
   if (loginPw) loginPw.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-  // Photo upload
   const photoInput = document.getElementById('photo-file-input');
   if (photoInput) photoInput.addEventListener('change', handlePhotoUpload);
 
-  // Photo URL live preview
   const pPhotoInput = document.getElementById('p-photo');
   if (pPhotoInput) pPhotoInput.addEventListener('input', function() { updatePhotoPreview(this.value); });
 
-  // ── RESUME: file input change ──
   const resumeInput = document.getElementById('resume-file-input');
   if (resumeInput) resumeInput.addEventListener('change', handleResumeUpload);
 
-  // ── RESUME: URL input live update ──
   const pResumeInput = document.getElementById('p-resume');
   if (pResumeInput) pResumeInput.addEventListener('input', function() { updateResumeUI(this.value); });
 });
@@ -800,7 +854,7 @@ async function doLogin() {
   const pw    = document.getElementById('login-pw').value.trim();
   const errEl = document.getElementById('login-err');
   errEl.textContent = '';
-  if (!pw) { errEl.textContent = 'Password enter karo'; return; }
+  if (!pw) { errEl.textContent = 'Please enter your password'; return; }
   errEl.textContent = '⏳ Logging in...';
   try {
     const r = await fetch(API_BASE + '/api/auth/login', {
@@ -814,7 +868,7 @@ async function doLogin() {
     showApp();
   } catch (e) {
     errEl.textContent = (e.message.includes('fetch') || e.message.includes('Failed'))
-      ? '⚠️ Server wake ho raha hai (Render free tier), 30-60 sec mein dobara try karo'
+      ? '⚠️ Server is waking up (Render free tier). Please retry in 30-60 seconds.'
       : e.message;
   }
 }
@@ -847,11 +901,11 @@ async function api(method, path, body) {
   if (body !== undefined) opts.body = JSON.stringify(body);
   let r;
   try { r = await fetch(API_BASE + path, opts); }
-  catch (networkErr) { throw new Error('Network error — server se connect nahi ho pa raha: ' + networkErr.message); }
-  if (r.status === 401) { logout(); throw new Error('Session expired — dobara login karo'); }
+  catch (networkErr) { throw new Error('Network error — cannot connect to server: ' + networkErr.message); }
+  if (r.status === 401) { logout(); throw new Error('Session expired — please login again'); }
   let data;
   try { data = await r.json(); }
-  catch { throw new Error('Server ne invalid response diya (status: ' + r.status + ')'); }
+  catch { throw new Error('Server returned invalid response (status: ' + r.status + ')'); }
   if (!r.ok) throw new Error(data.error || data.message || 'Request failed (' + r.status + ')');
   return data;
 }
@@ -869,7 +923,11 @@ async function loadAll() {
       api('GET', '/api/admin/skills'),
       api('GET', '/api/admin/testimonials')
     ]);
-    allData = { settings, projects, jobs, skills, testimonials };
+    // Blog posts — fetch separately, don't fail everything if endpoint missing
+    let blogPosts = [];
+    try { blogPosts = await api('GET', '/api/admin/blog'); } catch(e) { console.warn('Blog endpoint not available:', e.message); }
+
+    allData = { settings, projects, jobs, skills, testimonials, blogPosts };
     orderedProjects = [...projects].sort((a,b) => (a.order||0) - (b.order||0));
     renderDashboard();
     renderProfile();
@@ -877,6 +935,7 @@ async function loadAll() {
     renderJobs();
     renderSkills();
     renderTestimonials();
+    renderBlogAdmin();
     renderSettingsToggles();
   } catch (e) {
     showConnBanner();
@@ -892,13 +951,14 @@ function hideBanner()     { document.getElementById('conn-banner').classList.rem
 // DASHBOARD
 // ─────────────────────────────────────────────
 function renderDashboard() {
-  const { projects, jobs, skills, testimonials } = allData;
+  const { projects, jobs, skills, testimonials, blogPosts } = allData;
   document.getElementById('stat-projects').textContent = projects.length;
   document.getElementById('stat-jobs').textContent     = jobs.length;
   document.getElementById('stat-skills').textContent   = skills.length;
-  document.getElementById('stat-testi').textContent    = testimonials.length;
+  document.getElementById('stat-blog').textContent     = blogPosts.length;
   document.getElementById('stat-projects-sub').textContent = projects.filter(p => p.status === 'Live').length + ' live';
   document.getElementById('stat-jobs-sub').textContent     = jobs.filter(j => j.is_current).length + ' current';
+  document.getElementById('stat-blog-sub').textContent     = blogPosts.filter(p => p.published !== false).length + ' published';
 
   const table = document.getElementById('dash-projects-table');
   if (!projects.length) { table.innerHTML = '<div class="empty-state">No projects yet</div>'; return; }
@@ -939,7 +999,6 @@ function updatePhotoPreview(url) {
   else      { img.style.display = 'none'; ph.style.display = 'inline-flex'; }
 }
 
-// ── RESUME UI helpers ──
 function updateResumeUI(url) {
   const zone      = document.getElementById('resume-upload-zone');
   const statusBar = document.getElementById('resume-status-bar');
@@ -950,18 +1009,10 @@ function updateResumeUI(url) {
   const previewLink  = document.getElementById('resume-preview-link');
 
   if (url && url.trim()) {
-    // Status bar below upload zone
     statusBar.style.display = 'flex';
     viewBtn.href = url.trim();
-    // Show shortened label
-    if (url.startsWith('data:')) {
-      statusTxt.textContent = 'PDF uploaded (base64)';
-    } else {
-      statusTxt.textContent = url.length > 50 ? url.substring(0,50) + '...' : url;
-    }
-    // Upload zone style
+    statusTxt.textContent = url.startsWith('data:') ? 'PDF uploaded (base64)' : (url.length > 50 ? url.substring(0,50) + '...' : url);
     zone.classList.add('has-file');
-    // Right-side preview card
     previewEmpty.style.display = 'none';
     previewSet.style.display   = 'block';
     previewLink.href = url.trim();
@@ -977,7 +1028,7 @@ function clearResume() {
   document.getElementById('p-resume').value = '';
   document.getElementById('resume-upload-msg').textContent = '';
   updateResumeUI('');
-  showToast('Resume hata diya — Save Profile karo');
+  showToast('Resume removed — click Save Profile to apply');
 }
 
 function handleResumeUpload(event) {
@@ -987,25 +1038,25 @@ function handleResumeUpload(event) {
   const bar     = document.getElementById('resume-bar');
 
   if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
-    msg.style.color = 'var(--danger)'; msg.textContent = '❌ Sirf PDF allowed hai!'; return;
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ Only PDF files are allowed!'; return;
   }
   if (file.size > 5 * 1024 * 1024) {
-    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File 5MB se bada hai!'; return;
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File exceeds 5MB limit!'; return;
   }
 
-  msg.style.color = 'var(--accent)'; msg.textContent = '⏳ PDF load ho raha hai...';
+  msg.style.color = 'var(--accent)'; msg.textContent = '⏳ Loading PDF...';
   barWrap.style.display = 'block'; bar.style.width = '30%';
 
   const reader = new FileReader();
   reader.onload = function(e) {
     bar.style.width = '100%';
-    const base64 = e.target.result;           // full data URI
+    const base64 = e.target.result;
     document.getElementById('p-resume').value = base64;
     updateResumeUI(base64);
     msg.style.color = 'var(--now)';
-    msg.textContent = '✅ PDF ready! Save Profile karo.';
+    msg.textContent = '✅ PDF ready! Click Save Profile.';
     setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
-    showToast('Resume ready! Save Profile click karo ✓');
+    showToast('Resume ready! Click Save Profile ✓');
   };
   reader.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Read failed.'; barWrap.style.display='none'; };
   reader.readAsDataURL(file);
@@ -1018,7 +1069,7 @@ function handlePhotoUpload(event) {
   const barWrap = document.getElementById('upload-bar-wrap');
   const bar     = document.getElementById('upload-bar');
   if (file.size > 5 * 1024 * 1024) {
-    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File bahut bada hai! Max 5MB.'; return;
+    msg.style.color = 'var(--danger)'; msg.textContent = '❌ File too large! Max 5MB.'; return;
   }
   msg.style.color = 'var(--accent)'; msg.textContent = '⏳ Processing...';
   barWrap.style.display = 'block'; bar.style.width = '20%';
@@ -1039,9 +1090,9 @@ function handlePhotoUpload(event) {
       bar.style.width = '100%';
       document.getElementById('p-photo').value = base64;
       updatePhotoPreview(base64);
-      msg.style.color = 'var(--now)'; msg.textContent = '✅ Image ready! Save Profile karo.';
+      msg.style.color = 'var(--now)'; msg.textContent = '✅ Image ready! Click Save Profile.';
       setTimeout(() => { barWrap.style.display='none'; bar.style.width='0%'; }, 1500);
-      showToast('Image ready! Save Profile click karo ✓');
+      showToast('Image ready! Click Save Profile ✓');
     };
     img.onerror = () => { msg.style.color='var(--danger)'; msg.textContent='❌ Load failed.'; barWrap.style.display='none'; };
     img.src = e.target.result;
@@ -1061,7 +1112,7 @@ async function saveProfile() {
       github:     document.getElementById('p-github').value,
       linkedin:   document.getElementById('p-linkedin').value,
       photo_url:  document.getElementById('p-photo').value,
-      resume_url: document.getElementById('p-resume').value   // ← resume saved here
+      resume_url: document.getElementById('p-resume').value
     };
     allData.settings = await api('PUT', '/api/admin/settings', update);
     renderProfile();
@@ -1142,7 +1193,7 @@ function dragDrop(e, i) {
   orderedProjects.splice(i, 0, moved);
   dragSrcIndex = null;
   renderOrderList();
-  showToast('Order updated — Save karo!');
+  showToast('Order updated — click Save!');
 }
 function dragEnd() {
   dragSrcIndex = null;
@@ -1247,7 +1298,7 @@ async function saveProject() {
     tech_tags:   document.getElementById('proj-tech').value.split(',').map(s=>s.trim()).filter(Boolean)
   };
   if (!id) body.order = allData.projects.length;
-  if (!body.name) return showToast('Project name required', true);
+  if (!body.name) return showToast('Project name is required', true);
   try {
     if (id) await api('PUT',  '/api/admin/projects/' + id, body);
     else    await api('POST', '/api/admin/projects', body);
@@ -1256,7 +1307,7 @@ async function saveProject() {
     orderedProjects  = [...allData.projects].sort((a,b) => (a.order||0)-(b.order||0));
     renderProjects();
     renderDashboard();
-    showToast('Project saved! ✓ Order section mein adjust karo agar chahiye.');
+    showToast('Project saved! ✓ Adjust position in the Order section if needed.');
   } catch (e) { showToast(e.message, true); }
 }
 
@@ -1336,7 +1387,7 @@ async function saveJob() {
     panel_theme: document.getElementById('job-theme').value,
     panel_title: document.getElementById('job-panel-title').value.trim()
   };
-  if (!body.company) return showToast('Company name required', true);
+  if (!body.company) return showToast('Company name is required', true);
   try {
     if (id) await api('PUT',  '/api/admin/jobs/' + id, body);
     else    await api('POST', '/api/admin/jobs', body);
@@ -1410,7 +1461,7 @@ async function saveSkill() {
     tools,
     tags: document.getElementById('skill-tags').value.split(',').map(s=>({ label:s.trim() })).filter(t=>t.label)
   };
-  if (!body.title) return showToast('Category title required', true);
+  if (!body.title) return showToast('Category title is required', true);
   try {
     if (id) await api('PUT',  '/api/admin/skills/' + id, body);
     else    await api('POST', '/api/admin/skills', body);
@@ -1483,7 +1534,7 @@ async function saveTestimonial() {
     visible:      document.getElementById('testi-visible').value === 'true',
     quote:        document.getElementById('testi-quote').value.trim()
   };
-  if (!body.author_name || !body.quote) return showToast('Name and quote required', true);
+  if (!body.author_name || !body.quote) return showToast('Name and quote are required', true);
   try {
     if (id) await api('PUT',  '/api/admin/testimonials/' + id, body);
     else    await api('POST', '/api/admin/testimonials', body);
@@ -1507,6 +1558,130 @@ async function deleteTesti(id) {
 }
 
 // ─────────────────────────────────────────────
+// BLOG
+// ─────────────────────────────────────────────
+function renderBlogAdmin() {
+  const posts = allData.blogPosts || [];
+  document.getElementById('blog-count').textContent = `Blog Posts (${posts.length})`;
+  const grid = document.getElementById('blog-grid-admin');
+  if (!posts.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No blog posts yet — write your first one below!</div>';
+    return;
+  }
+  grid.innerHTML = posts.map(p => {
+    const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}) : '';
+    const isPublished = p.published !== false;
+    return `
+    <div class="blog-card-admin">
+      ${p.cover_image
+        ? `<img class="blog-card-admin-thumb" src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.style.display='none'" />`
+        : `<div class="blog-card-admin-placeholder">📝</div>`}
+      <div class="blog-card-admin-body">
+        <div class="blog-card-admin-title">${esc(p.title)}</div>
+        <div class="blog-card-admin-meta">
+          ${date ? date + ' · ' : ''}
+          ${p.category ? esc(p.category) + ' · ' : ''}
+          ${p.read_time ? esc(p.read_time) : ''}
+        </div>
+        <div class="blog-card-admin-actions">
+          ${isPublished
+            ? '<span class="badge badge-green">Published</span>'
+            : '<span class="badge badge-red">Draft</span>'}
+          ${p.external_url ? '<span class="badge badge-blue">External</span>' : ''}
+          <div style="flex:1"></div>
+          ${p.external_url ? `<a href="${esc(p.external_url)}" target="_blank" class="icon-btn" title="View post">⬡</a>` : ''}
+          <button class="icon-btn" onclick="editBlogPost('${p._id}')">✎</button>
+          <button class="icon-btn del" onclick="deleteBlogPost('${p._id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('') + `
+    <div class="blog-card-admin" style="border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:160px;" onclick="clearBlogForm()">
+      <div style="text-align:center;color:var(--muted)">
+        <div style="font-size:1.5rem;margin-bottom:4px;opacity:0.4">+</div>
+        <div style="font-size:0.75rem;font-weight:600;">New Post</div>
+      </div>
+    </div>`;
+}
+
+function updateBlogImagePreview(url) {
+  const wrap = document.getElementById('blog-img-preview-wrap');
+  const img  = document.getElementById('blog-img-preview');
+  if (url && url.trim()) { wrap.style.display='flex'; img.src=url; }
+  else { wrap.style.display='none'; img.src=''; }
+}
+
+function editBlogPost(id) {
+  const p = allData.blogPosts.find(x => x._id === id); if (!p) return;
+  document.getElementById('blog-id').value           = p._id;
+  document.getElementById('blog-title').value        = p.title        || '';
+  document.getElementById('blog-category').value     = p.category     || '';
+  document.getElementById('blog-read-time').value    = p.read_time    || '';
+  document.getElementById('blog-excerpt').value      = p.excerpt      || '';
+  document.getElementById('blog-cover').value        = p.cover_image  || '';
+  document.getElementById('blog-external-url').value = p.external_url || '';
+  document.getElementById('blog-slug').value         = p.slug         || '';
+  document.getElementById('blog-published').value    = (p.published !== false) ? 'true' : 'false';
+  updateBlogImagePreview(p.cover_image || '');
+  document.getElementById('blog-form-title').innerHTML = '<span class="panel-icon">✎</span> Edit Blog Post';
+  document.getElementById('blog-form-panel').scrollIntoView({ behavior:'smooth' });
+}
+
+function clearBlogForm() {
+  document.getElementById('blog-id').value = '';
+  ['blog-title','blog-category','blog-read-time','blog-excerpt','blog-cover','blog-external-url','blog-slug']
+    .forEach(id => document.getElementById(id).value='');
+  document.getElementById('blog-published').value = 'true';
+  document.getElementById('blog-form-title').innerHTML = '<span class="panel-icon">+</span> Add / Edit Blog Post';
+  updateBlogImagePreview('');
+}
+
+async function saveBlogPost() {
+  const id = document.getElementById('blog-id').value;
+  const titleVal = document.getElementById('blog-title').value.trim();
+  if (!titleVal) return showToast('Post title is required', true);
+
+  // Auto-generate slug from title if blank
+  let slugVal = document.getElementById('blog-slug').value.trim();
+  if (!slugVal) {
+    slugVal = titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    document.getElementById('blog-slug').value = slugVal;
+  }
+
+  const body = {
+    title:        titleVal,
+    category:     document.getElementById('blog-category').value.trim(),
+    read_time:    document.getElementById('blog-read-time').value.trim(),
+    excerpt:      document.getElementById('blog-excerpt').value.trim(),
+    cover_image:  document.getElementById('blog-cover').value.trim(),
+    external_url: document.getElementById('blog-external-url').value.trim(),
+    slug:         slugVal,
+    published:    document.getElementById('blog-published').value === 'true'
+  };
+
+  try {
+    if (id) await api('PUT',  '/api/admin/blog/' + id, body);
+    else    await api('POST', '/api/admin/blog', body);
+    clearBlogForm();
+    allData.blogPosts = await api('GET', '/api/admin/blog');
+    renderBlogAdmin();
+    renderDashboard();
+    showToast('Blog post saved! ✓');
+  } catch (e) { showToast(e.message, true); }
+}
+
+async function deleteBlogPost(id) {
+  if (!confirm('Delete this blog post?')) return;
+  try {
+    await api('DELETE', '/api/admin/blog/' + id);
+    allData.blogPosts = await api('GET', '/api/admin/blog');
+    renderBlogAdmin();
+    renderDashboard();
+    showToast('Blog post deleted');
+  } catch (e) { showToast(e.message, true); }
+}
+
+// ─────────────────────────────────────────────
 // SETTINGS
 // ─────────────────────────────────────────────
 function renderSettingsToggles() {
@@ -1517,10 +1692,12 @@ function renderSettingsToggles() {
   setToggle('toggle-skills',       s.show_skills       !== false);
   setToggle('toggle-career',       s.show_career       !== false);
   setToggle('toggle-testimonials', s.show_testimonials !== false);
+  setToggle('toggle-blog',         s.show_blog         !== false);
   setToggle('toggle-contact',      s.show_contact      !== false);
 }
 function setToggle(id, val) {
   const el = document.getElementById(id);
+  if (!el) return;
   val ? el.classList.add('on') : el.classList.remove('on');
 }
 async function saveSettings() {
@@ -1531,6 +1708,7 @@ async function saveSettings() {
     show_skills:       document.getElementById('toggle-skills').classList.contains('on'),
     show_career:       document.getElementById('toggle-career').classList.contains('on'),
     show_testimonials: document.getElementById('toggle-testimonials').classList.contains('on'),
+    show_blog:         document.getElementById('toggle-blog').classList.contains('on'),
     show_contact:      document.getElementById('toggle-contact').classList.contains('on')
   };
   try {
@@ -1543,7 +1721,7 @@ async function changePassword() {
   const np = document.getElementById('new-pw').value;
   const cp = document.getElementById('confirm-pw').value;
   if (!np)           return showToast('Enter a new password', true);
-  if (np.length < 6) return showToast('Min 6 characters required', true);
+  if (np.length < 6) return showToast('Minimum 6 characters required', true);
   if (np !== cp)     return showToast('Passwords do not match', true);
   try {
     await api('PUT', '/api/admin/settings', { new_password: np });
@@ -1569,7 +1747,8 @@ function showPage(id, el) {
   }
   const titles = {
     dashboard:'Dashboard', profile:'Profile & Photo', projects:'Projects',
-    jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials', settings:'Site Settings'
+    jobs:'Career / Jobs', skills:'Skills', testimonials:'Testimonials',
+    blog:'Blog', settings:'Site Settings'
   };
   document.getElementById('page-title').textContent = titles[id] || id;
   if (window.innerWidth <= 768) closeSidebar();
