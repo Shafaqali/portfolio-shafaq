@@ -138,7 +138,6 @@
   .toggle::after { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:3px; left:3px; transition:transform .2s; }
   .toggle.on::after { transform:translateX(18px); }
 
-  /* ORDER LIST */
   .order-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1rem; }
   .order-item { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border2); border-radius:12px; padding:10px 12px; transition:border-color .15s, background .15s; cursor:default; }
   .order-item:hover { border-color:rgba(192,132,252,0.3); background:rgba(192,132,252,0.04); }
@@ -162,7 +161,6 @@
   .order-save-hint { font-size:0.73rem; color:var(--muted); }
   .order-save-hint strong { color:var(--accent); }
 
-  /* project cards grid */
   .project-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
   .project-card { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
   .project-card:hover { border-color:rgba(192,132,252,0.35); }
@@ -175,7 +173,6 @@
   .project-tech { display:flex; flex-wrap:wrap; gap:4px; flex:1; }
   .tech-chip { font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:5px; background:var(--border); border:1px solid var(--border2); color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; }
 
-  /* RESUME UPLOAD */
   .resume-zone { border:1.5px dashed var(--border2); border-radius:12px; padding:1.1rem; text-align:center; cursor:pointer; transition:border-color .2s, background .2s; }
   .resume-zone:hover { border-color:rgba(192,132,252,0.45); background:rgba(192,132,252,0.04); }
   .resume-zone.has-file { border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.04); }
@@ -210,7 +207,6 @@
   .pwa-banner-close { background:none; border:none; color:var(--muted); cursor:pointer; padding:4px; font-size:16px; line-height:1; }
   .pwa-install-main { background:var(--accent); color:#0d0d18; border:none; border-radius:8px; padding:8px 16px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; }
 
-  /* BLOG CARDS */
   .blog-grid-admin { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
   .blog-card-admin { background:var(--card); border:1px solid var(--border2); border-radius:14px; overflow:hidden; transition:border-color .2s; position:relative; }
   .blog-card-admin:hover { border-color:rgba(192,132,252,0.35); }
@@ -221,10 +217,17 @@
   .blog-card-admin-meta { font-size:0.68rem; color:var(--muted); margin-bottom:8px; }
   .blog-card-admin-actions { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
 
-  /* CONTACTS */
   .contact-row { transition:border-color .15s, background .15s; }
   .contact-row:hover { border-color:rgba(192,132,252,0.3) !important; background:rgba(192,132,252,0.03) !important; }
   .contact-row.unread { font-weight:600; }
+
+  /* Notification button */
+  .notif-btn { background:none; border:1px solid var(--border2); color:var(--muted); cursor:pointer; width:34px; height:34px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; font-size:15px; transition:all .2s; flex-shrink:0; position:relative; }
+  .notif-btn:hover { background:rgba(128,128,128,0.08); color:var(--text); }
+  .notif-btn.on { color:var(--now); border-color:rgba(74,222,128,0.4); }
+  .notif-btn.off { color:var(--danger); border-color:rgba(248,113,113,0.3); }
+  .notif-btn .notif-dot { position:absolute; top:5px; right:5px; width:6px; height:6px; border-radius:50%; background:var(--now); display:none; }
+  .notif-btn.on .notif-dot { display:block; }
 
   .toast { position:fixed; bottom:1.5rem; right:1.5rem; left:1.5rem; max-width:340px; margin:0 auto; background:var(--card); border:1px solid rgba(74,222,128,0.3); color:var(--text); padding:10px 16px; border-radius:10px; font-size:0.78rem; font-weight:600; display:flex; align-items:center; gap:7px; z-index:9999; animation:slideIn .3s ease; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
   .toast.error { border-color:rgba(248,113,113,0.4); }
@@ -302,7 +305,6 @@
     <div class="nav-item" data-page="skills" onclick="showPage('skills',this)"><span class="nav-icon">◎</span> Skills</div>
     <div class="nav-item" data-page="testimonials" onclick="showPage('testimonials',this)"><span class="nav-icon">◉</span> Testimonials</div>
     <div class="nav-item" data-page="blog" onclick="showPage('blog',this)"><span class="nav-icon">✍</span> Blog</div>
-    <!-- ── CONTACTS NAV ── -->
     <div class="nav-item" data-page="contacts" onclick="showPage('contacts',this)">
       <span class="nav-icon">✉</span> Contacts
       <span class="nav-badge" id="nav-unread-badge">0</span>
@@ -331,6 +333,11 @@
         <div class="topbar-title" id="page-title">Dashboard</div>
       </div>
       <div class="topbar-actions">
+        <!-- ── NOTIFICATION BELL ── -->
+        <button class="notif-btn" id="notif-btn" onclick="toggleNotifications()" title="Enable push notifications">
+          🔔
+          <span class="notif-dot"></span>
+        </button>
         <button class="btn-install" id="pwa-install-btn" onclick="triggerInstall()" title="Install as App">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2v13M7 11l5 5 5-5"/><path d="M3 18h18v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"/>
@@ -354,7 +361,6 @@
           <div class="stat-card"><div class="stat-label">Jobs</div><div class="stat-value" id="stat-jobs">—</div><div class="stat-sub"><span class="stat-dot" style="background:var(--now)"></span><span id="stat-jobs-sub">loading...</span></div></div>
           <div class="stat-card"><div class="stat-label">Skills</div><div class="stat-value" id="stat-skills">—</div><div class="stat-sub"><span class="stat-dot" style="background:#38bdf8"></span>categories</div></div>
           <div class="stat-card"><div class="stat-label">Blog Posts</div><div class="stat-value" id="stat-blog">—</div><div class="stat-sub"><span class="stat-dot" style="background:#f9a8d4"></span><span id="stat-blog-sub">total</span></div></div>
-          <!-- ── CONTACTS STAT ── -->
           <div class="stat-card" style="cursor:pointer" onclick="showPage('contacts')">
             <div class="stat-label">Contacts</div>
             <div class="stat-value" id="stat-contacts">—</div>
@@ -642,8 +648,6 @@
             <button class="btn btn-ghost" id="contacts-filter-starred" onclick="setContactFilter('starred')" style="font-size:0.72rem;">⭐ Starred</button>
           </div>
         </div>
-
-        <!-- Message detail panel -->
         <div id="contact-detail-panel" style="display:none;margin-bottom:1rem;">
           <div class="form-panel" style="position:relative;">
             <button onclick="closeContactDetail()" style="position:absolute;top:12px;right:12px;background:none;border:1px solid var(--border2);color:var(--muted);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;">✕</button>
@@ -670,8 +674,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Contacts list -->
         <div id="contacts-list-wrap">
           <div class="loading">Loading contacts...</div>
         </div>
@@ -732,13 +734,30 @@
                 <button class="btn btn-ghost" onclick="changePassword()">Update Password</button>
               </div>
             </div>
+            <!-- ── PUSH NOTIFICATIONS SETTINGS PANEL ── -->
+            <div class="form-panel" style="margin-top:1rem;">
+              <div class="panel-title"><span class="panel-icon">🔔</span> Push Notifications</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
+                Get notified instantly when someone fills your contact form — even when the browser is closed.
+              </div>
+              <div id="notif-status-area">
+                <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;">
+                  <span id="notif-status-icon" style="font-size:1.2rem;">🔔</span>
+                  <div style="flex:1;min-width:0;">
+                    <div id="notif-status-label" style="font-size:0.8rem;font-weight:700;color:var(--text);">Notifications off</div>
+                    <div id="notif-status-desc" style="font-size:0.7rem;color:var(--muted);margin-top:2px;">Click Enable to receive instant alerts</div>
+                  </div>
+                  <button class="btn btn-primary" id="notif-settings-btn" onclick="toggleNotifications()" style="font-size:0.72rem;padding:5px 12px;">Enable</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-    </div><!-- end .content -->
-  </div><!-- end .main -->
-</div><!-- end .layout -->
+    </div>
+  </div>
+</div>
 
 <div class="pwa-banner" id="pwa-banner">
   <div class="pwa-banner-icon">
@@ -769,6 +788,168 @@ let contactFilter   = 'all';
 let currentDetailId = null;
 
 // ─────────────────────────────────────────────
+// PUSH NOTIFICATIONS — VAPID
+// ─────────────────────────────────────────────
+const VAPID_PUBLIC_KEY = 'BJnB5QB76sYpmPyCBByOjNAx83kCGswQTBi6-Zh1FbjPOpnsTJQrNL5pvJxft6cDX39FoTNLRgPEZ_hW06yZQ7I';
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+
+async function setupPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.warn('[Push] Not supported in this browser');
+    return;
+  }
+  try {
+    const reg = await navigator.serviceWorker.ready;
+
+    // check if already subscribed
+    let sub = await reg.pushManager.getSubscription();
+
+    if (!sub) {
+      // Ask permission only if not already granted
+      const perm = Notification.permission;
+      if (perm === 'denied') {
+        updateNotifUI('denied');
+        return;
+      }
+      if (perm === 'default') {
+        // Don't auto-ask on load — user must click bell
+        updateNotifUI('default');
+        return;
+      }
+      // permission === 'granted' but no subscription yet — subscribe
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+
+    // Save subscription to backend
+    const keyP256dh = sub.getKey('p256dh');
+    const keyAuth   = sub.getKey('auth');
+    await api('POST', '/api/admin/push-subscribe', {
+      endpoint: sub.endpoint,
+      keys: {
+        p256dh: keyP256dh ? btoa(String.fromCharCode(...new Uint8Array(keyP256dh))) : '',
+        auth:   keyAuth   ? btoa(String.fromCharCode(...new Uint8Array(keyAuth)))   : ''
+      }
+    });
+
+    updateNotifUI('granted');
+    console.log('[Push] Subscription saved ✓');
+  } catch (e) {
+    console.warn('[Push] Setup failed:', e.message);
+    updateNotifUI(Notification.permission === 'denied' ? 'denied' : 'default');
+  }
+}
+
+async function toggleNotifications() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    showToast('Push notifications not supported in this browser', true);
+    return;
+  }
+
+  const perm = Notification.permission;
+
+  if (perm === 'denied') {
+    showToast('Notifications are blocked — please allow them in your browser/OS settings', true);
+    return;
+  }
+
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+
+    if (sub) {
+      // Already subscribed → unsubscribe
+      try { await api('DELETE', '/api/admin/push-subscribe', { endpoint: sub.endpoint }); } catch(e) {}
+      await sub.unsubscribe();
+      updateNotifUI('default');
+      showToast('🔕 Push notifications disabled');
+    } else {
+      // Not subscribed → request permission and subscribe
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        updateNotifUI('denied');
+        showToast('Notification permission denied', true);
+        return;
+      }
+      const newSub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+      const keyP256dh = newSub.getKey('p256dh');
+      const keyAuth   = newSub.getKey('auth');
+      await api('POST', '/api/admin/push-subscribe', {
+        endpoint: newSub.endpoint,
+        keys: {
+          p256dh: keyP256dh ? btoa(String.fromCharCode(...new Uint8Array(keyP256dh))) : '',
+          auth:   keyAuth   ? btoa(String.fromCharCode(...new Uint8Array(keyAuth)))   : ''
+        }
+      });
+      updateNotifUI('granted');
+      showToast('🔔 Push notifications enabled! You\'ll get alerts for new contacts.');
+    }
+  } catch (e) {
+    showToast('Push error: ' + e.message, true);
+  }
+}
+
+function updateNotifUI(state) {
+  const btn        = document.getElementById('notif-btn');
+  const sLabel     = document.getElementById('notif-status-label');
+  const sDesc      = document.getElementById('notif-status-desc');
+  const sBtn       = document.getElementById('notif-settings-btn');
+  const sIcon      = document.getElementById('notif-status-icon');
+
+  if (state === 'granted') {
+    if (btn) { btn.className='notif-btn on'; btn.title='Notifications ON — click to disable'; }
+    if (sLabel) sLabel.textContent = 'Notifications enabled ✓';
+    if (sDesc)  sDesc.textContent  = 'You\'ll receive alerts when someone contacts you';
+    if (sBtn)   { sBtn.textContent = 'Disable'; sBtn.className = 'btn btn-ghost'; sBtn.style.fontSize='0.72rem'; sBtn.style.padding='5px 12px'; }
+    if (sIcon)  sIcon.textContent  = '🔔';
+  } else if (state === 'denied') {
+    if (btn) { btn.className='notif-btn off'; btn.title='Notifications blocked in browser settings'; }
+    if (sLabel) sLabel.textContent = 'Notifications blocked';
+    if (sDesc)  sDesc.textContent  = 'Allow notifications in your browser/OS settings, then reload';
+    if (sBtn)   { sBtn.textContent = 'Blocked'; sBtn.className = 'btn btn-danger'; sBtn.style.fontSize='0.72rem'; sBtn.style.padding='5px 12px'; sBtn.disabled = true; }
+    if (sIcon)  sIcon.textContent  = '🔕';
+  } else {
+    if (btn) { btn.className='notif-btn'; btn.title='Enable push notifications'; }
+    if (sLabel) sLabel.textContent = 'Notifications off';
+    if (sDesc)  sDesc.textContent  = 'Click Enable to receive instant alerts';
+    if (sBtn)   { sBtn.textContent = 'Enable'; sBtn.className = 'btn btn-primary'; sBtn.style.fontSize='0.72rem'; sBtn.style.padding='5px 12px'; sBtn.disabled = false; }
+    if (sIcon)  sIcon.textContent  = '🔔';
+  }
+}
+
+// Check notification state on init
+function checkNotifState() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    // Check if actually subscribed
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.ready.then(reg =>
+        reg.pushManager.getSubscription().then(sub => {
+          updateNotifUI(sub ? 'granted' : 'default');
+        })
+      );
+    } else {
+      updateNotifUI('granted');
+    }
+  } else if (Notification.permission === 'denied') {
+    updateNotifUI('denied');
+  } else {
+    updateNotifUI('default');
+  }
+}
+
+// ─────────────────────────────────────────────
 // PWA
 // ─────────────────────────────────────────────
 let deferredPrompt = null;
@@ -778,7 +959,14 @@ if ('serviceWorker' in navigator) {
       .then(reg => console.log('[SW] Registered:', reg.scope))
       .catch(err => console.warn('[SW] Failed:', err));
   });
+  // Handle messages from SW (e.g. notification click → navigate to contacts)
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data && e.data.action === 'navigate' && e.data.page) {
+      showPage(e.data.page);
+    }
+  });
 }
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredPrompt = e;
   document.getElementById('pwa-install-btn').classList.add('visible');
@@ -846,6 +1034,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (resumeInput) resumeInput.addEventListener('change', handleResumeUpload);
   const pResumeInput = document.getElementById('p-resume');
   if (pResumeInput) pResumeInput.addEventListener('input', function() { updateResumeUI(this.value); });
+
+  // Check initial notification state
+  checkNotifState();
 });
 
 // ─────────────────────────────────────────────
@@ -874,12 +1065,25 @@ async function doLogin() {
   }
 }
 
-function logout() {
+async function logout() {
   if (!confirm('Logout?')) return;
+  // Unsubscribe push on logout
+  try {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        try { await api('DELETE', '/api/admin/push-subscribe', { endpoint: sub.endpoint }); } catch(e) {}
+        await sub.unsubscribe();
+      }
+    }
+  } catch(e) { console.warn('[Push] Unsubscribe error:', e); }
+
   localStorage.removeItem('portfolio_admin_token'); token = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-pw').value = '';
+  updateNotifUI('default');
   closeSidebar();
 }
 
@@ -887,6 +1091,8 @@ function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   loadAll();
+  // Setup push after SW has time to register
+  setTimeout(setupPush, 1500);
 }
 
 if (token) showApp();
@@ -1715,7 +1921,6 @@ function renderContacts() {
 function openContactDetail(id) {
   const c = (allData.contacts||[]).find(x => x._id === id); if (!c) return;
   currentDetailId = id;
-
   document.getElementById('detail-subject').textContent    = c.subject || 'No subject';
   document.getElementById('detail-name').textContent       = c.name;
   document.getElementById('detail-email-link').textContent = c.email;
@@ -1725,14 +1930,11 @@ function openContactDetail(id) {
   document.getElementById('detail-message').textContent    = c.message;
   document.getElementById('detail-reply-btn').href         =
     `mailto:${c.email}?subject=Re: ${encodeURIComponent(c.subject || 'Your message')}`;
-
   const starBtn = document.getElementById('detail-star-btn');
   starBtn.textContent = c.starred ? '★ Starred' : '☆ Star';
   starBtn.style.color = c.starred ? '#fbbf24' : '';
-
   document.getElementById('contact-detail-panel').style.display = 'block';
   document.getElementById('contact-detail-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
-
   if (!c.read) toggleContactRead(id, true, true);
 }
 
@@ -1744,10 +1946,7 @@ function closeContactDetail() {
 async function toggleDetailStar() {
   if (!currentDetailId) return;
   const c = (allData.contacts||[]).find(x => x._id === currentDetailId);
-  if (c) {
-    await toggleContactStar(currentDetailId, !c.starred, true);
-    openContactDetail(currentDetailId);
-  }
+  if (c) { await toggleContactStar(currentDetailId, !c.starred, true); openContactDetail(currentDetailId); }
 }
 
 async function deleteContactFromDetail() {
@@ -1761,9 +1960,7 @@ async function toggleContactRead(id, val, silent = false) {
     const updated = await api('PUT', '/api/admin/contacts/' + id + '/read', { read: val });
     const idx = (allData.contacts||[]).findIndex(x => x._id === id);
     if (idx !== -1) allData.contacts[idx] = updated;
-    renderContacts();
-    updateContactStats();
-    renderDashboard();
+    renderContacts(); updateContactStats(); renderDashboard();
     if (!silent) showToast(val ? '✓ Marked as read' : '✓ Marked as unread');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1783,9 +1980,7 @@ async function deleteContact(id) {
   try {
     await api('DELETE', '/api/admin/contacts/' + id);
     allData.contacts = (allData.contacts||[]).filter(x => x._id !== id);
-    renderContacts();
-    updateContactStats();
-    renderDashboard();
+    renderContacts(); updateContactStats(); renderDashboard();
     showToast('Message deleted');
   } catch (e) { showToast(e.message, true); }
 }
@@ -1860,6 +2055,8 @@ function showPage(id, el) {
   };
   document.getElementById('page-title').textContent = titles[id] || id;
   if (window.innerWidth <= 768) closeSidebar();
+  // Refresh notif UI when settings page opens
+  if (id === 'settings') checkNotifState();
 }
 
 function esc(s) {
