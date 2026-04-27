@@ -1,9 +1,10 @@
 require('dotenv').config();
-const express = require('express');
+const express  = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const cors     = require('cors');
+const jwt      = require('jsonwebtoken');
+const bcrypt   = require('bcryptjs');
+const webpush  = require('web-push');
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -14,6 +15,18 @@ app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB error:', err));
+
+// ── VAPID Setup ─────────────────────────────────────────────────────
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    process.env.VAPID_EMAIL || 'mailto:admin@example.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+  console.log('✅ Web Push configured');
+} else {
+  console.warn('⚠️  VAPID keys not set — push notifications disabled');
+}
 
 // ── Schemas & Models ───────────────────────────────────────────────
 const SettingsSchema = new mongoose.Schema({
@@ -97,6 +110,14 @@ const ContactSchema = new mongoose.Schema({
   read:    { type: Boolean, default: false },
   starred: { type: Boolean, default: false }
 }, { timestamps: true });
+
+// ── Push Subscription Schema ────────────────────────────────────────
+const PushSubSchema = new mongoose.Schema({
+  endpoint: { type: String, required: true, unique: true },
+  keys:     { p256dh: String, auth: String },
+  createdAt:{ type: Date, default: Date.now }
+});
+const PushSub = mongoose.model('PushSub', PushSubSchema);
 
 const Settings    = mongoose.model('Settings',      SettingsSchema);
 const Project     = mongoose.model('Project',       ProjectSchema);
@@ -207,14 +228,7 @@ app.get('/api/portfolio', async (req, res) => {
       Testimonial.find({ visible: true }),
       BlogPost.find({ published: true }).sort({ createdAt: -1 })
     ]);
-    res.json({
-      settings: settings || {},
-      projects,
-      jobs,
-      skillCategories,
-      testimonials,
-      blogPosts
-    });
+    res.json({ settings: settings || {}, projects, jobs, skillCategories, testimonials, blogPosts });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -225,12 +239,10 @@ app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
-    // Basic validation
-    if (!name || !name.trim())    return res.status(400).json({ error: 'Name is required' });
-    if (!email || !email.trim())  return res.status(400).json({ error: 'Email is required' });
+    if (!name || !name.trim())       return res.status(400).json({ error: 'Name is required' });
+    if (!email || !email.trim())     return res.status(400).json({ error: 'Email is required' });
     if (!message || !message.trim()) return res.status(400).json({ error: 'Message is required' });
 
-    // Save to MongoDB
     const contact = await Contact.create({
       name:    name.trim(),
       email:   email.trim().toLowerCase(),
@@ -238,7 +250,7 @@ app.post('/api/contact', async (req, res) => {
       message: message.trim()
     });
 
-    // Get owner email from Settings to send notification
+    // Email via Resend
     const settings = await Settings.findOne().select('email');
     if (settings?.email) {
       await sendEmailViaResend({
@@ -250,10 +262,69 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
+    // ── Push Notification ───────────────────────────────────────────
+    try {
+      const subs = await PushSub.find();
+      if (subs.length > 0) {
+        const payload = JSON.stringify({
+          title:   '📬 New Contact Message!',
+          body:    `From: ${name.trim()}${(subject || '').trim() ? ' — ' + (subject || '').trim() : ''}`,
+          name:    name.trim(),
+          subject: (subject || '').trim()
+        });
+        const pushPromises = subs.map(sub =>
+          webpush.sendNotification(
+            { endpoint: sub.endpoint, keys: sub.keys },
+            payload
+          ).catch(async err => {
+            if (err.statusCode === 410) {
+              await PushSub.deleteOne({ endpoint: sub.endpoint });
+              console.log('🗑️ Removed expired push subscription');
+            } else {
+              console.error('Push send error:', err.message);
+            }
+          })
+        );
+        await Promise.all(pushPromises);
+        console.log(`✅ Push notification sent to ${subs.length} device(s)`);
+      }
+    } catch (pushErr) {
+      console.error('Push notification error:', pushErr.message);
+      // Push failure should NOT block contact save
+    }
+
     res.json({ ok: true, id: contact._id });
   } catch (err) {
     console.error('Contact submit error:', err);
     res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+});
+
+// ── ADMIN: Save Push Subscription ──────────────────────────────────
+app.post('/api/admin/push-subscribe', authRequired, async (req, res) => {
+  try {
+    const { endpoint, keys } = req.body;
+    if (!endpoint) return res.status(400).json({ error: 'endpoint required' });
+    await PushSub.findOneAndUpdate(
+      { endpoint },
+      { endpoint, keys },
+      { upsert: true, new: true }
+    );
+    console.log('✅ Push subscription saved:', endpoint.substring(0, 50) + '...');
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── ADMIN: Delete Push Subscription (logout cleanup) ───────────────
+app.delete('/api/admin/push-subscribe', authRequired, async (req, res) => {
+  try {
+    const { endpoint } = req.body;
+    if (endpoint) await PushSub.deleteOne({ endpoint });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -307,17 +378,14 @@ app.put('/api/admin/settings', authRequired, async (req, res) => {
 app.get('/api/admin/projects', authRequired, async (req, res) => {
   res.json(await Project.find().sort({ order: 1, createdAt: -1 }));
 });
-
 app.post('/api/admin/projects', authRequired, async (req, res) => {
   try { res.json(await Project.create(req.body)); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.put('/api/admin/projects/:id', authRequired, async (req, res) => {
   try { res.json(await Project.findByIdAndUpdate(req.params.id, req.body, { new: true })); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.delete('/api/admin/projects/:id', authRequired, async (req, res) => {
   await Project.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
@@ -327,17 +395,14 @@ app.delete('/api/admin/projects/:id', authRequired, async (req, res) => {
 app.get('/api/admin/jobs', authRequired, async (req, res) => {
   res.json(await Job.find().sort({ order: 1, createdAt: -1 }));
 });
-
 app.post('/api/admin/jobs', authRequired, async (req, res) => {
   try { res.json(await Job.create(req.body)); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.put('/api/admin/jobs/:id', authRequired, async (req, res) => {
   try { res.json(await Job.findByIdAndUpdate(req.params.id, req.body, { new: true })); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.delete('/api/admin/jobs/:id', authRequired, async (req, res) => {
   await Job.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
@@ -347,17 +412,14 @@ app.delete('/api/admin/jobs/:id', authRequired, async (req, res) => {
 app.get('/api/admin/skills', authRequired, async (req, res) => {
   res.json(await SkillCat.find().sort({ order: 1 }));
 });
-
 app.post('/api/admin/skills', authRequired, async (req, res) => {
   try { res.json(await SkillCat.create(req.body)); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.put('/api/admin/skills/:id', authRequired, async (req, res) => {
   try { res.json(await SkillCat.findByIdAndUpdate(req.params.id, req.body, { new: true })); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.delete('/api/admin/skills/:id', authRequired, async (req, res) => {
   await SkillCat.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
@@ -367,17 +429,14 @@ app.delete('/api/admin/skills/:id', authRequired, async (req, res) => {
 app.get('/api/admin/testimonials', authRequired, async (req, res) => {
   res.json(await Testimonial.find().sort({ createdAt: -1 }));
 });
-
 app.post('/api/admin/testimonials', authRequired, async (req, res) => {
   try { res.json(await Testimonial.create(req.body)); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.put('/api/admin/testimonials/:id', authRequired, async (req, res) => {
   try { res.json(await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true })); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.delete('/api/admin/testimonials/:id', authRequired, async (req, res) => {
   await Testimonial.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
@@ -387,17 +446,14 @@ app.delete('/api/admin/testimonials/:id', authRequired, async (req, res) => {
 app.get('/api/admin/blog', authRequired, async (req, res) => {
   res.json(await BlogPost.find().sort({ createdAt: -1 }));
 });
-
 app.post('/api/admin/blog', authRequired, async (req, res) => {
   try { res.json(await BlogPost.create(req.body)); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.put('/api/admin/blog/:id', authRequired, async (req, res) => {
   try { res.json(await BlogPost.findByIdAndUpdate(req.params.id, req.body, { new: true })); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.delete('/api/admin/blog/:id', authRequired, async (req, res) => {
   await BlogPost.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
@@ -407,25 +463,18 @@ app.delete('/api/admin/blog/:id', authRequired, async (req, res) => {
 app.get('/api/admin/contacts', authRequired, async (req, res) => {
   res.json(await Contact.find().sort({ createdAt: -1 }));
 });
-
 app.put('/api/admin/contacts/:id/read', authRequired, async (req, res) => {
   try {
-    const c = await Contact.findByIdAndUpdate(
-      req.params.id, { read: req.body.read }, { new: true }
-    );
+    const c = await Contact.findByIdAndUpdate(req.params.id, { read: req.body.read }, { new: true });
     res.json(c);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.put('/api/admin/contacts/:id/star', authRequired, async (req, res) => {
   try {
-    const c = await Contact.findByIdAndUpdate(
-      req.params.id, { starred: req.body.starred }, { new: true }
-    );
+    const c = await Contact.findByIdAndUpdate(req.params.id, { starred: req.body.starred }, { new: true });
     res.json(c);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
-
 app.delete('/api/admin/contacts/:id', authRequired, async (req, res) => {
   await Contact.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
