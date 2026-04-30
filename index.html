@@ -632,12 +632,13 @@ window.toggleMoreProjects = function() {
   const more   = document.getElementById('projects-more');
   const btn    = document.getElementById('btn-view-more');
   const label  = document.getElementById('view-more-label');
+  const badge  = document.getElementById('view-more-count');
   const expanded = more.classList.toggle('expanded');
   btn.classList.toggle('expanded', expanded);
   label.textContent = expanded ? 'Show Less' : 'View More Projects';
+  badge.textContent = expanded ? '-' + (more.querySelectorAll('.proj-card').length) : '+' + (more.querySelectorAll('.proj-card').length);
   if(expanded) setTimeout(() => more.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
 };
-
 /* ── SKILLS ───────────────────────────────────── */
 function renderSkills(cats) {
   const ICON_MAP = {
