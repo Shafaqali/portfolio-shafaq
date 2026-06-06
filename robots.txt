@@ -1,0 +1,31 @@
+# SEO Optimization: robots.txt
+# This file tells search engines which pages to crawl and index
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.pdf$
+Allow: /*.pdf$
+
+# Specify crawl delay (optional - adjust based on server capacity)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://shafaqali.github.io/portfolio-shafaq/sitemap.xml
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# Allow Google and other major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
