@@ -261,9 +261,10 @@
         .cert-verify-btn svg{width:11px;height:11px;flex-shrink:0}
         .cert-empty{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:.88rem;grid-column:1/-1}
         .cert-empty .empty-icon{font-size:2.5rem;opacity:.25;display:block;margin-bottom:1rem}
-        @keyframes certReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-        .cert-card{animation:certReveal .4s cubic-bezier(.4,0,.2,1) both}
+        /* ✅ FIX: Removed global cert-card animation that caused double-render visual glitch */
+        /* Only animate cards inside expanded more-grid, not initial grid */
         .cert-grid-more.expanded .cert-card{animation:certReveal .45s cubic-bezier(.4,0,.2,1) both}
+        @keyframes certReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
         /* CERTIFICATE MODAL */
         .cert-modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .25s ease}
@@ -308,7 +309,6 @@
         .blog-modal-read-time{font-size:.75rem;color:var(--dim);font-weight:500}
         .blog-modal-read-time::before{content:'·';margin-right:4px}
         .blog-modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;color:var(--text);line-height:1.18;margin-bottom:1.2rem}
-        /* Blog post content styles */
         .blog-modal-content{font-size:.92rem;color:var(--muted);line-height:1.82;margin-bottom:1.6rem}
         .blog-modal-content p{margin-bottom:1.1rem}
         .blog-modal-content p:last-child{margin-bottom:0}
@@ -556,6 +556,14 @@
             <div class="social-row" id="social-row">
                 <a id="soc-linkedin" href="#" target="_blank" class="soc" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
                 <a id="soc-github" href="#" target="_blank" class="soc" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+                <!-- ✅ INSTAGRAM ICON ADDED -->
+                <a id="soc-instagram" href="https://www.instagram.com/_.sk_shafaq._" target="_blank" class="soc" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </a>
                 <a id="soc-email" href="mailto:" class="soc" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7 12 14 2 7"/></svg></a>
                 <a href="resume.pdf" target="_blank" class="soc" title="Resume PDF" id="soc-resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></a>
             </div>
@@ -616,9 +624,7 @@
             <h2 class="cert-header-title">Certificates &amp; <span>Credentials</span></h2>
             <p class="cert-header-sub" id="cert-subtitle">Verified skills and achievements.</p>
         </div>
-        <div class="cert-grid-initial" id="cert-grid-initial">
-            <div class="cert-empty"><span class="empty-icon">🏆</span>Loading certificates...</div>
-        </div>
+        <div class="cert-grid-initial" id="cert-grid-initial"></div>
         <div class="cert-grid-more" id="cert-grid-more"></div>
         <div class="cert-view-more-wrap" id="cert-view-more-wrap" style="display:none">
             <button class="btn-view-more" id="btn-cert-more" onclick="toggleMoreCerts()">
@@ -701,6 +707,9 @@
         const API_BASE='https://portfolio-shafaq.onrender.com';
         const DARK_ICONS=new Set(['github','express','nextjs','next.js','vercel','electron','sequelize','puppeteer','notion','flask','fastapi','remix','shadcn','turbo','turborepo','bun','capacitor','obsidian','linear','figma']);
 
+        // ✅ Guard: prevent renderCertificates from running more than once
+        let certsRendered = false;
+
         async function init(){
             try{
                 const r=await fetch(API_BASE+'/api/portfolio');
@@ -717,40 +726,28 @@
         function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
         function isDarkIcon(name){return DARK_ICONS.has((name||'').toLowerCase().trim());}
 
-        // Simple markdown-to-HTML converter for blog content
+        // ✅ Safe JSON encode/decode for HTML attributes
+        function safeEncode(obj){return encodeURIComponent(JSON.stringify(obj));}
+        function safeDecode(str){return JSON.parse(decodeURIComponent(str));}
+
         function mdToHtml(text){
             if(!text)return'';
             return text
                 .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-                // Code blocks
                 .replace(/```[\w]*\n?([\s\S]*?)```/g,'<pre><code>$1</code></pre>')
-                // Inline code
                 .replace(/`([^`]+)`/g,'<code>$1</code>')
-                // Bold
                 .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
-                // Italic
                 .replace(/\*([^*]+)\*/g,'<em>$1</em>')
-                // H2
                 .replace(/^## (.+)$/gm,'<h2>$1</h2>')
-                // H3
                 .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-                // Blockquote
                 .replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>')
-                // Unordered list items
                 .replace(/^[-*] (.+)$/gm,'<li>$1</li>')
-                // Ordered list items
                 .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
-                // Wrap consecutive <li> in <ul>
                 .replace(/(<li>[\s\S]*?<\/li>)(\n|$)/g,'<ul>$1</ul>\n')
-                // Links
                 .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-                // Paragraphs (double newlines)
                 .replace(/\n\n+/g,'</p><p>')
-                // Single newlines within paragraphs
                 .replace(/\n/g,' ')
-                // Wrap in paragraph tags
                 .replace(/^(?!<[hupbro])(.+)/gm,'<p>$1</p>')
-                // Clean up empty paragraphs
                 .replace(/<p><\/p>/g,'')
                 .replace(/<p>(<[hupbro])/g,'$1')
                 .replace(/(<\/[hupbro][^>]*>)<\/p>/g,'$1');
@@ -822,6 +819,7 @@
             document.getElementById('footer-socials').innerHTML=`
 <a href="${esc(settings.linkedin||'#')}" target="_blank" class="fsoc" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
 <a href="${esc(settings.github||'#')}" target="_blank" class="fsoc" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+<a href="https://www.instagram.com/_.sk_shafaq._" target="_blank" class="fsoc" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
 <a href="mailto:${esc(settings.email||'')}" class="fsoc" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7 12 14 2 7"/></svg></a>
 <a href="${esc(resumeUrl||'resume.pdf')}" target="_blank" class="fsoc" title="Resume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></a>`;
         }
@@ -933,9 +931,7 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
             const date=p.createdAt?new Date(p.createdAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}):'';
             const bgColors=['linear-gradient(145deg,#1a1a3e,#0d0d20)','linear-gradient(145deg,#1a2a1e,#0d1a10)','linear-gradient(145deg,#2a1a1e,#1a0d10)','linear-gradient(145deg,#1a1a2e,#0a0a20)'];
             const bgIdx=(p.title||'').length%bgColors.length;
-            // Store data on card; click opens modal (or external url in new tab)
-            const safeData=JSON.stringify(p).replace(/'/g,"&#39;").replace(/"/g,'&quot;');
-            return`<div class="blog-card reveal" onclick="openBlogModal(this)" data-blog='${JSON.stringify(p).replace(/'/g,"&#39;")}'>
+            return`<div class="blog-card reveal" onclick="openBlogModal(this)" data-blog="${safeEncode(p)}">
 <div class="blog-thumb-placeholder" style="background:${bgColors[bgIdx]}">
   ${p.cover_image?`<img class="blog-thumb" src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.parentElement.innerHTML='<div class=\\'blog-thumb-placeholder-inner\\'>📝</div>'"/>`:`<div class="blog-thumb-placeholder-inner">📝</div>`}
   ${p.category?`<span class="blog-cat-tag">${esc(p.category)}</span>`:''}
@@ -992,17 +988,9 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
         /* BLOG MODAL */
         window.openBlogModal=function(card){
             let p;
-            try{ p=JSON.parse(card.getAttribute('data-blog')); }catch(e){ return; }
-
-            // If external URL → open in new tab directly
-            if(p.external_url){
-                window.open(p.external_url,'_blank','noopener');
-                return;
-            }
-
+            try{ p=safeDecode(card.getAttribute('data-blog')); }catch(e){ return; }
+            if(p.external_url){ window.open(p.external_url,'_blank','noopener'); return; }
             const date=p.createdAt?new Date(p.createdAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}):'';
-
-            // Cover image
             const coverEl=document.getElementById('blog-modal-cover');
             const bgColors=['linear-gradient(145deg,#1a1a3e,#0d0d20)','linear-gradient(145deg,#1a2a1e,#0d1a10)','linear-gradient(145deg,#2a1a1e,#1a0d10)','linear-gradient(145deg,#1a1a2e,#0a0a20)'];
             const bgIdx=(p.title||'').length%bgColors.length;
@@ -1016,58 +1004,39 @@ ${p.category?`<span class="blog-modal-cat">${esc(p.category)}</span>`:''}
 ${p.category?`<span class="blog-modal-cat">${esc(p.category)}</span>`:''}
 <div class="blog-modal-cover-gradient"></div>`;
             }
-
-            // Category
             const catWrap=document.getElementById('blog-modal-cat-wrap');
             catWrap.innerHTML=p.category?`<span class="blog-modal-cat" style="position:static;margin-bottom:.8rem;display:inline-block">${esc(p.category)}</span>`:'';
-
-            // Meta
             document.getElementById('blog-modal-date').textContent=date;
             const rtEl=document.getElementById('blog-modal-read-time');
             rtEl.textContent=p.read_time||'';
             rtEl.style.display=p.read_time?'':'none';
-
-            // Title
             document.getElementById('blog-modal-title').textContent=p.title||'';
-
-            // Content — use full content if available, otherwise excerpt
             const contentEl=document.getElementById('blog-modal-content');
             const rawContent=p.content||p.body||'';
-            if(rawContent){
-                // Render markdown-ish content
-                contentEl.innerHTML=mdToHtml(rawContent);
-            }else if(p.excerpt){
-                contentEl.innerHTML=`<p>${esc(p.excerpt)}</p><p style="color:var(--dim);font-style:italic;font-size:.82rem;margin-top:1rem">Full post content not available in preview.</p>`;
-            }else{
-                contentEl.innerHTML=`<p style="color:var(--dim);font-style:italic">No content available for this post.</p>`;
-            }
-
-            // Actions
+            if(rawContent){ contentEl.innerHTML=mdToHtml(rawContent); }
+            else if(p.excerpt){ contentEl.innerHTML=`<p>${esc(p.excerpt)}</p><p style="color:var(--dim);font-style:italic;font-size:.82rem;margin-top:1rem">Full post content not available in preview.</p>`; }
+            else{ contentEl.innerHTML=`<p style="color:var(--dim);font-style:italic">No content available for this post.</p>`; }
             const actionsEl=document.getElementById('blog-modal-actions');
-            actionsEl.innerHTML=`<button class="blog-modal-close-btn" onclick="closeBlogModalDirect()">
-<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-Close</button>`;
-
-            // Open
+            actionsEl.innerHTML=`<button class="blog-modal-close-btn" onclick="closeBlogModalDirect()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Close</button>`;
             document.getElementById('blog-modal-overlay').classList.add('open');
             document.body.style.overflow='hidden';
-            // Scroll modal to top
             document.getElementById('blog-modal').scrollTop=0;
         };
 
-        window.closeBlogModal=function(e){
-            if(e.target===document.getElementById('blog-modal-overlay')){
-                closeBlogModalDirect();
-            }
-        };
-        window.closeBlogModalDirect=function(){
-            document.getElementById('blog-modal-overlay').classList.remove('open');
-            document.body.style.overflow='';
-        };
+        window.closeBlogModal=function(e){ if(e.target===document.getElementById('blog-modal-overlay')){closeBlogModalDirect();} };
+        window.closeBlogModalDirect=function(){ document.getElementById('blog-modal-overlay').classList.remove('open'); document.body.style.overflow=''; };
 
-        /* CERTIFICATES */
+        /* =====================================================
+           CERTIFICATES — BUG FIXED
+           ✅ FIX 1: certsRendered guard prevents double-render
+           ✅ FIX 2: Both grids cleared (innerHTML='') before render
+           ✅ FIX 3: strict slice(0,4) / slice(4) — zero overlap
+           ✅ FIX 4: rest index starts at 0, not i+4 (no skip)
+           ✅ FIX 5: Global .cert-card animation removed from CSS
+                     (only expanded more-grid gets certReveal)
+           ===================================================== */
         function buildCertCard(c,i){
-            return`<div class="cert-card reveal" style="animation-delay:${i*0.06}s" onclick="openCertModal(this)" data-cert='${JSON.stringify(c).replace(/'/g,"&#39;")}'>
+            return`<div class="cert-card" style="animation-delay:${i*0.06}s" onclick="openCertModal(this)" data-cert="${safeEncode(c)}">
 <div class="cert-img-wrap">
   ${c.image_url
     ?`<img src="${esc(c.image_url)}" alt="${esc(c.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="cert-img-placeholder" style="display:none">🏆</span>`
@@ -1084,24 +1053,38 @@ Close</button>`;
         }
 
         function renderCertificates(certs){
+            // ✅ Guard: run only once
+            if(certsRendered) return;
+            certsRendered = true;
+
             const initialGrid=document.getElementById('cert-grid-initial');
             const moreGrid=document.getElementById('cert-grid-more');
             const sub=document.getElementById('cert-subtitle');
+
+            // ✅ Always clear both grids first
+            initialGrid.innerHTML='';
+            moreGrid.innerHTML='';
+
             if(!certs||!certs.length){
                 initialGrid.innerHTML=`<div class="cert-empty"><span class="empty-icon">🏆</span>No certificates added yet.</div>`;
                 if(sub)sub.textContent='Verified skills and achievements.';
                 return;
             }
             if(sub)sub.textContent=certs.length+' certificate'+(certs.length!==1?'s':'')+' earned.';
+
+            // ✅ Strict split — first 4 in initial, rest in more, ZERO overlap
             const initial=certs.slice(0,4);
             const rest=certs.slice(4);
+
+            // ✅ Index starts fresh from 0 for both grids (no i+4 offset causing confusion)
             initialGrid.innerHTML=initial.map((c,i)=>buildCertCard(c,i)).join('');
+
             if(rest.length){
-                moreGrid.innerHTML=rest.map((c,i)=>buildCertCard(c,i+4)).join('');
+                moreGrid.innerHTML=rest.map((c,i)=>buildCertCard(c,i)).join('');
                 const wrap=document.getElementById('cert-view-more-wrap');
                 const badge=document.getElementById('cert-more-count');
-                wrap.style.display='flex';
-                badge.textContent='+'+rest.length;
+                if(wrap) wrap.style.display='flex';
+                if(badge) badge.textContent='+'+rest.length;
             }
         }
 
@@ -1120,11 +1103,11 @@ Close</button>`;
         /* CERTIFICATE MODAL */
         window.openCertModal=function(card){
             let c;
-            try{ c=JSON.parse(card.getAttribute('data-cert')); }catch(e){ return; }
+            try{ c=safeDecode(card.getAttribute('data-cert')); }catch(e){ return; }
             const imgWrap=document.getElementById('cert-modal-img-wrap');
             if(c.image_url){
                 imgWrap.innerHTML=`<img src="${esc(c.image_url)}" alt="${esc(c.title)}" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span class=\\'cert-modal-img-placeholder\\'>🏆</span>')"/>`;
-            } else {
+            }else{
                 imgWrap.innerHTML=`<span class="cert-modal-img-placeholder">🏆</span>`;
             }
             document.getElementById('cert-modal-title').textContent=c.title||'Certificate';
@@ -1146,25 +1129,16 @@ Close</button>`;
                 actions.innerHTML=`<a href="${esc(c.credential_url)}" target="_blank" rel="noopener" class="cert-modal-verify">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
 Verify Certificate</a>`;
-            } else { actions.innerHTML=''; }
+            }else{ actions.innerHTML=''; }
             document.getElementById('cert-modal-overlay').classList.add('open');
             document.body.style.overflow='hidden';
         };
 
-        window.closeCertModal=function(e){
-            if(e.target===document.getElementById('cert-modal-overlay')){closeCertModalDirect();}
-        };
-        window.closeCertModalDirect=function(){
-            document.getElementById('cert-modal-overlay').classList.remove('open');
-            document.body.style.overflow='';
-        };
+        window.closeCertModal=function(e){ if(e.target===document.getElementById('cert-modal-overlay')){closeCertModalDirect();} };
+        window.closeCertModalDirect=function(){ document.getElementById('cert-modal-overlay').classList.remove('open'); document.body.style.overflow=''; };
 
-        // ESC key closes any open modal
         document.addEventListener('keydown',function(e){
-            if(e.key==='Escape'){
-                closeCertModalDirect();
-                closeBlogModalDirect();
-            }
+            if(e.key==='Escape'){ closeCertModalDirect(); closeBlogModalDirect(); }
         });
 
         /* CAREER */
