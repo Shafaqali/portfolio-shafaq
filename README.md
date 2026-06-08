@@ -27,13 +27,13 @@ Server runs at: http://localhost:3000
      - **Build Command:** `npm install`
      - **Start Command:** `node server.js`
    - "Environment Variables" section mein ye add karo:
-     - `MONGODB_URI` = `mongodb+srv://alishafaq782_db_user:TNS37YO5629ZrmIq@cluster0.jvpyl8v.mongodb.net/portfolio`
+     - `MONGODB_URI` = `your url`
      - `JWT_SECRET` = koi bhi random string (e.g. `meri_secret_key_2024_xyz`)
-     - `ADMIN_PASSWORD` = `admin123` (ya jo chahiye)
+     - `ADMIN_PASSWORD` = `xyz` (ya jo chahiye)
    - "Create Web Service" click karo
 
 3. **Deploy hone ke baad:**
-   - Render ek URL dega jaise: `https://portfolio-backend-xxxx.onrender.com`
+   - Render url : `url paste here`
    - Ye URL copy karo
 
 4. **dashboard.html aur index.html mein URL update karo:**
