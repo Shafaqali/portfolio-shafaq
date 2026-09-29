@@ -132,7 +132,7 @@
         .btn-view-more .arrow{transition:transform .3s cubic-bezier(.4,0,.2,1);display:inline-flex}
         .btn-view-more.expanded .arrow{transform:rotate(180deg)}
         .btn-view-more .count-badge{background:rgba(192,132,252,0.14);border:1px solid rgba(192,132,252,0.28);color:var(--accent);border-radius:100px;font-size:0.68rem;font-weight:700;padding:2px 8px;letter-spacing:.04em}
-        .proj-card{background:var(--card);border:1px solid var(--border2);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s cubic-bezier(.4,0,.2,1),border-color .2s,box-shadow .2s;position:relative}
+        .proj-card{background:var(--card);border:1px solid var(--border2);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s cubic-bezier(.4,0,.2,1),border-color .2s,box-shadow .2s;position:relative;cursor:pointer}
         .proj-card:hover{transform:translateY(-5px);border-color:rgba(192,132,252,0.35);box-shadow:0 20px 60px rgba(0,0,0,0.35),0 0 0 1px rgba(192,132,252,0.12)}
         body.light .proj-card:hover{box-shadow:0 20px 48px rgba(124,58,237,0.12)}
         .proj-card.featured .feat-star{display:flex}
@@ -736,7 +736,7 @@
             }
         }
 
-        function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
         function isDarkIcon(name){return DARK_ICONS.has((name||'').toLowerCase().trim());}
 
         // ✅ Safe JSON encode/decode for HTML attributes
@@ -766,7 +766,7 @@
                 .replace(/(<\/[hupbro][^>]*>)<\/p>/g,'$1');
         }
 
-        function render({settings,projects,skillCategories,testimonials,blogPosts,certificates,career}){
+        function render({settings,projects,jobs,skillCategories,testimonials,blogPosts,certificates,career}){
             const name=settings.name||'Portfolio';
             document.title=name+' — '+(settings.tagline||'Developer');
             document.getElementById('hero-eyebrow').textContent=settings.tagline||'Full-Stack Developer';
@@ -800,7 +800,7 @@
             renderTestimonials(testimonials);
             renderBlog(blogPosts||[]);
             renderCertificates(certificates||[]);
-            renderCareer(career||[]);
+            renderCareer(career||jobs||[]);
 
             const sectionMap={
                 'projects':settings.show_projects,
@@ -843,8 +843,9 @@
             const statusLabel=p.status||'WIP';
             const hasGithub=p.github&&p.github!=='#';
             const hasLive=p.live&&p.live!=='#';
+            const detailUrl='project.html?id='+encodeURIComponent(p._id||p.slug||p.name||'');
             const desc=(p.description||'').length>100?p.description.substring(0,100)+'…':(p.description||'');
-            return `<div class="proj-card${isFeatured?' featured':''}">
+            return `<div class="proj-card${isFeatured?' featured':''}" data-detail-url="${esc(detailUrl)}" onclick="openProjectDetail(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProjectDetail(this);}" role="link" tabindex="0">
 ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Featured</div>`:''}
 <div style="position:relative;flex-shrink:0">
   ${p.image_url?`<img class="proj-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'"/>`:`<div class="proj-thumb-placeholder">🖥️</div>`}
@@ -855,9 +856,10 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
   ${(p.tech_tags||[]).length?`<div class="proj-tagline">${(p.tech_tags||[]).slice(0,3).join(' · ')}</div>`:''}
   ${desc?`<div class="proj-desc-text">${esc(desc)}</div>`:''}
   <div class="proj-tech-row">${(p.tech_tags||[]).map(t=>`<span class="proj-tech-chip">${esc(t)}</span>`).join('')}</div>
+  <div class="proj-links-row"><span class="proj-link-btn">View Details<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
   ${(hasGithub||hasLive)?`<div class="proj-links-row">
-    ${hasGithub?`<a href="${esc(p.github)}" target="_blank" class="proj-link-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>`:''}
-    ${hasLive?`<a href="${esc(p.live)}" target="_blank" class="proj-link-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Live Demo</a>`:''}
+    ${hasGithub?`<a href="${esc(p.github)}" target="_blank" onclick="event.stopPropagation()" class="proj-link-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>`:''}
+    ${hasLive?`<a href="${esc(p.live)}" target="_blank" onclick="event.stopPropagation()" class="proj-link-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Live Demo</a>`:''}
   </div>`:''}
 </div>
 </div>`;
@@ -890,6 +892,11 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
             label.textContent=expanded?'Show Less':'View More Projects';
             badge.textContent=expanded?'-'+(more.querySelectorAll('.proj-card').length):'+'+(more.querySelectorAll('.proj-card').length);
             if(expanded)setTimeout(()=>more.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+        };
+
+        window.openProjectDetail=function(card){
+            const url=card.getAttribute('data-detail-url');
+            if(url) window.location.href=url;
         };
 
         /* SKILLS */
@@ -944,7 +951,8 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
             const date=p.createdAt?new Date(p.createdAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}):'';
             const bgColors=['linear-gradient(145deg,#1a1a3e,#0d0d20)','linear-gradient(145deg,#1a2a1e,#0d1a10)','linear-gradient(145deg,#2a1a1e,#1a0d10)','linear-gradient(145deg,#1a1a2e,#0a0a20)'];
             const bgIdx=(p.title||'').length%bgColors.length;
-            return`<div class="blog-card reveal" onclick="openBlogModal(this)" data-blog="${safeEncode(p)}">
+            const detailUrl=p.external_url||('blog.html?slug='+encodeURIComponent(p.slug||p._id||p.title||''));
+            return`<div class="blog-card reveal" onclick="openBlogPage(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBlogPage(this);}" role="link" tabindex="0" data-detail-url="${esc(detailUrl)}" data-external="${p.external_url?'1':'0'}">
 <div class="blog-thumb-placeholder" style="background:${bgColors[bgIdx]}">
   ${p.cover_image?`<img class="blog-thumb" src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.parentElement.innerHTML='<div class=\\'blog-thumb-placeholder-inner\\'>📝</div>'"/>`:`<div class="blog-thumb-placeholder-inner">📝</div>`}
   ${p.category?`<span class="blog-cat-tag">${esc(p.category)}</span>`:''}
@@ -998,11 +1006,20 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
             if(expanded)setTimeout(()=>more.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
         };
 
+        window.openBlogPage=function(card){
+            const url=card.getAttribute('data-detail-url');
+            if(!url)return;
+            if(card.getAttribute('data-external')==='1') window.open(url,'_blank','noopener');
+            else window.location.href=url;
+        };
+
         /* BLOG MODAL */
         window.openBlogModal=function(card){
             let p;
             try{ p=safeDecode(card.getAttribute('data-blog')); }catch(e){ return; }
             if(p.external_url){ window.open(p.external_url,'_blank','noopener'); return; }
+            window.location.href='blog.html?slug='+encodeURIComponent(p.slug||p._id||p.title||'');
+            return;
             const date=p.createdAt?new Date(p.createdAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}):'';
             const coverEl=document.getElementById('blog-modal-cover');
             const bgColors=['linear-gradient(145deg,#1a1a3e,#0d0d20)','linear-gradient(145deg,#1a2a1e,#0d1a10)','linear-gradient(145deg,#2a1a1e,#1a0d10)','linear-gradient(145deg,#1a1a2e,#0a0a20)'];
@@ -1159,22 +1176,24 @@ Verify Certificate</a>`;
             const timeline=document.getElementById('career-timeline');
             const sub=document.getElementById('career-subtitle');
             if(!items||!items.length){
-                timeline.innerHTML=`<div class="career-empty"><span class="empty-icon">💼</span>No career entries yet.</div>`;
+                timeline.innerHTML=`<div class="career-empty"><span class="empty-icon">ðŸ’¼</span>No career entries yet.</div>`;
                 return;
             }
             if(sub)sub.textContent=items.length+' position'+(items.length!==1?'s':'')+' in career.';
             timeline.innerHTML=items.map((item,i)=>{
-                const isCurrent=item.current||item.is_current||item.end_date==='Present'||item.end_date===''||!item.end_date;
-                const period=item.start_date?(item.start_date+' — '+(item.end_date||'Present')):'';
+                const endDate=(item.end_date||'').trim();
+                const isCurrent=!!(item.current||item.is_current||endDate.toLowerCase()==='present');
+                const period=item.date_text||(item.start_date?(item.start_date+' - '+(endDate||'Present')):'');
                 const techTags=(item.tech_tags||item.technologies||[]);
                 const bullets=(item.bullets||item.highlights||[]);
+                const description=item.description||item.panel_title||'';
                 return`<div class="career-item${isCurrent?' current':''}" style="animation-delay:${i*0.1}s">
 <div class="career-dot"></div>
 <div class="career-card">
   <div class="career-card-top">
     <div class="career-logo-wrap">
       <div class="career-logo">
-        ${item.logo_url?`<img src="${esc(item.logo_url)}" alt="${esc(item.company||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="career-logo-placeholder" style="display:none">💼</span>`:`<span class="career-logo-placeholder">💼</span>`}
+        ${item.logo_url?`<img src="${esc(item.logo_url)}" alt="${esc(item.company||'')}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="career-logo-placeholder" style="display:none">ðŸ’¼</span>`:`<span class="career-logo-placeholder">ðŸ’¼</span>`}
       </div>
       <div class="career-title-group">
         <div class="career-role">${esc(item.role||item.title||'')}</div>
@@ -1188,7 +1207,7 @@ Verify Certificate</a>`;
     </div>
   </div>
   ${item.location?`<div class="career-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${esc(item.location)}</div>`:''}
-  ${item.description?`<div class="career-desc">${esc(item.description)}</div>`:''}
+  ${description?`<div class="career-desc">${esc(description)}</div>`:''}
   ${bullets.length?`<ul class="career-bullets">${bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>`:''}
   ${techTags.length?`<div class="proj-tech-row">${techTags.map(t=>`<span class="proj-tech-chip">${esc(t)}</span>`).join('')}</div>`:''}
 </div>

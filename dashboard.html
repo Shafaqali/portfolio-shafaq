@@ -1969,16 +1969,30 @@
                                 </select></div>
                             <div class="form-group full"><label>Description</label><textarea id="proj-desc"
                                     placeholder="Short description..."></textarea></div>
+                            <div class="form-group full"><label>Full Project Detail</label><textarea id="proj-content"
+                                    placeholder="Write the full case study/details. Markdown supported."
+                                    rows="7"></textarea></div>
                             <div class="form-group full"><label>GitHub Link</label><input id="proj-github"
                                     placeholder="https://github.com/..." /></div>
                             <div class="form-group full"><label>Live Demo / Portfolio Link</label><input id="proj-live"
                                     placeholder="https://..." /></div>
                             <div class="form-group full">
-                                <label>Project Screenshot / Image URL</label>
-                                <input id="proj-image" placeholder="https://i.imgur.com/..."
+                                <label>Project Screenshot / Image</label>
+                                <input type="file" id="proj-file-input" accept="image/*" style="display:none"
+                                    onchange="handleProjectImageUpload(event)" />
+                                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+                                    <button class="btn btn-ghost" type="button"
+                                        onclick="document.getElementById('proj-file-input').click()">
+                                        Upload from device
+                                    </button>
+                                    <span id="proj-upload-msg"
+                                        style="font-size:0.75rem;color:var(--accent);min-height:18px;"></span>
+                                </div>
+                                <input id="proj-image" placeholder="Or paste image URL - https://i.imgur.com/..."
                                     oninput="updateProjImagePreview(this.value)" />
                                 <div class="field-hint">📌 Upload on Imgur → copy direct link | <a
-                                        href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
+                                        href="https://imgur.com/upload" target="_blank">imgur.com/upload</a> | Device
+                                    upload is saved directly as compressed base64.</div>
                                 <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none;">
                                     <img id="proj-img-preview" src="" alt="Preview"
                                         onerror="document.getElementById('proj-img-preview-wrap').style.display='none'" />
@@ -2133,12 +2147,26 @@
                                     placeholder="5 min read" /></div>
                             <div class="form-group full"><label>Excerpt / Summary</label><textarea id="blog-excerpt"
                                     placeholder="A short summary..." rows="3"></textarea></div>
+                            <div class="form-group full"><label>Full Post Content</label><textarea id="blog-content"
+                                    placeholder="Write the full blog post here. Markdown supported."
+                                    rows="10"></textarea></div>
                             <div class="form-group full">
-                                <label>Cover Image URL</label>
-                                <input id="blog-cover" placeholder="https://i.imgur.com/..."
+                                <label>Cover Image</label>
+                                <input type="file" id="blog-file-input" accept="image/*" style="display:none"
+                                    onchange="handleBlogImageUpload(event)" />
+                                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+                                    <button class="btn btn-ghost" type="button"
+                                        onclick="document.getElementById('blog-file-input').click()">
+                                        Upload from device
+                                    </button>
+                                    <span id="blog-upload-msg"
+                                        style="font-size:0.75rem;color:var(--accent);min-height:18px;"></span>
+                                </div>
+                                <input id="blog-cover" placeholder="Or paste image URL - https://i.imgur.com/..."
                                     oninput="updateBlogImagePreview(this.value)" />
                                 <div class="field-hint">📌 Upload on Imgur → copy direct link | <a
-                                        href="https://imgur.com/upload" target="_blank">imgur.com/upload</a></div>
+                                        href="https://imgur.com/upload" target="_blank">imgur.com/upload</a> | Device
+                                    upload is saved directly as compressed base64.</div>
                                 <div class="img-preview-wrap" id="blog-img-preview-wrap" style="display:none;">
                                     <img id="blog-img-preview" src="" alt="Preview"
                                         onerror="document.getElementById('blog-img-preview-wrap').style.display='none'" />
@@ -2908,6 +2936,42 @@
             finally { btn.disabled = false; btn.textContent = '💾 Save Order'; }
         }
 
+        function handleImageUploadToInput(event, inputId, previewFn, msgId, label) {
+            const file = event.target.files[0]; if (!file) return;
+            const msg = document.getElementById(msgId);
+            if (!file.type.startsWith('image/')) { msg.style.color = 'var(--danger)'; msg.textContent = 'Only image files are allowed.'; event.target.value = ''; return; }
+            if (file.size > 5 * 1024 * 1024) { msg.style.color = 'var(--danger)'; msg.textContent = 'Max 5MB image allowed.'; event.target.value = ''; return; }
+            msg.style.color = 'var(--accent)'; msg.textContent = 'Processing image...';
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const MAX = 1200; let w = img.width, h = img.height;
+                    if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h * MAX / w); w = MAX; } else { w = Math.round(w * MAX / h); h = MAX; } }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.84);
+                    document.getElementById(inputId).value = base64;
+                    previewFn(base64);
+                    msg.style.color = 'var(--now)'; msg.textContent = 'Ready! Click Save.';
+                    showToast(label + ' image ready - click Save');
+                };
+                img.onerror = () => { msg.style.color = 'var(--danger)'; msg.textContent = 'Image load failed.'; };
+                img.src = e.target.result;
+            };
+            reader.onerror = () => { msg.style.color = 'var(--danger)'; msg.textContent = 'File read failed.'; };
+            reader.readAsDataURL(file); event.target.value = '';
+        }
+
+        function handleProjectImageUpload(event) {
+            handleImageUploadToInput(event, 'proj-image', updateProjImagePreview, 'proj-upload-msg', 'Project');
+        }
+
+        function handleBlogImageUpload(event) {
+            handleImageUploadToInput(event, 'blog-cover', updateBlogImagePreview, 'blog-upload-msg', 'Blog cover');
+        }
+
         function renderProjectGrid() {
             const grid = document.getElementById('projects-grid');
             if (!orderedProjects.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No projects yet — add one below!</div>'; return; }
@@ -2944,6 +3008,7 @@
             document.getElementById('proj-name').value = p.name || '';
             document.getElementById('proj-status').value = p.status || 'WIP';
             document.getElementById('proj-desc').value = p.description || '';
+            document.getElementById('proj-content').value = p.content || '';
             document.getElementById('proj-github').value = p.github || '';
             document.getElementById('proj-live').value = p.live || '';
             document.getElementById('proj-image').value = p.image_url || '';
@@ -2955,10 +3020,12 @@
 
         function clearProjectForm() {
             document.getElementById('proj-id').value = '';
-            ['proj-name', 'proj-desc', 'proj-github', 'proj-live', 'proj-image', 'proj-tech'].forEach(id => document.getElementById(id).value = '');
+            ['proj-name', 'proj-desc', 'proj-content', 'proj-github', 'proj-live', 'proj-image', 'proj-tech'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('proj-status').value = 'WIP';
             document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">+</span> Add / Edit Project';
             updateProjImagePreview('');
+            const uploadMsg = document.getElementById('proj-upload-msg');
+            if (uploadMsg) uploadMsg.textContent = '';
         }
 
         async function saveProject() {
@@ -2967,6 +3034,7 @@
                 name: document.getElementById('proj-name').value.trim(),
                 status: document.getElementById('proj-status').value,
                 description: document.getElementById('proj-desc').value,
+                content: document.getElementById('proj-content').value,
                 github: document.getElementById('proj-github').value.trim(),
                 live: document.getElementById('proj-live').value.trim(),
                 image_url: document.getElementById('proj-image').value.trim(),
@@ -3045,6 +3113,8 @@
                 company: document.getElementById('job-company').value.trim(),
                 role: document.getElementById('job-role').value.trim(),
                 date_text: end ? `${start} – ${end}` : start,
+                start_date: start,
+                end_date: end,
                 is_current: document.getElementById('job-current').value === 'true',
                 bullets: document.getElementById('job-bullets').value.split('\n').map(s => s.trim()).filter(Boolean),
                 tech_tags: document.getElementById('job-tech').value.split(',').map(s => s.trim()).filter(Boolean),
@@ -3241,6 +3311,7 @@
             document.getElementById('blog-category').value = p.category || '';
             document.getElementById('blog-read-time').value = p.read_time || '';
             document.getElementById('blog-excerpt').value = p.excerpt || '';
+            document.getElementById('blog-content').value = p.content || '';
             document.getElementById('blog-cover').value = p.cover_image || '';
             document.getElementById('blog-external-url').value = p.external_url || '';
             document.getElementById('blog-slug').value = p.slug || '';
@@ -3252,10 +3323,12 @@
 
         function clearBlogForm() {
             document.getElementById('blog-id').value = '';
-            ['blog-title', 'blog-category', 'blog-read-time', 'blog-excerpt', 'blog-cover', 'blog-external-url', 'blog-slug'].forEach(id => document.getElementById(id).value = '');
+            ['blog-title', 'blog-category', 'blog-read-time', 'blog-excerpt', 'blog-content', 'blog-cover', 'blog-external-url', 'blog-slug'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('blog-published').value = 'true';
             document.getElementById('blog-form-title').innerHTML = '<span class="panel-icon">+</span> Add / Edit Blog Post';
             updateBlogImagePreview('');
+            const uploadMsg = document.getElementById('blog-upload-msg');
+            if (uploadMsg) uploadMsg.textContent = '';
         }
 
         async function saveBlogPost() {
@@ -3269,6 +3342,7 @@
                 category: document.getElementById('blog-category').value.trim(),
                 read_time: document.getElementById('blog-read-time').value.trim(),
                 excerpt: document.getElementById('blog-excerpt').value.trim(),
+                content: document.getElementById('blog-content').value,
                 cover_image: document.getElementById('blog-cover').value.trim(),
                 external_url: document.getElementById('blog-external-url').value.trim(),
                 slug: slugVal,

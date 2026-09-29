@@ -50,11 +50,13 @@ const SettingsSchema = new mongoose.Schema({
 
 const ProjectSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    slug: { type: String, default: '' },
     description: { type: String, default: '' },
+    content: { type: String, default: '' },
     status: { type: String, enum: ['Live', 'WIP', 'Archived'], default: 'WIP' },
     github: { type: String, default: '' },
     live: { type: String, default: '' },
-    image_url: { type: String, default: '' },
+    image_url: { type: String, default: '', maxlength: 5000000 },
     tech_tags: [String],
     featured: { type: Boolean, default: false },
     is_featured: { type: Boolean, default: false },
@@ -65,6 +67,12 @@ const JobSchema = new mongoose.Schema({
     company: { type: String, required: true },
     role: { type: String, default: '' },
     date_text: { type: String, default: '' },
+    start_date: { type: String, default: '' },
+    end_date: { type: String, default: '' },
+    location: { type: String, default: '' },
+    type: { type: String, default: '' },
+    description: { type: String, default: '' },
+    logo_url: { type: String, default: '', maxlength: 5000000 },
     is_current: { type: Boolean, default: false },
     bullets: [String],
     tech_tags: [String],
@@ -96,7 +104,8 @@ const BlogPostSchema = new mongoose.Schema({
     category: { type: String, default: '' },
     read_time: { type: String, default: '' },
     excerpt: { type: String, default: '' },
-    cover_image: { type: String, default: '' },
+    content: { type: String, default: '' },
+    cover_image: { type: String, default: '', maxlength: 5000000 },
     external_url: { type: String, default: '' },
     published: { type: Boolean, default: true }
 }, { timestamps: true });
@@ -201,7 +210,7 @@ app.get('/api/portfolio', async (req, res) => {
             BlogPost.find({ published: true }).sort({ createdAt: -1 }),
             Certificate.find({ visible: true }).sort({ order: 1, createdAt: -1 })
         ]);
-        res.json({ settings: settings || {}, projects, jobs, skillCategories, testimonials, blogPosts, certificates });
+        res.json({ settings: settings || {}, projects, jobs, career: jobs, skillCategories, testimonials, blogPosts, certificates });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

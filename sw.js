@@ -1,5 +1,8 @@
-const CACHE = 'sa-admin-v1';
+const CACHE = 'sa-admin-v2';
 const OFFLINE_URLS = [
+  './index.html',
+  './project.html',
+  './blog.html',
   './dashboard.html',
   './manifest.json'
 ];
