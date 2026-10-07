@@ -114,8 +114,9 @@
             border-radius: 18px;
             padding: 2rem;
             width: 100%;
-            max-width: 340px;
+            max-width: 380px;
             text-align: center;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(192, 132, 252, 0.04);
         }
 
         .login-logo {
@@ -131,9 +132,17 @@
         }
 
         .login-subtitle {
-            font-size: 0.78rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .login-helper {
+            font-size: 0.76rem;
             color: var(--muted);
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.4rem;
+            line-height: 1.55;
         }
 
         .login-box input {
@@ -146,11 +155,47 @@
             font-family: inherit;
             font-size: 0.88rem;
             outline: none;
-            margin-bottom: 0.8rem;
         }
 
         .login-box input:focus {
             border-color: rgba(192, 132, 252, 0.5);
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .login-box .password-field {
+            margin-bottom: 0.85rem;
+        }
+
+        .password-field input {
+            padding-right: 70px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 1px solid var(--border2);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            height: 28px;
+            min-width: 54px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: color .16s, border-color .16s, background .16s;
+        }
+
+        .password-toggle:hover {
+            color: var(--text);
+            border-color: rgba(192, 132, 252, 0.38);
+            background: rgba(192, 132, 252, 0.08);
         }
 
         .login-box .btn-primary {
@@ -164,6 +209,108 @@
             color: var(--danger);
             margin-top: 0.5rem;
             min-height: 18px;
+        }
+
+        .password-note {
+            font-size: 0.72rem;
+            color: var(--muted);
+            line-height: 1.55;
+            margin-bottom: 0.9rem;
+        }
+
+        .password-meter {
+            height: 7px;
+            border-radius: 999px;
+            background: var(--border2);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .password-meter span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            background: var(--danger);
+            transition: width .2s, background .2s;
+        }
+
+        .password-status {
+            font-size: 0.72rem;
+            color: var(--muted);
+            min-height: 18px;
+            margin-top: 7px;
+        }
+
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10020;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(5, 5, 12, 0.72);
+            backdrop-filter: blur(16px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .18s;
+        }
+
+        .confirm-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .confirm-card {
+            width: min(420px, 100%);
+            background: var(--card);
+            border: 1px solid var(--border2);
+            border-radius: 18px;
+            padding: 1.25rem;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+            transform: translateY(10px) scale(0.98);
+            transition: transform .18s;
+        }
+
+        .confirm-overlay.open .confirm-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .confirm-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(192, 132, 252, 0.11);
+            border: 1px solid rgba(192, 132, 252, 0.25);
+            color: var(--accent);
+            font-weight: 900;
+            margin-bottom: 0.9rem;
+        }
+
+        .confirm-title {
+            font-family: 'Bricolage Grotesque', 'Georgia', serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.35rem;
+        }
+
+        .confirm-message {
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin-bottom: 1.1rem;
+        }
+
+        .confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .layout {
@@ -1748,10 +1895,26 @@
     <div class="login-screen" id="login-screen">
         <div class="login-box">
             <div class="login-logo">SA<em>.</em></div>
-            <div class="login-subtitle">Admin Panel — Enter your password</div>
-            <input type="password" id="login-pw" placeholder="Password" />
-            <button class="btn btn-primary" onclick="doLogin()">Login →</button>
+            <div class="login-subtitle">Admin Panel</div>
+            <div class="login-helper">Enter your admin password to manage portfolio content.</div>
+            <div class="password-field">
+                <input type="password" id="login-pw" placeholder="Password" autocomplete="current-password" />
+                <button class="password-toggle" type="button" onclick="togglePassword('login-pw', this)">Show</button>
+            </div>
+            <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Login →</button>
             <div class="login-error" id="login-err"></div>
+        </div>
+    </div>
+
+    <div class="confirm-overlay" id="confirm-modal" aria-hidden="true">
+        <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+            <div class="confirm-icon" id="confirm-icon">!</div>
+            <div class="confirm-title" id="confirm-title">Confirm action</div>
+            <div class="confirm-message" id="confirm-message">Are you sure?</div>
+            <div class="confirm-actions">
+                <button class="btn btn-ghost" id="confirm-cancel" onclick="closeConfirmModal(false)">Cancel</button>
+                <button class="btn btn-primary" id="confirm-ok" onclick="closeConfirmModal(true)">Continue</button>
+            </div>
         </div>
     </div>
 
@@ -1789,7 +1952,7 @@
             <div class="nav-item" data-page="settings" onclick="showPage('settings',this)"><span
                     class="nav-icon">⊙</span> Site Settings</div>
             <div class="sidebar-bottom">
-                <div class="user-pill" onclick="logout()" title="Click to logout">
+                <div class="user-pill" onclick="askLogout()" title="Click to logout">
                     <div class="user-avatar" id="side-avatar">SA</div>
                     <div>
                         <div class="user-name" id="side-name">Shafaq Ali</div>
@@ -2551,12 +2714,30 @@
                         <div class="col-6">
                             <div class="form-panel">
                                 <div class="panel-title"><span class="panel-icon">⬡</span> Admin Password</div>
-                                <div class="form-group" style="margin-bottom:10px"><label>New Password</label><input
-                                        type="password" id="new-pw" placeholder="Min 6 characters" /></div>
-                                <div class="form-group"><label>Confirm Password</label><input type="password"
-                                        id="confirm-pw" placeholder="Repeat password" /></div>
-                                <div style="margin-top:1rem">
-                                    <button class="btn btn-ghost" onclick="changePassword()">Update Password</button>
+                                <div class="password-note">Use at least 6 characters. Add numbers or symbols for a stronger admin password.</div>
+                                <div class="form-group" style="margin-bottom:10px">
+                                    <label>New Password</label>
+                                    <div class="password-field">
+                                        <input type="password" id="new-pw" placeholder="Min 6 characters"
+                                            autocomplete="new-password" oninput="updatePasswordUi()" />
+                                        <button class="password-toggle" type="button"
+                                            onclick="togglePassword('new-pw', this)">Show</button>
+                                    </div>
+                                    <div class="password-meter"><span id="password-meter-fill"></span></div>
+                                    <div class="password-status" id="password-status">Password strength will appear here.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <div class="password-field">
+                                        <input type="password" id="confirm-pw" placeholder="Repeat password"
+                                            autocomplete="new-password" oninput="updatePasswordUi()" />
+                                        <button class="password-toggle" type="button"
+                                            onclick="togglePassword('confirm-pw', this)">Show</button>
+                                    </div>
+                                </div>
+                                <div style="margin-top:1rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                                    <button class="btn btn-primary" id="password-save-btn" onclick="changePassword()">Update Password</button>
+                                    <button class="btn btn-ghost" type="button" onclick="clearPasswordFields()">Clear</button>
                                 </div>
                             </div>
                             <div class="form-panel" style="margin-top:1rem;">
@@ -2770,7 +2951,44 @@
             btn.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
             document.body.style.overflow = '';
         }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+        let confirmModalResolver = null;
+        function showConfirmModal({ title, message, confirmText = 'Continue', cancelText = 'Cancel', hideCancel = false, icon = '!' }) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').textContent = title || 'Confirm action';
+            document.getElementById('confirm-message').textContent = message || '';
+            document.getElementById('confirm-icon').textContent = icon;
+            document.getElementById('confirm-ok').textContent = confirmText;
+            const cancel = document.getElementById('confirm-cancel');
+            cancel.textContent = cancelText;
+            cancel.style.display = hideCancel ? 'none' : '';
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.getElementById('confirm-ok').focus();
+            return new Promise(resolve => { confirmModalResolver = resolve; });
+        }
+
+        function closeConfirmModal(result) {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            if (confirmModalResolver) confirmModalResolver(!!result);
+            confirmModalResolver = null;
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            if (btn) btn.textContent = show ? 'Hide' : 'Show';
+            input.focus();
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            if (document.getElementById('confirm-modal').classList.contains('open')) closeConfirmModal(false);
+            else closeSidebar();
+        });
 
         // ─── DOM READY ─────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', function () {
@@ -2791,37 +3009,73 @@
         async function doLogin() {
             const pw = document.getElementById('login-pw').value.trim();
             const errEl = document.getElementById('login-err');
+            const btn = document.getElementById('login-btn');
             errEl.textContent = '';
             if (!pw) { errEl.textContent = 'Please enter your password'; return; }
-            errEl.textContent = '⏳ Logging in...';
+            errEl.textContent = 'Logging in...';
+            if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
             try {
                 const r = await fetch(API_BASE + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
                 const data = await r.json();
                 if (!r.ok) throw new Error(data.error || 'Login failed');
                 token = data.token;
                 localStorage.setItem('portfolio_admin_token', token);
+                errEl.textContent = '';
                 showApp();
             } catch (e) {
                 errEl.textContent = (e.message.includes('fetch') || e.message.includes('Failed'))
-                    ? '⚠️ Server is waking up (Render free tier). Please retry in 30-60 seconds.'
+                    ? 'Server is waking up. Please retry in 30-60 seconds.'
                     : e.message;
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Login →'; }
             }
         }
 
-        async function logout() {
-            if (!confirm('Logout?')) return;
+        async function askLogout() {
+            const ok = await showConfirmModal({
+                title: 'Logout from dashboard?',
+                message: 'You will return to the login screen. Unsaved form changes will stay only in this browser until refresh.',
+                confirmText: 'Logout',
+                cancelText: 'Stay logged in',
+                icon: 'i'
+            });
+            if (ok) await logout({ message: 'You have been logged out.' });
+        }
+
+        async function logout(options = {}) {
+            const oldToken = token;
             try {
                 if ('serviceWorker' in navigator && 'PushManager' in window) {
                     const reg = await navigator.serviceWorker.ready;
                     const sub = await reg.pushManager.getSubscription();
-                    if (sub) { try { await api('DELETE', '/api/admin/push-subscribe', { endpoint: sub.endpoint }); } catch (e) { } await sub.unsubscribe(); }
+                    if (sub) {
+                        try {
+                            await fetch(API_BASE + '/api/admin/push-subscribe', {
+                                method: 'DELETE',
+                                headers: { 'Authorization': 'Bearer ' + oldToken, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ endpoint: sub.endpoint })
+                            });
+                        } catch (e) { }
+                        await sub.unsubscribe();
+                    }
                 }
             } catch (e) { }
             localStorage.removeItem('portfolio_admin_token'); token = '';
             document.getElementById('app').style.display = 'none';
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('login-pw').value = '';
+            const errEl = document.getElementById('login-err');
+            if (errEl) errEl.textContent = options.message || '';
             updateNotifUI('default'); closeSidebar();
+            if (options.modalMessage) {
+                await showConfirmModal({
+                    title: options.modalTitle || 'Session ended',
+                    message: options.modalMessage,
+                    confirmText: 'OK',
+                    hideCancel: true,
+                    icon: 'i'
+                });
+            }
         }
 
         function showApp() {
@@ -2839,7 +3093,14 @@
             let r;
             try { r = await fetch(API_BASE + path, opts); }
             catch (networkErr) { throw new Error('Network error — cannot connect to server: ' + networkErr.message); }
-            if (r.status === 401) { logout(); throw new Error('Session expired — please login again'); }
+            if (r.status === 401) {
+                await logout({
+                    message: 'Session expired. Please login again.',
+                    modalTitle: 'Session expired',
+                    modalMessage: 'For security, your admin session ended. Login again to continue.'
+                });
+                throw new Error('Session expired - please login again');
+            }
             let data;
             try { data = await r.json(); } catch { throw new Error('Server returned invalid response (status: ' + r.status + ')'); }
             if (!r.ok) throw new Error(data.error || data.message || 'Request failed (' + r.status + ')');
@@ -3934,16 +4195,62 @@
             } catch (e) { showToast(e.message, true); }
         }
 
+        function passwordScore(value) {
+            let score = 0;
+            if (value.length >= 6) score++;
+            if (value.length >= 10) score++;
+            if (/[A-Z]/.test(value) && /[a-z]/.test(value)) score++;
+            if (/\d/.test(value)) score++;
+            if (/[^A-Za-z0-9]/.test(value)) score++;
+            return Math.min(score, 5);
+        }
+
+        function updatePasswordUi() {
+            const np = document.getElementById('new-pw')?.value || '';
+            const cp = document.getElementById('confirm-pw')?.value || '';
+            const fill = document.getElementById('password-meter-fill');
+            const status = document.getElementById('password-status');
+            if (!fill || !status) return;
+            const score = passwordScore(np);
+            const widths = ['0%', '24%', '44%', '64%', '82%', '100%'];
+            const colors = ['var(--danger)', 'var(--danger)', '#fbbf24', '#38bdf8', 'var(--accent)', 'var(--now)'];
+            fill.style.width = widths[score];
+            fill.style.background = colors[score];
+            if (!np) status.textContent = 'Password strength will appear here.';
+            else if (np.length < 6) status.textContent = 'Add at least 6 characters.';
+            else if (cp && np !== cp) status.textContent = 'Confirm password does not match yet.';
+            else status.textContent = ['Too short', 'Weak', 'Fair', 'Good', 'Strong', 'Excellent'][score];
+        }
+
+        function clearPasswordFields() {
+            document.getElementById('new-pw').value = '';
+            document.getElementById('confirm-pw').value = '';
+            updatePasswordUi();
+        }
+
         async function changePassword() {
-            const np = document.getElementById('new-pw').value, cp = document.getElementById('confirm-pw').value;
+            const np = document.getElementById('new-pw').value.trim(), cp = document.getElementById('confirm-pw').value.trim();
+            const btn = document.getElementById('password-save-btn');
             if (!np) return showToast('Enter a new password', true);
             if (np.length < 6) return showToast('Minimum 6 characters required', true);
             if (np !== cp) return showToast('Passwords do not match', true);
+            const ok = await showConfirmModal({
+                title: 'Update admin password?',
+                message: 'After this change, use the new password the next time you login.',
+                confirmText: 'Update Password',
+                cancelText: 'Cancel',
+                icon: 'i'
+            });
+            if (!ok) return;
+            if (btn) { btn.disabled = true; btn.textContent = 'Updating...'; }
             try {
                 await api('PUT', '/api/admin/settings', { new_password: np });
-                document.getElementById('new-pw').value = ''; document.getElementById('confirm-pw').value = '';
+                clearPasswordFields();
                 showToast('Password updated! ✓');
             } catch (e) { showToast(e.message, true); }
+            finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Update Password'; }
+            }
         }
 
         // ─── UI HELPERS ────────────────────────────────────────────────────
