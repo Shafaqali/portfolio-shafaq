@@ -92,7 +92,12 @@
         }
         function renderPost(p){
             const date=formatDate(p.createdAt);
-            const content=(p.content&&p.content.trim())?p.content:(p.excerpt||'');
+            const excerpt=String(p.excerpt||'').trim();
+            const fullContent=String(p.content||'').trim();
+            const hasContent=fullContent&&fullContent!==excerpt;
+            const articleHtml=hasContent
+                ? `<article class="article">${mdToHtml(fullContent)}</article>`
+                : (!excerpt?'<article class="article"><p>Full post content has not been added yet.</p></article>':'');
             document.title=(p.title||'Blog Post')+' - Blog';
             app.innerHTML=`
 ${p.cover_image?`<div class="cover"><img src="${esc(p.cover_image)}" alt="${esc(p.title)}" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>Post</div>'"></div>`:`<div class="cover"><div class="placeholder">Post</div></div>`}
@@ -102,9 +107,9 @@ ${p.cover_image?`<div class="cover"><img src="${esc(p.cover_image)}" alt="${esc(
   ${p.read_time?`<span>${esc(p.read_time)}</span>`:''}
 </div>
 <h1>${esc(p.title||'Untitled Post')}</h1>
-${p.excerpt?`<p class="excerpt">${esc(p.excerpt)}</p>`:''}
+${excerpt?`<p class="excerpt">${esc(excerpt)}</p>`:''}
 ${p.external_url?`<a class="external" href="${esc(p.external_url)}" target="_blank" rel="noopener">Open original post</a>`:''}
-<article class="article">${content?mdToHtml(content):'<p>Full post content has not been added yet.</p>'}</article>`;
+${articleHtml}`;
         }
         fetch(API_BASE+'/api/portfolio')
             .then(r=>r.json())

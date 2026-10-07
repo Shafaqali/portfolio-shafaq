@@ -137,9 +137,16 @@
         body.light .proj-card:hover{box-shadow:0 20px 48px rgba(124,58,237,0.12)}
         .proj-card.featured .feat-star{display:flex}
         .feat-star{display:none;position:absolute;top:12px;left:12px;z-index:5;background:rgba(8,8,22,0.72);backdrop-filter:blur(10px);border:1px solid rgba(192,132,252,0.38);border-radius:100px;padding:3px 10px;align-items:center;gap:5px;font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-        .proj-thumb{width:100%;height:170px;object-fit:cover;display:block;background:var(--bg3);flex-shrink:0}
-        .proj-thumb-placeholder{width:100%;height:170px;background:linear-gradient(145deg,#1a1a3e 0%,#0d0d20 55%,#12102a 100%);display:flex;align-items:center;justify-content:center;font-size:2.2rem;opacity:0.25;flex-shrink:0;position:relative;overflow:hidden}
+        .proj-thumb-wrap{position:relative;height:170px;background:var(--bg3);flex-shrink:0;overflow:hidden}
+        .proj-thumb{width:100%;height:100%;object-fit:cover;display:block;background:var(--bg3)}
+        .proj-thumb-slide{position:absolute;inset:0;opacity:0;transition:opacity .36s ease}
+        .proj-thumb-slide.active{opacity:1}
+        .proj-thumb-placeholder{width:100%;height:100%;background:linear-gradient(145deg,#1a1a3e 0%,#0d0d20 55%,#12102a 100%);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);flex-shrink:0;position:relative;overflow:hidden}
         .proj-thumb-placeholder::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(192,132,252,0.15) 0%,transparent 65%)}
+        .proj-gallery-dots{position:absolute;left:12px;bottom:10px;z-index:5;display:flex;gap:5px;opacity:0;transition:opacity .2s}
+        .proj-card:hover .proj-gallery-dots,.proj-card:focus .proj-gallery-dots{opacity:1}
+        .proj-gallery-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.34);border:1px solid rgba(255,255,255,.3);transition:background .2s,transform .2s}
+        .proj-gallery-dots span.active{background:var(--accent);transform:scale(1.18)}
         .proj-status-tag{position:absolute;top:12px;right:12px;z-index:4;display:inline-flex;align-items:center;gap:5px;font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:100px;backdrop-filter:blur(8px)}
         .proj-status-tag.live{background:rgba(10,28,14,0.75);color:var(--now);border:1px solid rgba(74,222,128,0.35)}
         .proj-status-tag.live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--now);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -147,6 +154,7 @@
         .proj-status-tag.archived{background:rgba(10,10,20,0.75);color:#94a3b8;border:1px solid rgba(148,163,184,0.3)}
         .proj-body{padding:1.2rem 1.3rem 1.4rem;display:flex;flex-direction:column;flex:1;gap:8px}
         .proj-name{font-family:'Bricolage Grotesque',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:var(--text)}
+        .proj-cat-chip{width:max-content;max-width:100%;font-size:.59rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.24);border-radius:100px;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .proj-tagline{font-size:.72rem;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
         .proj-desc-text{font-size:.8rem;color:var(--muted);line-height:1.6;flex:1}
         .proj-tech-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
@@ -838,20 +846,64 @@
         }
 
         /* PROJECT CARDS */
+        function getProjectImages(p){
+            const images=[p.image_url].concat(Array.isArray(p.media_images)?p.media_images:[]);
+            const seen=new Set();
+            return images.map(src=>String(src||'').trim()).filter(src=>{
+                if(!src||seen.has(src))return false;
+                seen.add(src);
+                return true;
+            }).slice(0,6);
+        }
+
+        function setupProjectThumbSlideshows(){
+            document.querySelectorAll('.proj-card[data-gallery="true"]').forEach(card=>{
+                const slides=[...card.querySelectorAll('.proj-thumb-slide')];
+                const dots=[...card.querySelectorAll('.proj-gallery-dots span')];
+                if(slides.length<2)return;
+                let index=0;
+                let timer=null;
+                const show=next=>{
+                    index=next;
+                    slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));
+                    dots.forEach((dot,i)=>dot.classList.toggle('active',i===index));
+                };
+                const start=()=>{
+                    if(timer)return;
+                    timer=setInterval(()=>show((index+1)%slides.length),900);
+                };
+                const stop=()=>{
+                    if(timer)clearInterval(timer);
+                    timer=null;
+                    show(0);
+                };
+                card.addEventListener('mouseenter',start);
+                card.addEventListener('mouseleave',stop);
+                card.addEventListener('focus',start);
+                card.addEventListener('blur',stop);
+            });
+        }
+
         function buildProjectCard(p,isFeatured){
             const statusKey=(p.status||'wip').toLowerCase();
             const statusLabel=p.status||'WIP';
             const hasGithub=p.github&&p.github!=='#';
             const hasLive=p.live&&p.live!=='#';
             const detailUrl='project.html?id='+encodeURIComponent(p._id||p.slug||p.name||'');
+            const category=String(p.category||'').trim();
+            const images=getProjectImages(p);
+            const thumbSlides=images.length?images.map((src,i)=>`<img class="proj-thumb proj-thumb-slide${i===0?' active':''}" src="${esc(src)}" alt="${esc(p.name)} preview ${i+1}" onerror="this.remove()">`).join(''):'<div class="proj-thumb-placeholder">Project</div>';
+            const galleryDots=images.length>1?`<div class="proj-gallery-dots">${images.map((_,i)=>`<span class="${i===0?'active':''}"></span>`).join('')}</div>`:'';
             const desc=(p.description||'').length>100?p.description.substring(0,100)+'…':(p.description||'');
-            return `<div class="proj-card${isFeatured?' featured':''}" data-detail-url="${esc(detailUrl)}" onclick="openProjectDetail(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProjectDetail(this);}" role="link" tabindex="0">
+            return `<div class="proj-card${isFeatured?' featured':''}" data-gallery="${images.length>1?'true':'false'}" data-detail-url="${esc(detailUrl)}" onclick="openProjectDetail(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProjectDetail(this);}" role="link" tabindex="0">
 ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Featured</div>`:''}
-<div style="position:relative;flex-shrink:0">
-  ${p.image_url?`<img class="proj-thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.style.display='none'"/>`:`<div class="proj-thumb-placeholder">🖥️</div>`}
+<div class="proj-thumb-wrap">
+  ${thumbSlides}
+  ${galleryDots}
   <span class="proj-status-tag ${statusKey}">${esc(statusLabel)}</span>
 </div>
 <div class="proj-body">
+  ${category?`<div class="proj-cat-chip">${esc(category)}</div>`:''}
   <div class="proj-name">${esc(p.name)}</div>
   ${(p.tech_tags||[]).length?`<div class="proj-tagline">${(p.tech_tags||[]).slice(0,3).join(' · ')}</div>`:''}
   ${desc?`<div class="proj-desc-text">${esc(desc)}</div>`:''}
@@ -879,7 +931,11 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
                 const badge=document.getElementById('view-more-count');
                 wrap.style.display='flex';
                 badge.textContent='+'+rest.length;
+            }else{
+                document.getElementById('projects-more').innerHTML='';
+                document.getElementById('view-more-wrap').style.display='none';
             }
+            setupProjectThumbSlideshows();
         }
 
         window.toggleMoreProjects=function(){

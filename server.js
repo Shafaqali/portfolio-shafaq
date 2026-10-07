@@ -8,8 +8,8 @@ const webpush = require('web-push');
 
 const app = express();
 app.use(cors({ origin: '*' }));
-app.use(express.json({ limit: '15mb' }));
-app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ MongoDB connected'))
@@ -51,12 +51,17 @@ const SettingsSchema = new mongoose.Schema({
 const ProjectSchema = new mongoose.Schema({
     name: { type: String, required: true },
     slug: { type: String, default: '' },
+    category: { type: String, default: 'Other' },
     description: { type: String, default: '' },
     content: { type: String, default: '' },
     status: { type: String, enum: ['Live', 'WIP', 'Archived'], default: 'WIP' },
     github: { type: String, default: '' },
     live: { type: String, default: '' },
     image_url: { type: String, default: '', maxlength: 5000000 },
+    dashboard_url: { type: String, default: '' },
+    website_url: { type: String, default: '' },
+    video_url: { type: String, default: '', maxlength: 12000000 },
+    media_images: [{ type: String, maxlength: 5000000 }],
     tech_tags: [String],
     featured: { type: Boolean, default: false },
     is_featured: { type: Boolean, default: false },
