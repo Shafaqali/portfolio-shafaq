@@ -13,7 +13,13 @@
     <style>
         :root{--bg:#0d0d18;--bg2:#13131f;--bg3:#1a1a2e;--card:#161624;--text:#eeeef5;--muted:rgba(238,238,245,.6);--dim:rgba(238,238,245,.36);--accent:#c084fc;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12)}
         *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+        html{scrollbar-width:thin;scrollbar-color:rgba(192,132,252,.45) rgba(255,255,255,.035);scrollbar-gutter:stable}
+        ::-webkit-scrollbar{width:10px;height:10px}
+        ::-webkit-scrollbar-track{background:rgba(255,255,255,.035)}
+        ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(192,132,252,.58),rgba(192,132,252,.28));border:2px solid var(--bg);border-radius:999px}
+        ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(192,132,252,.78),rgba(192,132,252,.42))}
+        ::-webkit-scrollbar-corner{background:transparent}
+        body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
         body::before{content:'';position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);background-size:48px 48px}
         a{color:inherit}
         nav{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;border-bottom:1px solid var(--border);background:rgba(13,13,24,.82);backdrop-filter:blur(16px);position:sticky;top:0;z-index:5}

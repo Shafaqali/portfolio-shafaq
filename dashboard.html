@@ -44,6 +44,37 @@
             --success: #4ade80;
             --sidebar-w: 220px;
             --topbar-h: 52px;
+            --scroll-track: rgba(255, 255, 255, 0.035);
+            --scroll-thumb: rgba(192, 132, 252, 0.42);
+            --scroll-thumb-hover: rgba(192, 132, 252, 0.68);
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--scroll-thumb) transparent;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--scroll-thumb), rgba(192, 132, 252, 0.24));
+            border: 2px solid #0d0d18;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--scroll-thumb-hover), rgba(192, 132, 252, 0.36));
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: transparent;
         }
 
         body {
@@ -74,6 +105,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            overflow-y: auto;
         }
 
         .login-box {
@@ -172,7 +204,9 @@
             position: sticky;
             top: 0;
             overflow-y: auto;
+            overflow-x: hidden;
             overscroll-behavior: contain;
+            scrollbar-gutter: stable;
             z-index: 1;
             transition: transform .28s cubic-bezier(.4, 0, .2, 1);
         }
@@ -314,6 +348,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             overscroll-behavior: contain;
+            scrollbar-gutter: stable;
             display: flex;
             flex-direction: column;
             min-width: 0;
@@ -532,6 +567,8 @@
             border: 1px solid var(--border2);
             border-radius: 14px;
             overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-gutter: stable;
         }
 
         table {

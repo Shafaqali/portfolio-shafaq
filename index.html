@@ -63,8 +63,17 @@
 
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         ::selection{background:rgba(124,58,237,0.18)}
-        html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.12) transparent}
+        html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(192,132,252,0.45) rgba(255,255,255,0.035);scrollbar-gutter:stable}
+        ::-webkit-scrollbar{width:10px;height:10px}
+        ::-webkit-scrollbar-track{background:rgba(255,255,255,0.035)}
+        ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(192,132,252,0.58),rgba(192,132,252,0.28));border:2px solid var(--bg);border-radius:999px}
+        ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(192,132,252,0.78),rgba(192,132,252,0.42))}
+        ::-webkit-scrollbar-corner{background:transparent}
         body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+        body.light{scrollbar-color:rgba(124,58,237,0.38) rgba(0,0,0,0.04)}
+        body.light::-webkit-scrollbar-track{background:rgba(0,0,0,0.04)}
+        body.light::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(124,58,237,0.48),rgba(124,58,237,0.22));border-color:#f4f4fb}
+        body.light::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(124,58,237,0.68),rgba(124,58,237,0.34))}
         body::after{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");background-size:200px 200px;opacity:var(--grain-opacity);transition:opacity .3s}
         body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.024) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.024) 1px,transparent 1px);background-size:48px 48px;opacity:var(--grid-show);transition:opacity .3s}
 
