@@ -2,14 +2,16 @@
     'use strict';
 
     function bindSwipe(element, move, enabled = () => true) {
+        const events = new AbortController();
+        const options = { signal: events.signal };
         let start = null;
         let suppressClickUntil = 0;
         element.addEventListener('pointerdown', event => {
             if (!event.isPrimary) { start = null; return; }
             if (event.pointerType === 'mouse' || !enabled()) return;
             start = { id: event.pointerId, x: event.clientX, y: event.clientY };
-        });
-        element.addEventListener('pointercancel', () => { start = null; });
+        }, options);
+        element.addEventListener('pointercancel', () => { start = null; }, options);
         element.addEventListener('pointerup', event => {
             if (!start || start.id !== event.pointerId) return;
             const dx = event.clientX - start.x;
@@ -18,16 +20,17 @@
             if (!enabled() || Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
             suppressClickUntil = performance.now() + 500;
             move(dx < 0 ? 1 : -1);
-        });
+        }, options);
         // A swipe must not also open the image or follow the project card link.
         element.addEventListener('click', event => {
             if (performance.now() >= suppressClickUntil) return;
             event.preventDefault();
             event.stopImmediatePropagation();
-        }, true);
+        }, { capture: true, signal: events.signal });
+        return () => events.abort();
     }
 
-    function carousel(root) {
+    function carousel(root, { swipe = true, keyboard = true } = {}) {
         if (root.dataset.galleryReady) return;
         root.dataset.galleryReady = 'true';
         const slides = [...root.querySelectorAll('[data-gallery-slide]')];
@@ -69,7 +72,7 @@
             event.stopPropagation();
             show(Number(button.dataset.galleryTo));
         }));
-        root.addEventListener('keydown', event => {
+        if (keyboard) root.addEventListener('keydown', event => {
             if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.altKey || event.ctrlKey || event.metaKey) return;
             event.preventDefault();
             event.stopPropagation();
@@ -83,13 +86,13 @@
             img.addEventListener('error', update);
             if (img.complete) update();
         });
-        bindSwipe(root.querySelector('[data-gallery-swipe]') || root, direction => show(index + direction));
+        if (swipe) bindSwipe(root.querySelector('[data-gallery-swipe]') || root, direction => show(index + direction));
         show(0, false);
         return { show, get index() { return index; } };
     }
 
-    function slideshow(root, interval = 3000) {
-        const controller = carousel(root);
+    function slideshow(root, interval = 3000, enabled = () => true) {
+        const controller = carousel(root, { swipe: false, keyboard: false });
         const slides = [...root.querySelectorAll('[data-gallery-slide]')];
         if (!controller || slides.length < 2) return () => {};
         let timer = null;
@@ -104,7 +107,7 @@
         }
         function sync() {
             stop();
-            if (!visible || document.hidden || !root.isConnected) return;
+            if (!visible || document.hidden || !root.isConnected || !enabled()) return;
             preloadNext();
             timer = setInterval(() => {
                 if (!root.isConnected) { cleanup(); return; }
@@ -122,10 +125,12 @@
         }, { threshold: 0.1 });
         observer.observe(root);
         document.addEventListener('visibilitychange', sync);
+        root.addEventListener('slideshowstatechange', sync);
         function cleanup() {
             stop();
             observer.disconnect();
             document.removeEventListener('visibilitychange', sync);
+            root.removeEventListener('slideshowstatechange', sync);
         }
         return cleanup;
     }
@@ -218,5 +223,5 @@
         };
     }
 
-    window.ProjectGalleries = { carousel, slideshow, viewer };
+    window.ProjectGalleries = { bindSwipe, carousel, slideshow, viewer };
 })();

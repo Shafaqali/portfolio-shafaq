@@ -5,13 +5,13 @@ Node.js + Express + MongoDB Atlas backend for the portfolio + admin panel.
 ## Dashboard: project images and video
 
 - **Cover Image:** one main photo for the portfolio card and project detail page. Leave it blank to use the first gallery image. Pasting multiple image links here puts the first in the cover and the rest in the gallery.
-- **Gallery Images:** up to 8 extra screenshots or photos. Paste direct public image links separated by **commas or new lines**, including MediaDrop links, or select files from your device (max 5MB per image). Use **Make cover** or **Remove** under a thumbnail. Minimal portfolio cards show complete images that automatically change every 3 seconds while visible, with no image buttons or counters. The detail page has previous/next buttons, swipe, and thumbnails; tap the cover or gallery image for a fullscreen viewer with zoom, keyboard arrows, and Escape to close.
+- **Gallery Images:** up to 8 extra screenshots or photos. Paste direct public image links separated by **commas or new lines**, including MediaDrop links, or select files from your device (max 5MB per image). Use **Make cover** or **Remove** under a thumbnail. The portfolio shows a carousel with one clear center project and smaller, softly blurred neighbors. Projects advance every 5 seconds and hold on hover or keyboard focus; previous/next buttons, side-card selection, keyboard arrows, and touch swipe also navigate all projects. The center project's complete images automatically change every 3.5 seconds, including while the project is held. The detail page keeps its separate image buttons, swipe, thumbnails, and fullscreen viewer.
 - **Project Video:** one optional YouTube link (including Shorts), direct MP4/WebM/OGG link, or device video up to 8MB. These show a player on the detail page. Other public video pages open in a new tab.
 - **Dashboard Link / Website Link:** optional buttons on the detail page; these fields do not upload images.
 
 Check the previews, then click **Save Project**. Selecting a file only prepares it; it is saved with the project. A broken image stays visible as an error so you can replace its link. Previously saved comma-separated image lists also display correctly.
 
-Keep `project-media.js` and `project-gallery.js` alongside `dashboard.html`, `index.html`, and `project.html` when deploying the frontend. Run `npm test` for the media parsing regression tests.
+Keep `project-media.js`, `project-gallery.js`, and `project-deck.js` alongside `dashboard.html`, `index.html`, and `project.html` when deploying the frontend. Run `npm test` for the media parsing regression tests.
 
 ## Local Setup
 

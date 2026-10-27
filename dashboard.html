@@ -2396,8 +2396,8 @@
                                 use ↑↓ to reorder · Top 3 = Featured</span>
                         </div>
                         <div class="order-save-bar">
-                            <div class="order-save-hint"><strong>⭐ Top 3</strong> will appear as featured on the
-                                portfolio. The rest go in "More Projects".</div>
+                            <div class="order-save-hint"><strong>⭐ Top 3</strong> appear first in the portfolio
+                                carousel. The remaining projects follow in this order.</div>
                             <button class="btn btn-primary" id="save-order-btn" onclick="saveProjectOrder()">💾 Save
                                 Order</button>
                         </div>
@@ -2440,7 +2440,7 @@
                             <div class="form-group full project-media-guide">
                                 <strong>Project media: kya, kahan dikhega?</strong>
                                 <p><b>1. Cover:</b> portfolio ke project card aur detail page ki main image.<br>
-                                    <b>2. Gallery:</b> project card par images har 3 seconds mein auto-change hongi; detail page par arrows / swipe se dekhein.<br>
+                                    <b>2. Gallery:</b> center project ki images har 3.5 seconds mein auto-change hongi; detail page par arrows / swipe se dekhein.<br>
                                     <b>3. Video:</b> project detail page par demo video.</p>
                                 <p>Device se file select karein ya direct links paste karein. Preview check karke <b>Save Project</b> dabayein.</p>
                             </div>
@@ -2483,7 +2483,7 @@
                                     aria-describedby="proj-gallery-hint proj-gallery-feedback"
                                     oninput="updateProjGalleryPreview(this.value)"></textarea>
                                 <div class="field-hint" id="proj-gallery-hint">Max 8 images, har file max 5MB. Aapke MediaDrop links bhi chalenge &mdash; commas ya alag lines mein paste karein.
-                                    Kisi thumbnail par <b>Make cover</b> se main image choose karein. Card par 3-second slideshow chalega; detail page par arrows / swipe aur fullscreen view milega.</div>
+                                    Kisi thumbnail par <b>Make cover</b> se main image choose karein. Portfolio carousel projects ko 5 seconds mein badlega; hover par project hold hoga aur uski images 3.5 seconds mein change hoti rahengi.</div>
                                 <div class="media-feedback" id="proj-gallery-feedback" role="status" aria-live="polite">0 / 8 gallery images selected.</div>
                                 <div class="gallery-preview-grid" id="proj-gallery-preview"></div>
                             </div>
