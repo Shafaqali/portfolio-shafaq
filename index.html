@@ -146,16 +146,24 @@
         body.light .proj-card:hover{box-shadow:0 20px 48px rgba(124,58,237,0.12)}
         .proj-card.featured .feat-star{display:flex}
         .feat-star{display:none;position:absolute;top:12px;left:12px;z-index:5;background:rgba(8,8,22,0.72);backdrop-filter:blur(10px);border:1px solid rgba(192,132,252,0.38);border-radius:100px;padding:3px 10px;align-items:center;gap:5px;font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-        .proj-thumb-wrap{position:relative;height:170px;background:var(--bg3);flex-shrink:0;overflow:hidden}
-        .proj-thumb{width:100%;height:100%;object-fit:cover;display:block;background:var(--bg3)}
-        .proj-thumb-slide{position:absolute;inset:0;opacity:0;transition:opacity .36s ease}
-        .proj-thumb-slide.active{opacity:1}
+        .proj-thumb-wrap{position:relative;height:230px;background:var(--bg3);flex-shrink:0;overflow:hidden;touch-action:pan-y pinch-zoom}
+        .proj-thumb{width:100%;height:100%;object-fit:contain;display:block;background:var(--bg3);padding:10px 12px 34px;user-select:none}
+        .proj-thumb-slide{position:absolute;inset:0;width:100%;height:100%}
+        .proj-thumb-slide[hidden]{display:none}
+        .proj-thumb-error{display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:var(--muted);font-size:.8rem;padding:40px;text-align:center}
+        .proj-thumb-slide.is-error img{visibility:hidden}
+        .proj-thumb-slide.is-error .proj-thumb-error{display:flex}
         .proj-thumb-placeholder{width:100%;height:100%;background:linear-gradient(145deg,#1a1a3e 0%,#0d0d20 55%,#12102a 100%);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);flex-shrink:0;position:relative;overflow:hidden}
         .proj-thumb-placeholder::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(192,132,252,0.15) 0%,transparent 65%)}
-        .proj-gallery-dots{position:absolute;left:12px;bottom:10px;z-index:5;display:flex;gap:5px;opacity:0;transition:opacity .2s}
-        .proj-card:hover .proj-gallery-dots,.proj-card:focus .proj-gallery-dots{opacity:1}
-        .proj-gallery-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.34);border:1px solid rgba(255,255,255,.3);transition:background .2s,transform .2s}
-        .proj-gallery-dots span.active{background:var(--accent);transform:scale(1.18)}
+        .proj-gallery-dots{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);z-index:5;display:flex;gap:0;padding:0 4px;background:rgba(8,8,22,.8);border-radius:20px}
+        .proj-gallery-dots button{width:20px;height:24px;display:grid;place-items:center;background:transparent;border:0;cursor:pointer}
+        .proj-gallery-dots button::after{content:'';width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.34);border:1px solid rgba(255,255,255,.3)}
+        .proj-gallery-dots button.active::after{background:var(--accent);transform:scale(1.2)}
+        .proj-gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:36px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(8,8,22,.82);color:#eeeef5;font:inherit;font-size:1.3rem;cursor:pointer}
+        .proj-gallery-arrow.previous{left:8px}.proj-gallery-arrow.next{right:8px}
+        .proj-gallery-arrow:hover{border-color:var(--accent)}
+        .proj-gallery-arrow:focus-visible,.proj-gallery-dots button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+        .proj-gallery-count{position:absolute;bottom:10px;right:10px;z-index:4;font-size:.65rem;font-weight:700;color:#eeeef5;padding:3px 7px;border-radius:6px;background:rgba(8,8,22,.82);font-variant-numeric:tabular-nums}
         .proj-status-tag{position:absolute;top:12px;right:12px;z-index:4;display:inline-flex;align-items:center;gap:5px;font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:100px;backdrop-filter:blur(8px)}
         .proj-status-tag.live{background:rgba(10,28,14,0.75);color:var(--now);border:1px solid rgba(74,222,128,0.35)}
         .proj-status-tag.live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--now);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -732,6 +740,7 @@
     </footer>
 
     <script src="project-media.js"></script>
+    <script src="project-gallery.js"></script>
     <script>
     (function(){
         'use strict';
@@ -857,35 +866,11 @@
 
         /* PROJECT CARDS */
         function getProjectImages(p){
-            return ProjectMedia.getImages(p).filter(ProjectMedia.isImageSource).slice(0,6);
+            return ProjectMedia.getImages(p).filter(ProjectMedia.isImageSource);
         }
 
-        function setupProjectThumbSlideshows(){
-            document.querySelectorAll('.proj-card[data-gallery="true"]').forEach(card=>{
-                const slides=[...card.querySelectorAll('.proj-thumb-slide')];
-                const dots=[...card.querySelectorAll('.proj-gallery-dots span')];
-                if(slides.length<2)return;
-                let index=0;
-                let timer=null;
-                const show=next=>{
-                    index=next;
-                    slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));
-                    dots.forEach((dot,i)=>dot.classList.toggle('active',i===index));
-                };
-                const start=()=>{
-                    if(timer)return;
-                    timer=setInterval(()=>show((index+1)%slides.length),900);
-                };
-                const stop=()=>{
-                    if(timer)clearInterval(timer);
-                    timer=null;
-                    show(0);
-                };
-                card.addEventListener('mouseenter',start);
-                card.addEventListener('mouseleave',stop);
-                card.addEventListener('focus',start);
-                card.addEventListener('blur',stop);
-            });
+        function setupProjectThumbGalleries(){
+            document.querySelectorAll('.proj-thumb-wrap[data-image-gallery]').forEach(gallery=>ProjectGalleries.carousel(gallery));
         }
 
         function buildProjectCard(p,isFeatured){
@@ -896,14 +881,14 @@
             const detailUrl='project.html?id='+encodeURIComponent(p._id||p.slug||p.name||'');
             const category=String(p.category||'').trim();
             const images=getProjectImages(p);
-            const thumbSlides=images.length?images.map((src,i)=>`<img class="proj-thumb proj-thumb-slide${i===0?' active':''}" src="${esc(src)}" alt="${esc(p.name)} preview ${i+1}" onerror="this.remove()">`).join(''):'<div class="proj-thumb-placeholder">Project</div>';
-            const galleryDots=images.length>1?`<div class="proj-gallery-dots">${images.map((_,i)=>`<span class="${i===0?'active':''}"></span>`).join('')}</div>`:'';
+            const thumbSlides=images.length?images.map((src,i)=>`<div class="proj-thumb-slide${i===0?' active':''}" data-gallery-slide ${i?'hidden':''}><img class="proj-thumb" src="${esc(src)}" alt="${esc(p.name)} preview ${i+1}" draggable="false" ${i?'loading="lazy"':''}><span class="proj-thumb-error">Image unavailable. Open project details to browse more images.</span></div>`).join(''):'<div class="proj-thumb-placeholder">Project</div>';
+            const galleryControls=images.length>1?`<button type="button" class="proj-gallery-arrow previous" data-gallery-step="-1" aria-label="Previous ${esc(p.name)} image">&lsaquo;</button><button type="button" class="proj-gallery-arrow next" data-gallery-step="1" aria-label="Next ${esc(p.name)} image">&rsaquo;</button><div class="proj-gallery-dots" aria-label="Choose ${esc(p.name)} image">${images.map((_,i)=>`<button type="button" data-gallery-to="${i}" class="${i===0?'active':''}" aria-pressed="${i===0}" aria-label="Show ${esc(p.name)} image ${i+1}"></button>`).join('')}</div><span class="proj-gallery-count" data-gallery-count aria-live="polite">1 / ${images.length}</span>`:'';
             const desc=(p.description||'').length>100?p.description.substring(0,100)+'…':(p.description||'');
-            return `<div class="proj-card${isFeatured?' featured':''}" data-gallery="${images.length>1?'true':'false'}" data-detail-url="${esc(detailUrl)}" onclick="openProjectDetail(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProjectDetail(this);}" role="link" tabindex="0">
+            return `<div class="proj-card${isFeatured?' featured':''}" data-gallery="${images.length>1?'true':'false'}" data-detail-url="${esc(detailUrl)}" onclick="openProjectDetail(this)" onkeydown="if(event.target===this&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openProjectDetail(this);}" role="link" tabindex="0">
 ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Featured</div>`:''}
-<div class="proj-thumb-wrap">
+<div class="proj-thumb-wrap" data-image-gallery aria-label="${esc(p.name)} images">
   ${thumbSlides}
-  ${galleryDots}
+  ${galleryControls}
   <span class="proj-status-tag ${statusKey}">${esc(statusLabel)}</span>
 </div>
 <div class="proj-body">
@@ -939,7 +924,7 @@ ${isFeatured?`<div class="feat-star"><svg width="9" height="9" viewBox="0 0 24 2
                 document.getElementById('projects-more').innerHTML='';
                 document.getElementById('view-more-wrap').style.display='none';
             }
-            setupProjectThumbSlideshows();
+            setupProjectThumbGalleries();
         }
 
         window.toggleMoreProjects=function(){

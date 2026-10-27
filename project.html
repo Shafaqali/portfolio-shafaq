@@ -33,8 +33,11 @@
         .kicker{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
         h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(2.3rem,6vw,4.6rem);line-height:1.02;letter-spacing:-.03em;margin-bottom:1rem}
         .summary{font-size:1rem;line-height:1.75;color:var(--muted);max-width:680px}
-        .media{border:1px solid var(--border2);border-radius:20px;overflow:hidden;background:var(--bg3);min-height:260px;display:flex;align-items:center;justify-content:center}
-        .media img{width:100%;height:100%;max-height:420px;object-fit:cover;display:block}
+        .media{border:1px solid var(--border2);border-radius:20px;overflow:hidden;background:#080811;min-height:260px;display:flex;align-items:center;justify-content:center;position:relative}
+        .cover-open{display:block;width:100%;border:0;background:transparent;color:var(--text);font:inherit;cursor:zoom-in;position:relative}
+        .media img{width:100%;height:clamp(300px,38vw,480px);object-fit:contain;display:block;padding:12px}
+        .cover-expand{display:block;font-size:.74rem;font-weight:700;border-top:1px solid var(--border2);padding:10px 12px;background:rgba(192,132,252,.06);text-align:center}
+        .cover-open:focus-visible,.gallery-slide:focus-visible,.gallery-button:focus-visible,.gallery-thumb:focus-visible,.viewer-button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
         .placeholder{font-size:3rem;opacity:.22}
         .meta{display:flex;flex-wrap:wrap;gap:8px;margin:1.4rem 0}
         .chip,.status{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border2);border-radius:100px;padding:5px 10px;color:var(--dim);background:rgba(255,255,255,.04)}
@@ -45,10 +48,43 @@
         .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;border-radius:10px;padding:10px 18px;font-size:.86rem;font-weight:800;border:1px solid var(--border2);color:var(--muted);transition:.18s}
         .btn.primary{background:var(--accent);border-color:var(--accent);color:#0d0d18}
         .btn:hover{transform:translateY(-2px);color:var(--text);border-color:rgba(192,132,252,.4)}
-        .media-section{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:1.2rem;margin-top:1.2rem}
+        .media-section{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:1.2rem;margin-top:1.2rem;scroll-margin-top:80px}
         .media-section h2{font-family:'Bricolage Grotesque',sans-serif;font-size:1.1rem;letter-spacing:-.02em;margin-bottom:1rem}
-        .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-        .gallery-grid img{width:100%;aspect-ratio:1.45;object-fit:cover;border-radius:12px;border:1px solid var(--border2);background:var(--bg3)}
+        .gallery-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:1rem}
+        .gallery-heading h2{margin:0}
+        .gallery-count{font-size:.8rem;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+        .gallery-stage{height:clamp(340px,64svh,620px);position:relative;border:1px solid var(--border2);border-radius:14px;overflow:hidden;background:#080811;touch-action:pan-y pinch-zoom}
+        .gallery-slide{display:block;width:100%;height:100%;position:relative;padding:12px;border:0;background:transparent;cursor:zoom-in;color:var(--text);font:inherit}
+        .gallery-slide img{display:block;width:100%;height:100%;object-fit:contain;user-select:none}
+        [data-gallery-slide][hidden],.image-viewer [hidden]{display:none!important}
+        .image-slide-error{display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted);font-size:.85rem;line-height:1.6}
+        .is-error .image-slide-error{display:flex}
+        .is-error img{visibility:hidden}
+        .gallery-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0}
+        .gallery-hint{font-size:.75rem;line-height:1.5;color:var(--muted);text-align:center}
+        .gallery-button,.viewer-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 14px;border:1px solid var(--border2);border-radius:10px;background:var(--bg3);color:var(--text);font:inherit;font-size:.8rem;font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap}
+        .gallery-button:hover,.viewer-button:hover{border-color:var(--accent)}
+        .gallery-button:disabled,.viewer-button:disabled{opacity:.4;cursor:default}
+        .gallery-thumbnails{display:flex;gap:10px;overflow-x:auto;padding:5px 2px 10px;position:relative;overscroll-behavior-x:contain}
+        .gallery-thumb{flex:0 0 76px;height:90px;padding:5px;border:2px solid transparent;border-radius:10px;background:var(--bg3);cursor:pointer;position:relative}
+        .gallery-thumb.active{border-color:var(--accent);background:rgba(192,132,252,.1)}
+        .gallery-thumb img{display:block;width:100%;height:100%;object-fit:contain}
+        .gallery-thumb span{position:absolute;bottom:3px;right:3px;font-size:.58rem;line-height:1.3;background:var(--bg);border-radius:4px;padding:2px 4px;color:var(--text)}
+        .image-viewer{position:fixed;inset:0;width:100%;height:100dvh;max-width:none;max-height:none;padding:18px;border:0;background:#080811;color:var(--text);overflow:hidden}
+        .image-viewer[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px}
+        .image-viewer::backdrop{background:rgba(0,0,0,.9)}
+        .viewer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+        .viewer-toolbar>div:first-child{min-width:0;display:flex;align-items:center;gap:14px}
+        .viewer-title{font-size:.9rem;max-width:40ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .viewer-count{font-size:.8rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+        .viewer-actions{display:flex;gap:8px;flex-wrap:wrap}
+        .viewer-stage{position:relative;min-height:0;overflow:hidden;touch-action:pan-y pinch-zoom;border-radius:10px;background:#050509}
+        .viewer-image{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in;user-select:none}
+        .viewer-stage.is-zoomed{overflow:auto;touch-action:auto}
+        .viewer-stage.is-zoomed .viewer-image{height:auto;max-width:none;max-height:none;cursor:zoom-out}
+        .viewer-error{padding:3rem 1rem;text-align:center;color:var(--muted);line-height:1.7}
+        .viewer-navigation{display:flex;align-items:center;justify-content:space-between;gap:10px}
+        .viewer-navigation>span{font-size:.75rem;color:var(--muted);text-align:center}
         .video-box{overflow:hidden;border-radius:14px;border:1px solid var(--border2);background:#05050b}
         .video-box video,.video-box iframe{width:100%;aspect-ratio:16/9;display:block;border:0;background:#05050b}
         .video-link{display:flex;align-items:center;justify-content:center;min-height:120px;color:var(--accent);font-weight:800;text-decoration:none}
@@ -61,8 +97,8 @@
         .content code{font-family:monospace;background:rgba(192,132,252,.12);border:1px solid rgba(192,132,252,.22);border-radius:5px;padding:2px 6px;color:var(--accent)}
         .content pre{overflow:auto;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:1rem;margin-bottom:1.1rem}
         .content pre code{background:transparent;border:0;padding:0;color:var(--text)}
-        @media(max-width:800px){nav{padding:0 1.2rem}main{padding:3rem 1.2rem 4rem}.project-hero{grid-template-columns:1fr}.media{min-height:210px}.content{padding:1.4rem}.gallery-grid{grid-template-columns:1fr 1fr}}
-        @media(max-width:520px){.gallery-grid{grid-template-columns:1fr}}
+        @media(max-width:800px){nav{padding:0 1.2rem}main{padding:3rem 1.2rem 4rem}.project-hero{grid-template-columns:1fr}.media{min-height:210px}.media img{height:420px;max-height:65svh}.content{padding:1.4rem}}
+        @media(max-width:520px){.media-section{padding:.85rem}.gallery-navigation{flex-wrap:wrap}.gallery-hint{order:3;flex-basis:100%}.gallery-thumb{flex-basis:64px;height:78px}.gallery-stage{height:clamp(300px,60svh,520px)}.image-viewer{padding:10px;padding-bottom:max(10px,env(safe-area-inset-bottom))}.viewer-toolbar{gap:10px}.viewer-toolbar>div:first-child{width:100%;justify-content:space-between}.viewer-actions{width:100%;justify-content:flex-end}.viewer-button{min-height:44px;padding:8px 10px;font-size:.75rem}.viewer-navigation{flex-wrap:wrap}.viewer-navigation>span{order:3;flex-basis:100%}}
     </style>
 </head>
 
@@ -74,6 +110,7 @@
     <main id="app"><div class="loading">Loading project...</div></main>
 
     <script src="project-media.js"></script>
+    <script src="project-gallery.js"></script>
     <script>
     (function(){
         'use strict';
@@ -86,6 +123,28 @@
         function slugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
         function getProjectImages(p){
             return ProjectMedia.getImages(p).filter(ProjectMedia.isImageSource);
+        }
+        function renderGallery(images,name){
+            if(images.length<2)return'';
+            return `<section class="media-section project-gallery" data-image-gallery aria-label="Project image gallery">
+                <div class="gallery-heading"><h2>Project Images</h2><span class="gallery-count" data-gallery-count aria-live="polite">1 / ${images.length}</span></div>
+                <div class="gallery-stage" data-gallery-swipe>
+                    ${images.map((src,i)=>`<button type="button" class="gallery-slide" data-gallery-slide data-open-image="${i}" ${i?'hidden':''} aria-label="Open ${esc(name)} image ${i+1} fullscreen">
+                        <img src="${esc(src)}" alt="${esc(name)} ${i===0?'cover':'image '+(i+1)}" draggable="false" ${i?'loading="lazy"':''}>
+                        <span class="image-slide-error">Image could not be loaded. Tap to open the viewer or try the next image.</span>
+                    </button>`).join('')}
+                </div>
+                <div class="gallery-navigation">
+                    <button type="button" class="gallery-button" data-gallery-step="-1" aria-label="Previous project image">&larr; Previous</button>
+                    <p class="gallery-hint">Swipe or use arrows &middot; Tap image to enlarge</p>
+                    <button type="button" class="gallery-button" data-gallery-step="1" aria-label="Next project image">Next &rarr;</button>
+                </div>
+                <div class="gallery-thumbnails" data-gallery-thumbnails aria-label="Choose a project image">
+                    ${images.map((src,i)=>`<button type="button" class="gallery-thumb${i?'':' active'}" data-gallery-to="${i}" aria-label="Show ${i===0?'cover image':'project image '+(i+1)}" aria-pressed="${i===0}">
+                        <img src="${esc(src)}" alt="" loading="lazy" draggable="false"><span>${i===0?'Cover':i+1}</span>
+                    </button>`).join('')}
+                </div>
+            </section>`;
         }
         function renderVideo(url){
             const video=ProjectMedia.videoSource(url);
@@ -116,12 +175,11 @@
             const status=(p.status||'WIP').toLowerCase();
             const images=getProjectImages(p);
             const cover=images[0]||'';
-            const gallery=images.filter(src=>src!==cover);
             const description=String(p.description||'').trim();
             const fullContent=String(p.content||'').trim();
             const hasContent=fullContent&&fullContent!==description;
             const category=String(p.category||'').trim();
-            const galleryHtml=gallery.length?`<section class="media-section"><h2>Project Images</h2><div class="gallery-grid">${gallery.map((src,i)=>`<img src="${esc(src)}" alt="${esc(p.name)} image ${i+1}" onerror="this.remove()">`).join('')}</div></section>`:'';
+            const galleryHtml=renderGallery(images,p.name||'Project');
             document.title=(p.name||'Project')+' - Project Details';
             app.innerHTML=`
 <section class="project-hero">
@@ -141,11 +199,23 @@
       ${p.github?`<a class="btn" href="${esc(p.github)}" target="_blank" rel="noopener">View GitHub</a>`:''}
     </div>
   </div>
-  <div class="media">${cover?`<img src="${esc(cover)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>Project</div>'">`:`<div class="placeholder">Project</div>`}</div>
+  <div class="media">${cover?`<button type="button" class="cover-open" data-open-image="0" aria-label="Open ${esc(p.name)} cover image fullscreen"><img src="${esc(cover)}" alt="${esc(p.name)} cover" draggable="false"><span class="cover-expand">Expand image &nearr;</span><span class="image-slide-error">Cover could not be loaded. Tap to browse project images.</span></button>`:`<div class="placeholder">Project</div>`}</div>
 </section>
 ${renderVideo(p.video_url)}
 ${galleryHtml}
 ${hasContent?`<article class="content">${mdToHtml(fullContent)}</article>`:''}`;
+            const gallery=app.querySelector('[data-image-gallery]');
+            if(gallery)ProjectGalleries.carousel(gallery);
+            const viewer=ProjectGalleries.viewer(images,p.name||'Project');
+            app.querySelectorAll('[data-open-image]').forEach(button=>button.addEventListener('click',()=>viewer.open(Number(button.dataset.openImage),button)));
+            const coverButton=app.querySelector('.cover-open');
+            if(coverButton){
+                const img=coverButton.querySelector('img');
+                const update=()=>coverButton.classList.toggle('is-error',img.complete&&!img.naturalWidth);
+                img.addEventListener('load',update);
+                img.addEventListener('error',update);
+                if(img.complete)update();
+            }
         }
         fetch(API_BASE+'/api/portfolio')
             .then(r=>r.json())
