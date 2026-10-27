@@ -731,6 +731,7 @@
         <p class="footer-copy">Crafted with <span>♥</span> by <span id="footer-name">Mohammed Natsha</span></p>
     </footer>
 
+    <script src="project-media.js"></script>
     <script>
     (function(){
         'use strict';
@@ -856,13 +857,7 @@
 
         /* PROJECT CARDS */
         function getProjectImages(p){
-            const images=[p.image_url].concat(Array.isArray(p.media_images)?p.media_images:[]);
-            const seen=new Set();
-            return images.map(src=>String(src||'').trim()).filter(src=>{
-                if(!src||seen.has(src))return false;
-                seen.add(src);
-                return true;
-            }).slice(0,6);
+            return ProjectMedia.getImages(p).filter(ProjectMedia.isImageSource).slice(0,6);
         }
 
         function setupProjectThumbSlideshows(){

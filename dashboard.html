@@ -998,10 +998,37 @@
 
         .gallery-preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 8px;
             margin-top: 8px;
         }
+
+        .project-media-guide, .project-media-field {
+            padding: 1rem;
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            min-width: 0;
+        }
+
+        .project-media-guide { background: var(--accent-glow, rgba(192, 132, 252, .07)); }
+        .project-media-guide strong { font-size: .82rem; }
+        .project-media-guide p { font-size: .76rem; color: var(--muted); line-height: 1.7; margin-top: .5rem; }
+        .project-media-field > label { color: var(--text); font-size: .82rem; }
+        .project-media-field .field-hint { line-height: 1.7; }
+        .media-feedback { font-size: .75rem; color: var(--muted); margin-top: 8px; line-height: 1.6; overflow-wrap: anywhere; }
+        .media-feedback[data-state="error"] { color: var(--danger); }
+        .media-feedback[data-state="ready"] { color: var(--now); }
+        .gallery-preview-item { min-width: 0; padding: 8px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; }
+        .gallery-preview-item[data-state="error"] { border-color: var(--danger); }
+        .gallery-preview-grid .gallery-preview-item img { display: block; object-fit: contain; }
+        .gallery-preview-item figcaption { font-size: .7rem; color: var(--muted); margin: 6px 0; }
+        .gallery-preview-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .gallery-preview-actions .btn { font-size: .67rem; padding: 5px 8px; }
+        .media-image-error { display: none; padding: 12px 4px; font-size: .74rem; line-height: 1.6; color: var(--danger); }
+        .media-image-error a { color: var(--accent); }
+        .gallery-preview-item[data-state="error"] .media-image-error { display: block; }
+        #proj-img-preview-wrap { height: 200px; }
+        #proj-img-preview { object-fit: contain; }
 
         .gallery-preview-grid img {
             width: 100%;
@@ -1026,10 +1053,12 @@
             font-size: 0.74rem;
         }
 
-        .video-preview-box video {
+        .video-preview-box video, .video-preview-box iframe {
             width: 100%;
-            max-height: 220px;
+            aspect-ratio: 16 / 9;
+            max-height: 320px;
             display: block;
+            border: 0;
             background: #000;
         }
 
@@ -2408,8 +2437,15 @@
                                     placeholder="https://github.com/..." /></div>
                             <div class="form-group full"><label>Live Demo / Portfolio Link</label><input id="proj-live"
                                     placeholder="https://..." /></div>
-                            <div class="form-group full">
-                                <label>Cover Image</label>
+                            <div class="form-group full project-media-guide">
+                                <strong>Project media: kya, kahan dikhega?</strong>
+                                <p><b>1. Cover:</b> portfolio ke project card aur detail page ki main image.<br>
+                                    <b>2. Gallery:</b> extra screenshots / model photos, detail page par aur card ke hover slideshow mein.<br>
+                                    <b>3. Video:</b> project detail page par demo video.</p>
+                                <p>Device se file select karein ya direct links paste karein. Preview check karke <b>Save Project</b> dabayein.</p>
+                            </div>
+                            <div class="form-group full project-media-field">
+                                <label for="proj-image">1. Cover Image &middot; Main project photo</label>
                                 <input type="file" id="proj-file-input" accept="image/*" style="display:none"
                                     onchange="handleProjectImageUpload(event)" />
                                 <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
@@ -2420,18 +2456,18 @@
                                     <span id="proj-upload-msg"
                                         style="font-size:0.75rem;color:var(--accent);min-height:18px;"></span>
                                 </div>
-                                <input id="proj-image" placeholder="Or paste image URL - https://i.imgur.com/..."
-                                    oninput="updateProjImagePreview(this.value)" />
-                                <div class="field-hint">📌 Upload on Imgur → copy direct link | <a
-                                        href="https://imgur.com/upload" target="_blank">imgur.com/upload</a> | Device
-                                    upload is saved directly as compressed base64.</div>
+                                <input id="proj-image" placeholder="Paste one direct image link (https://...)"
+                                    aria-describedby="proj-image-hint proj-image-feedback"
+                                    oninput="handleProjectCoverInput()" />
+                                <div class="field-hint" id="proj-image-hint">Ek main image select karein (max 5MB). Cover khali ho to pehli gallery image cover banegi.
+                                    Multiple links yahan paste karenge to pehla cover aur baaki gallery mein chale jayenge.</div>
+                                <div class="media-feedback" id="proj-image-feedback" role="status" aria-live="polite"></div>
                                 <div class="img-preview-wrap" id="proj-img-preview-wrap" style="display:none;">
-                                    <img id="proj-img-preview" src="" alt="Preview"
-                                        onerror="document.getElementById('proj-img-preview-wrap').style.display='none'" />
+                                    <img id="proj-img-preview" alt="Project cover preview" />
                                 </div>
                             </div>
-                            <div class="form-group full">
-                                <label>Gallery / Model Images</label>
+                            <div class="form-group full project-media-field">
+                                <label for="proj-gallery-images">2. Gallery Images &middot; Extra screenshots / photos</label>
                                 <input type="file" id="proj-gallery-file-input" accept="image/*" multiple
                                     style="display:none" onchange="handleProjectGalleryUpload(event)" />
                                 <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
@@ -2443,13 +2479,16 @@
                                         style="font-size:0.75rem;color:var(--accent);min-height:18px;"></span>
                                 </div>
                                 <textarea id="proj-gallery-images" rows="4"
-                                    placeholder="Paste one image URL per line, or upload from device"
+                                    placeholder="Paste image links separated by commas or new lines"
+                                    aria-describedby="proj-gallery-hint proj-gallery-feedback"
                                     oninput="updateProjGalleryPreview(this.value)"></textarea>
-                                <div class="field-hint">Use this for IoT model photos, dashboard screenshots, website screens, or any extra project images.</div>
+                                <div class="field-hint" id="proj-gallery-hint">Max 8 images, har file max 5MB. Aapke MediaDrop links bhi chalenge &mdash; commas ya alag lines mein paste karein.
+                                    Kisi thumbnail par <b>Make cover</b> se main image choose karein. Detail page par saari gallery images dikhegi; card slideshow mein pehli 6 images tak.</div>
+                                <div class="media-feedback" id="proj-gallery-feedback" role="status" aria-live="polite">0 / 8 gallery images selected.</div>
                                 <div class="gallery-preview-grid" id="proj-gallery-preview"></div>
                             </div>
-                            <div class="form-group full">
-                                <label>Project Video</label>
+                            <div class="form-group full project-media-field">
+                                <label for="proj-video">3. Project Video &middot; Demo / walkthrough</label>
                                 <input type="file" id="proj-video-file-input" accept="video/mp4,video/webm,video/ogg"
                                     style="display:none" onchange="handleProjectVideoUpload(event)" />
                                 <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
@@ -2461,20 +2500,23 @@
                                         style="font-size:0.75rem;color:var(--accent);min-height:18px;"></span>
                                 </div>
                                 <input id="proj-video" placeholder="Or paste YouTube / MP4 / video URL"
+                                    aria-describedby="proj-video-hint proj-video-feedback"
                                     oninput="updateProjVideoPreview(this.value)" />
-                                <div class="field-hint">Device videos are stored as base64; keep them short for fast loading.</div>
+                                <div class="field-hint" id="proj-video-hint">Ek optional video. YouTube link (Shorts bhi) ya direct MP4 / WebM / OGG link ka player detail page par dikhega.
+                                    Device se max 8MB ka video select kar sakte hain. Doosri video website ka link new tab mein khulega.</div>
+                                <div class="media-feedback" id="proj-video-feedback" role="status" aria-live="polite"></div>
                                 <div class="video-preview-box" id="proj-video-preview" style="display:none;"></div>
                             </div>
-                            <div class="form-group full"><label>Dashboard Link</label><input id="proj-dashboard-url"
-                                    placeholder="https://dashboard.example.com" /></div>
-                            <div class="form-group full"><label>Website Link</label><input id="proj-website-url"
-                                    placeholder="https://project-site.example.com" /></div>
+                            <div class="form-group full"><label for="proj-dashboard-url">Dashboard Link</label><input id="proj-dashboard-url"
+                                    placeholder="https://dashboard.example.com" /><div class="field-hint">Optional: project detail page par &ldquo;Open Dashboard&rdquo; button ka link.</div></div>
+                            <div class="form-group full"><label for="proj-website-url">Website Link</label><input id="proj-website-url"
+                                    placeholder="https://project-site.example.com" /><div class="field-hint">Optional: project detail page par &ldquo;Open Website&rdquo; button ka link.</div></div>
                             <div class="form-group full"><label>Tech Tags (comma separated)</label><input id="proj-tech"
                                     placeholder="React, Node.js, MongoDB..." /></div>
                         </div>
                         <div style="margin-top:1rem;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
                             <button class="btn btn-ghost" onclick="clearProjectForm()">Clear</button>
-                            <button class="btn btn-primary" onclick="saveProject()">Save Project</button>
+                            <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">Save Project</button>
                         </div>
                     </div>
                 </div>
@@ -2961,12 +3003,16 @@
         </div>
     </div>
 
+    <script src="project-media.js"></script>
     <script>
         const API_BASE = 'https://portfolio-shafaq.onrender.com';
         let token = localStorage.getItem('portfolio_admin_token') || '';
         let allData = { projects: [], jobs: [], skills: [], testimonials: [], blogPosts: [], contacts: [], certificates: [], settings: {} };
 
         let orderedProjects = [];
+        let pendingProjectUploads = 0;
+        let projectFormVersion = 0;
+        let savingProject = false;
         let dragSrcIndex = null;
         let contactFilter = 'all';
         let currentDetailId = null;
@@ -3471,21 +3517,17 @@
         }
 
         function projectImageList(p) {
-            const images = [p.image_url].concat(Array.isArray(p.media_images) ? p.media_images : []);
-            const seen = new Set();
-            return images.map(src => String(src || '').trim()).filter(src => {
-                if (!src || seen.has(src)) return false;
-                seen.add(src);
-                return true;
-            });
+            return ProjectMedia.getImages(p);
         }
 
         function parseGalleryImages(value) {
-            return String(value || '').split(/\r?\n/).map(src => src.trim()).filter(Boolean).slice(0, 8);
+            return ProjectMedia.parseImages(value);
         }
 
-        function isDirectVideoSrc(url) {
-            return /^data:video\//i.test(url) || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+        function updateProjectSaveButton() {
+            const btn = document.getElementById('save-project-btn');
+            btn.disabled = savingProject || pendingProjectUploads > 0;
+            btn.textContent = savingProject ? 'Saving...' : pendingProjectUploads ? 'Preparing media...' : 'Save Project';
         }
 
         function renderOrderList() {
@@ -3596,14 +3638,47 @@
             });
         }
 
-        function handleProjectImageUpload(event) {
-            handleImageUploadToInput(event, 'proj-image', updateProjImagePreview, 'proj-upload-msg', 'Project');
+        async function handleProjectImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const version = projectFormVersion;
+            const msg = document.getElementById('proj-upload-msg');
+            pendingProjectUploads++;
+            updateProjectSaveButton();
+            msg.style.color = 'var(--accent)';
+            msg.textContent = 'Preparing cover...';
+            try {
+                const image = await compressImageFile(file);
+                if (version !== projectFormVersion) return;
+                document.getElementById('proj-image').value = image;
+                updateProjGalleryPreview(document.getElementById('proj-gallery-images').value);
+                msg.style.color = 'var(--now)';
+                msg.textContent = 'Cover ready. Click Save Project to save.';
+            } catch (e) {
+                if (version !== projectFormVersion) return;
+                msg.style.color = 'var(--danger)';
+                msg.textContent = e.message;
+            } finally {
+                event.target.value = '';
+                pendingProjectUploads--;
+                updateProjectSaveButton();
+            }
         }
 
         async function handleProjectGalleryUpload(event) {
-            const files = [...event.target.files].slice(0, 8);
+            const files = [...event.target.files];
             const msg = document.getElementById('proj-gallery-upload-msg');
             if (!files.length) return;
+            const version = projectFormVersion;
+            const input = document.getElementById('proj-gallery-images');
+            if (parseGalleryImages(input.value).length + files.length > ProjectMedia.maxGalleryImages) {
+                msg.style.color = 'var(--danger)';
+                msg.textContent = 'Max 8 gallery images. Remove some images or select fewer files.';
+                event.target.value = '';
+                return;
+            }
+            pendingProjectUploads++;
+            updateProjectSaveButton();
             msg.style.color = 'var(--accent)';
             msg.textContent = 'Processing images...';
             try {
@@ -3612,18 +3687,21 @@
                     msg.textContent = `Processing ${i + 1}/${files.length}...`;
                     uploaded.push(await compressImageFile(files[i], 1200, 0.82));
                 }
-                const input = document.getElementById('proj-gallery-images');
-                const merged = parseGalleryImages(input.value).concat(uploaded).slice(0, 8);
+                if (version !== projectFormVersion) return;
+                const merged = parseGalleryImages(parseGalleryImages(input.value).concat(uploaded));
                 input.value = merged.join('\n');
                 updateProjGalleryPreview(input.value);
                 msg.style.color = 'var(--now)';
                 msg.textContent = `${uploaded.length} image${uploaded.length > 1 ? 's' : ''} ready - click Save.`;
                 showToast('Gallery images ready - click Save');
             } catch (e) {
+                if (version !== projectFormVersion) return;
                 msg.style.color = 'var(--danger)';
                 msg.textContent = e.message;
             } finally {
                 event.target.value = '';
+                pendingProjectUploads--;
+                updateProjectSaveButton();
             }
         }
 
@@ -3631,12 +3709,16 @@
             const file = event.target.files[0];
             const msg = document.getElementById('proj-video-upload-msg');
             if (!file) return;
-            if (!file.type.startsWith('video/')) { msg.style.color = 'var(--danger)'; msg.textContent = 'Only video files are allowed.'; event.target.value = ''; return; }
+            if (!['video/mp4', 'video/webm', 'video/ogg'].includes(file.type)) { msg.style.color = 'var(--danger)'; msg.textContent = 'Choose an MP4, WebM or OGG video.'; event.target.value = ''; return; }
             if (file.size > 8 * 1024 * 1024) { msg.style.color = 'var(--danger)'; msg.textContent = 'Max 8MB video allowed.'; event.target.value = ''; return; }
             msg.style.color = 'var(--accent)';
             msg.textContent = 'Reading video...';
+            const version = projectFormVersion;
+            pendingProjectUploads++;
+            updateProjectSaveButton();
             const reader = new FileReader();
             reader.onload = function (e) {
+                if (version !== projectFormVersion) return;
                 document.getElementById('proj-video').value = e.target.result;
                 updateProjVideoPreview(e.target.result);
                 msg.style.color = 'var(--now)';
@@ -3644,7 +3726,8 @@
                 showToast('Project video ready - click Save');
                 event.target.value = '';
             };
-            reader.onerror = () => { msg.style.color = 'var(--danger)'; msg.textContent = 'Video read failed.'; event.target.value = ''; };
+            reader.onerror = () => { if (version !== projectFormVersion) return; msg.style.color = 'var(--danger)'; msg.textContent = 'Video read failed.'; event.target.value = ''; };
+            reader.onloadend = () => { pendingProjectUploads--; updateProjectSaveButton(); event.target.value = ''; };
             reader.readAsDataURL(file);
         }
 
@@ -3678,35 +3761,138 @@
     </div>`;
         }
 
+        function setProjectMediaFeedback(id, text, state = '') {
+            const feedback = document.getElementById(id);
+            feedback.textContent = text;
+            feedback.dataset.state = state;
+        }
+
+        function handleProjectCoverInput() {
+            const input = document.getElementById('proj-image');
+            const images = parseGalleryImages(input.value);
+            if (images.length > 1) {
+                input.value = images[0];
+                const gallery = document.getElementById('proj-gallery-images');
+                gallery.value = parseGalleryImages(images.slice(1).concat(parseGalleryImages(gallery.value))).join('\n');
+                updateProjGalleryPreview(gallery.value);
+                showToast('First image set as cover. Remaining links added to gallery.');
+            } else updateProjGalleryPreview(document.getElementById('proj-gallery-images').value);
+        }
+
         function updateProjImagePreview(url) {
             const wrap = document.getElementById('proj-img-preview-wrap'), img = document.getElementById('proj-img-preview');
-            if (url && url.trim()) { wrap.style.display = 'flex'; img.src = url; } else { wrap.style.display = 'none'; img.src = ''; }
+            const explicit = parseGalleryImages(url)[0];
+            const src = explicit || parseGalleryImages(document.getElementById('proj-gallery-images').value)[0] || '';
+            img.onload = null;
+            img.onerror = null;
+            wrap.style.display = 'none';
+            if (!src) {
+                img.removeAttribute('src');
+                setProjectMediaFeedback('proj-image-feedback', 'No cover selected. Pehli gallery image automatic cover banegi.');
+                return;
+            }
+            if (!ProjectMedia.isImageSource(src)) {
+                img.removeAttribute('src');
+                setProjectMediaFeedback('proj-image-feedback', 'Valid http:// ya https:// image link paste karein.', 'error');
+                return;
+            }
+            setProjectMediaFeedback('proj-image-feedback', explicit ? 'Loading cover preview...' : 'Loading first gallery image as cover...');
+            img.onload = () => {
+                wrap.style.display = 'flex';
+                setProjectMediaFeedback('proj-image-feedback', explicit ? 'Cover preview ready. Project card aur detail page par yeh main image dikhegi.' : 'Pehli gallery image automatic cover hai. Doosri image ke liye Make cover use karein.', 'ready');
+            };
+            img.onerror = () => {
+                wrap.style.display = 'none';
+                setProjectMediaFeedback('proj-image-feedback', 'Cover load nahi hua. Link public/direct image hona chahiye. Link check karein ya device se upload karein.', 'error');
+            };
+            img.src = src;
+        }
+
+        function updateProjectGalleryFeedback() {
+            const images = parseGalleryImages(document.getElementById('proj-gallery-images').value);
+            const failed = document.querySelectorAll('#proj-gallery-preview [data-state="error"]').length;
+            const limitError = images.length > ProjectMedia.maxGalleryImages;
+            setProjectMediaFeedback('proj-gallery-feedback', `${images.length} / 8 gallery images selected.` +
+                (limitError ? ' Extra images remove karein; koi image automatically delete nahi hui.' : '') +
+                (failed ? ` ${failed} image(s) load nahi hui. Neeche link check karein ya image replace karein.` : ''),
+                limitError || failed ? 'error' : '');
+        }
+
+        function setProjectGalleryImageState(img, loaded) {
+            img.closest('figure').dataset.state = loaded ? 'ready' : 'error';
+            img.style.display = loaded ? 'block' : 'none';
+            updateProjectGalleryFeedback();
         }
 
         function updateProjGalleryPreview(value) {
             const grid = document.getElementById('proj-gallery-preview');
-            if (!grid) return;
             const images = parseGalleryImages(value);
-            grid.innerHTML = images.map(src => `<img src="${esc(src)}" alt="Gallery image" onerror="this.remove()">`).join('');
+            const cover = parseGalleryImages(document.getElementById('proj-image').value)[0] || images[0];
+            grid.innerHTML = images.map((src, i) => {
+                const valid = ProjectMedia.isImageSource(src);
+                return `<figure class="gallery-preview-item" data-state="${valid ? 'loading' : 'error'}">
+                    ${valid ? `<img src="${esc(src)}" alt="Gallery image ${i + 1}" onload="setProjectGalleryImageState(this,true)" onerror="setProjectGalleryImageState(this,false)">` : ''}
+                    <div class="media-image-error">${valid ? 'Image load nahi hui.' : 'Invalid image link.'} ${ProjectMedia.isWebUrl(src) ? `<a href="${esc(src)}" target="_blank" rel="noopener">Open original link</a>` : 'Public image URL ya device upload use karein.'}</div>
+                    <figcaption>Image ${i + 1}${src === cover ? ' &middot; Current cover' : ''}</figcaption>
+                    <div class="gallery-preview-actions">
+                        <button class="btn btn-ghost" type="button" onclick="makeProjectGalleryCover(${i})" ${src === cover ? 'disabled' : ''}>${src === cover ? 'Cover' : 'Make cover'}</button>
+                        <button class="btn btn-ghost" type="button" onclick="removeProjectGalleryImage(${i})" aria-label="Remove gallery image ${i + 1}">Remove</button>
+                    </div>
+                </figure>`;
+            }).join('');
+            updateProjectGalleryFeedback();
+            updateProjImagePreview(document.getElementById('proj-image').value);
+        }
+
+        function makeProjectGalleryCover(index) {
+            const input = document.getElementById('proj-gallery-images');
+            const images = parseGalleryImages(input.value);
+            const selected = images[index];
+            if (!selected || !ProjectMedia.isImageSource(selected)) return;
+            const previous = parseGalleryImages(document.getElementById('proj-image').value)[0];
+            document.getElementById('proj-image').value = selected;
+            input.value = parseGalleryImages([previous].concat(images.filter(src => src !== selected))).filter(src => src !== selected).join('\n');
+            updateProjGalleryPreview(input.value);
+            showToast('Cover updated. Previous cover kept in gallery. Click Save Project.');
+        }
+
+        function removeProjectGalleryImage(index) {
+            const input = document.getElementById('proj-gallery-images');
+            input.value = parseGalleryImages(input.value).filter((_, i) => i !== index).join('\n');
+            updateProjGalleryPreview(input.value);
         }
 
         function updateProjVideoPreview(url) {
             const box = document.getElementById('proj-video-preview');
-            if (!box) return;
-            const value = String(url || '').trim();
-            if (!value) {
-                box.style.display = 'none';
-                box.innerHTML = '';
+            const video = ProjectMedia.videoSource(url);
+            box.innerHTML = '';
+            box.style.display = 'none';
+            if (video.kind === 'empty') {
+                setProjectMediaFeedback('proj-video-feedback', 'Video optional hai.');
+                return;
+            }
+            if (video.kind === 'invalid') {
+                setProjectMediaFeedback('proj-video-feedback', 'Valid YouTube / http(s) video link ya MP4 / WebM / OGG file use karein.', 'error');
                 return;
             }
             box.style.display = 'flex';
-            box.innerHTML = isDirectVideoSrc(value)
-                ? `<video controls src="${esc(value)}"></video>`
-                : `<a href="${esc(value)}" target="_blank" style="color:var(--accent);font-weight:700;">Video link ready</a>`;
+            if (video.kind === 'youtube') {
+                box.innerHTML = `<iframe src="${esc(video.src)}" title="Project video preview" allowfullscreen></iframe>`;
+                setProjectMediaFeedback('proj-video-feedback', 'YouTube player project detail page par dikhega.');
+            } else if (video.kind === 'file') {
+                box.innerHTML = `<video controls preload="metadata" src="${esc(video.src)}" onloadedmetadata="setProjectMediaFeedback('proj-video-feedback','Video preview ready. Save Project dabayein.','ready')" onerror="setProjectMediaFeedback('proj-video-feedback','Video load nahi hua. Public direct video link aur MP4 / WebM / OGG format check karein.','error')"></video>`;
+                setProjectMediaFeedback('proj-video-feedback', 'Loading video preview...');
+            } else {
+                box.innerHTML = `<a href="${esc(video.src)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;padding:12px;">Open video link &nearr;</a>`;
+                setProjectMediaFeedback('proj-video-feedback', 'Yeh external page hai: video new tab mein khulega. Inline player ke liye YouTube ya direct MP4 / WebM / OGG link use karein.');
+            }
         }
 
         function editProject(id) {
             const p = allData.projects.find(x => x._id === id); if (!p) return;
+            projectFormVersion++;
+            const covers = parseGalleryImages(p.image_url);
+            const gallery = parseGalleryImages(covers.slice(1).concat(p.media_images || []));
             document.getElementById('proj-id').value = p._id;
             document.getElementById('proj-name').value = p.name || '';
             document.getElementById('proj-status').value = p.status || 'WIP';
@@ -3715,20 +3901,20 @@
             document.getElementById('proj-content').value = p.content || '';
             document.getElementById('proj-github').value = p.github || '';
             document.getElementById('proj-live').value = p.live || '';
-            document.getElementById('proj-image').value = p.image_url || '';
-            document.getElementById('proj-gallery-images').value = (p.media_images || []).join('\n');
+            document.getElementById('proj-image').value = covers[0] || '';
+            document.getElementById('proj-gallery-images').value = gallery.join('\n');
             document.getElementById('proj-video').value = p.video_url || '';
             document.getElementById('proj-dashboard-url').value = p.dashboard_url || '';
             document.getElementById('proj-website-url').value = p.website_url || '';
             document.getElementById('proj-tech').value = (p.tech_tags || []).join(', ');
-            updateProjImagePreview(p.image_url || '');
-            updateProjGalleryPreview((p.media_images || []).join('\n'));
+            updateProjGalleryPreview(gallery.join('\n'));
             updateProjVideoPreview(p.video_url || '');
             document.getElementById('proj-form-title').innerHTML = '<span class="panel-icon">✎</span> Edit Project';
             document.getElementById('project-form-panel').scrollIntoView({ behavior: 'smooth' });
         }
 
         function clearProjectForm() {
+            projectFormVersion++;
             document.getElementById('proj-id').value = '';
             ['proj-name', 'proj-desc', 'proj-content', 'proj-github', 'proj-live', 'proj-image', 'proj-gallery-images', 'proj-video', 'proj-dashboard-url', 'proj-website-url', 'proj-tech'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('proj-status').value = 'WIP';
@@ -3746,9 +3932,18 @@
         }
 
         async function saveProject() {
+            if (savingProject || pendingProjectUploads) return showToast('Media prepare ho rahi hai. Please wait.', true);
             const id = document.getElementById('proj-id').value;
+            handleProjectCoverInput();
             const galleryImages = parseGalleryImages(document.getElementById('proj-gallery-images').value);
-            const coverImage = document.getElementById('proj-image').value.trim() || galleryImages[0] || '';
+            const coverImage = parseGalleryImages(document.getElementById('proj-image').value)[0] || galleryImages[0] || '';
+            if (galleryImages.length > ProjectMedia.maxGalleryImages) return showToast('Max 8 gallery images. Extra images remove karein.', true);
+            if ([coverImage].concat(galleryImages).filter(Boolean).some(src => !ProjectMedia.isImageSource(src))) {
+                return showToast('Image link invalid hai. Public http(s) image URL ya device upload use karein.', true);
+            }
+            if (ProjectMedia.videoSource(document.getElementById('proj-video').value).kind === 'invalid') {
+                return showToast('Video link invalid hai. YouTube / direct video link use karein.', true);
+            }
             const body = {
                 name: document.getElementById('proj-name').value.trim(),
                 status: document.getElementById('proj-status').value,
@@ -3766,6 +3961,11 @@
             };
             if (!id) body.order = allData.projects.length;
             if (!body.name) return showToast('Project name is required', true);
+            if (new Blob([JSON.stringify(body)]).size > 15 * 1024 * 1024) {
+                return showToast('Project media bahut badi hai. Video ke liye YouTube/direct link use karein ya chhoti files select karein.', true);
+            }
+            savingProject = true;
+            updateProjectSaveButton();
             try {
                 if (id) await api('PUT', '/api/admin/projects/' + id, body);
                 else await api('POST', '/api/admin/projects', body);
@@ -3775,6 +3975,7 @@
                 renderProjects(); renderDashboard();
                 showToast('Project saved! ✓ Adjust position in the Order section if needed.');
             } catch (e) { showToast(e.message, true); }
+            finally { savingProject = false; updateProjectSaveButton(); }
         }
 
         async function deleteProject(id) {

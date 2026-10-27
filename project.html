@@ -73,6 +73,7 @@
     </nav>
     <main id="app"><div class="loading">Loading project...</div></main>
 
+    <script src="project-media.js"></script>
     <script>
     (function(){
         'use strict';
@@ -84,33 +85,14 @@
         function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
         function slugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
         function getProjectImages(p){
-            const images=[p.image_url].concat(Array.isArray(p.media_images)?p.media_images:[]);
-            const seen=new Set();
-            return images.map(src=>String(src||'').trim()).filter(src=>{
-                if(!src||seen.has(src))return false;
-                seen.add(src);
-                return true;
-            });
-        }
-        function isDirectVideoSrc(url){
-            return /^data:video\//i.test(url)||/\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
-        }
-        function youtubeId(url){
-            const value=String(url||'');
-            const short=value.match(/youtu\.be\/([^?&]+)/);
-            if(short)return short[1];
-            const long=value.match(/[?&]v=([^?&]+)/);
-            if(long)return long[1];
-            const embed=value.match(/youtube\.com\/embed\/([^?&/]+)/);
-            return embed?embed[1]:'';
+            return ProjectMedia.getImages(p).filter(ProjectMedia.isImageSource);
         }
         function renderVideo(url){
-            const value=String(url||'').trim();
-            if(!value)return'';
-            const id=youtubeId(value);
-            if(id)return `<section class="media-section"><h2>Project Video</h2><div class="video-box"><iframe src="https://www.youtube.com/embed/${esc(id)}" title="Project video" allowfullscreen></iframe></div></section>`;
-            if(isDirectVideoSrc(value))return `<section class="media-section"><h2>Project Video</h2><div class="video-box"><video controls src="${esc(value)}"></video></div></section>`;
-            return `<section class="media-section"><h2>Project Video</h2><div class="video-box"><a class="video-link" href="${esc(value)}" target="_blank" rel="noopener">Open Project Video</a></div></section>`;
+            const video=ProjectMedia.videoSource(url);
+            if(['empty','invalid'].includes(video.kind))return'';
+            if(video.kind==='youtube')return `<section class="media-section"><h2>Project Video</h2><div class="video-box"><iframe src="${esc(video.src)}" title="Project video" allowfullscreen></iframe></div></section>`;
+            if(video.kind==='file')return `<section class="media-section"><h2>Project Video</h2><div class="video-box"><video controls preload="metadata" src="${esc(video.src)}"></video></div></section>`;
+            return `<section class="media-section"><h2>Project Video</h2><div class="video-box"><a class="video-link" href="${esc(video.src)}" target="_blank" rel="noopener">Open Project Video</a></div></section>`;
         }
         function mdToHtml(text){
             if(!text)return'';
@@ -133,7 +115,7 @@
         function renderProject(p){
             const status=(p.status||'WIP').toLowerCase();
             const images=getProjectImages(p);
-            const cover=p.image_url||images[0]||'';
+            const cover=images[0]||'';
             const gallery=images.filter(src=>src!==cover);
             const description=String(p.description||'').trim();
             const fullContent=String(p.content||'').trim();
