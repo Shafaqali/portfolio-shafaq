@@ -5,7 +5,7 @@ Node.js + Express + MongoDB Atlas backend for the portfolio + admin panel.
 ## Dashboard: project images and video
 
 - **Cover Image:** one main photo for the portfolio card and project detail page. Leave it blank to use the first gallery image. Pasting multiple image links here puts the first in the cover and the rest in the gallery.
-- **Gallery Images:** up to 8 extra screenshots or photos. Paste direct public image links separated by **commas or new lines**, including MediaDrop links, or select files from your device (max 5MB per image). Use **Make cover** or **Remove** under a thumbnail. Portfolio cards and the detail page show complete images with previous/next buttons and horizontal swipe. The detail page also has thumbnails; tap the cover or gallery image for a fullscreen viewer with zoom, keyboard arrows, and Escape to close.
+- **Gallery Images:** up to 8 extra screenshots or photos. Paste direct public image links separated by **commas or new lines**, including MediaDrop links, or select files from your device (max 5MB per image). Use **Make cover** or **Remove** under a thumbnail. Minimal portfolio cards show complete images that automatically change every 3 seconds while visible, with no image buttons or counters. The detail page has previous/next buttons, swipe, and thumbnails; tap the cover or gallery image for a fullscreen viewer with zoom, keyboard arrows, and Escape to close.
 - **Project Video:** one optional YouTube link (including Shorts), direct MP4/WebM/OGG link, or device video up to 8MB. These show a player on the detail page. Other public video pages open in a new tab.
 - **Dashboard Link / Website Link:** optional buttons on the detail page; these fields do not upload images.
 

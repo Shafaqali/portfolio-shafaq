@@ -1,4 +1,4 @@
-const CACHE = 'sa-admin-v4';
+const CACHE = 'sa-admin-v5';
 const OFFLINE_URLS = [
   './index.html',
   './project.html',

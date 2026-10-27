@@ -88,6 +88,48 @@
         return { show, get index() { return index; } };
     }
 
+    function slideshow(root, interval = 3000) {
+        const controller = carousel(root);
+        const slides = [...root.querySelectorAll('[data-gallery-slide]')];
+        if (!controller || slides.length < 2) return () => {};
+        let timer = null;
+        let visible = false;
+        function preloadNext() {
+            const img = slides[(controller.index + 1) % slides.length].querySelector('img');
+            if (img) img.loading = 'eager';
+        }
+        function stop() {
+            clearInterval(timer);
+            timer = null;
+        }
+        function sync() {
+            stop();
+            if (!visible || document.hidden || !root.isConnected) return;
+            preloadNext();
+            timer = setInterval(() => {
+                if (!root.isConnected) { cleanup(); return; }
+                const next = (controller.index + 1) % slides.length;
+                const img = slides[next].querySelector('img');
+                // Keep the current image visible while the next file is loading.
+                if (img && !img.complete) return;
+                controller.show(next);
+                preloadNext();
+            }, interval);
+        }
+        const observer = new IntersectionObserver(entries => {
+            visible = entries[0].isIntersecting && entries[0].intersectionRatio >= 0.1;
+            sync();
+        }, { threshold: 0.1 });
+        observer.observe(root);
+        document.addEventListener('visibilitychange', sync);
+        function cleanup() {
+            stop();
+            observer.disconnect();
+            document.removeEventListener('visibilitychange', sync);
+        }
+        return cleanup;
+    }
+
     function viewer(images, name) {
         if (!images.length) return;
         const dialog = document.createElement('dialog');
@@ -176,5 +218,5 @@
         };
     }
 
-    window.ProjectGalleries = { carousel, viewer };
+    window.ProjectGalleries = { carousel, slideshow, viewer };
 })();
