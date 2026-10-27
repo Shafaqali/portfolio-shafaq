@@ -11,6 +11,8 @@ Node.js + Express + MongoDB Atlas backend for the portfolio + admin panel.
 
 Check the previews, then click **Save Project**. Selecting a file only prepares it; it is saved with the project. A broken image stays visible as an error so you can replace its link. Previously saved comma-separated image lists also display correctly.
 
+Portfolio cards use larger previews with compact category, status, and title captions. Phone screenshots get taller cards; wide website screenshots get wider cards, with the full image visible. Full descriptions and technology tags remain on the project detail page.
+
 Keep `project-media.js`, `project-gallery.js`, and `project-deck.js` alongside `dashboard.html`, `index.html`, and `project.html` when deploying the frontend. Run `npm test` for the media parsing regression tests.
 
 ## Local Setup

@@ -30,6 +30,7 @@
             if (!slides.length) return;
             index = (value + slides.length) % slides.length;
             root.dataset.projectIndex = String(index);
+            stage.dataset.previewLayout = slides[index].dataset.previewLayout || 'wide';
             slides.forEach((slide, i) => {
                 let distance = (i - index + slides.length) % slides.length;
                 if (distance > slides.length / 2) distance -= slides.length;
@@ -61,6 +62,16 @@
             show(slides.indexOf(slide), true);
         }, options);
         slides.forEach(slide => {
+            const cover = slide.querySelector('[data-gallery-slide] img');
+            const fitPreview = () => {
+                if (!cover.naturalWidth) return;
+                slide.dataset.previewLayout = cover.naturalHeight > cover.naturalWidth * 0.85 ? 'portrait' : 'wide';
+                if (slide === slides[index]) stage.dataset.previewLayout = slide.dataset.previewLayout;
+            };
+            if (cover) {
+                cover.addEventListener('load', fitPreview, options);
+                if (cover.complete) fitPreview();
+            }
             slide.addEventListener('pointerenter', event => {
                 if (event.pointerType !== 'mouse') return;
                 hovered = true;
